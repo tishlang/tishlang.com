@@ -1,71 +1,59 @@
-import { Cpu, Brain, Database, Zap, Layers, Shield } from "lucide-react"
-
 const features = [
   {
-    icon: Cpu,
-    title: "Native Compilation",
+    title: "native compilation",
     description:
-      "Compiles to native machine code via LLVM. No runtime overhead, no garbage collection pauses. Predictable, blazing-fast performance.",
+      "compiles to native machine code via llvm. no runtime overhead, no garbage collection pauses.",
   },
   {
-    icon: Brain,
-    title: "Built-in AI Modules",
+    title: "built-in ai modules",
     description:
-      "First-class support for tensor operations, model loading (ONNX, safetensors), and inference. No bindings, no FFI -- just import and use.",
+      "first-class tensor operations, model loading (onnx, safetensors), and inference. just import and use.",
   },
   {
-    icon: Database,
-    title: "Data Processing",
+    title: "data processing",
     description:
-      "Native DataFrame operations, CSV/Parquet/JSON parsing, and streaming pipelines. Process millions of rows without leaving the language.",
+      "native dataframe operations, csv/parquet/json parsing, and streaming pipelines out of the box.",
   },
   {
-    icon: Zap,
-    title: "Familiar Syntax",
+    title: "familiar syntax",
     description:
-      "JS/TS developers feel at home immediately. Arrow functions, destructuring, template literals, async/await -- it all works.",
+      "arrow functions, destructuring, template literals, async/await -- it all works the way you expect.",
   },
   {
-    icon: Layers,
-    title: "Zero-Cost Abstractions",
+    title: "zero-cost abstractions",
     description:
-      "Generics, traits, and pattern matching compile away completely. High-level code with low-level performance characteristics.",
+      "generics, traits, and pattern matching compile away completely. high-level code, low-level perf.",
   },
   {
-    icon: Shield,
-    title: "Memory Safe",
+    title: "memory safe",
     description:
-      "Ownership-based memory model inspired by Rust, but with a simpler surface syntax. No dangling pointers, no data races, no UB.",
+      "ownership-based memory model inspired by rust, with a simpler surface. no dangling pointers.",
   },
 ]
 
 export function Features() {
   return (
-    <section id="features" className="px-6 py-24">
-      <div className="mx-auto max-w-6xl">
-        <div className="mb-16 text-center">
-          <h2 className="mb-4 text-balance text-3xl font-bold text-foreground sm:text-4xl">
-            Everything you need to ship native AI apps
-          </h2>
-          <p className="mx-auto max-w-2xl text-pretty text-muted-foreground">
-            tishlang combines the ergonomics of TypeScript with the performance
-            of systems languages and the ML-first stdlib you wish existed.
-          </p>
-        </div>
+    <section id="features" className="border-t border-border px-8 py-24">
+      <div className="mx-auto max-w-5xl">
+        <p className="mb-4 text-sm text-primary">features</p>
+        <h2 className="mb-4 text-2xl font-normal text-foreground sm:text-3xl">
+          everything you need to ship native ai apps
+        </h2>
+        <p className="mb-16 max-w-xl text-sm leading-relaxed text-muted-foreground">
+          tishlang combines the ergonomics of typescript with the performance
+          of systems languages and an ml-first standard library.
+        </p>
 
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group rounded-lg border border-border bg-card p-6 transition-colors hover:border-primary/30 hover:bg-secondary/30"
+              className="border border-border p-6"
             >
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-md bg-primary/10">
-                <feature.icon className="h-5 w-5 text-primary" />
-              </div>
-              <h3 className="mb-2 text-base font-semibold text-foreground">
+              <h3 className="mb-3 text-sm text-foreground">
                 {feature.title}
               </h3>
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="text-xs leading-relaxed text-muted-foreground">
                 {feature.description}
               </p>
             </div>
