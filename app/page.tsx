@@ -1,16 +1,23 @@
+import { Navbar } from "@/components/landing/navbar"
+import { Hero } from "@/components/landing/hero"
+import { CodeShowcase } from "@/components/landing/code-showcase"
+import { Features } from "@/components/landing/features"
+import { Benchmarks } from "@/components/landing/benchmarks"
+import { CTA } from "@/components/landing/cta"
+import { Footer } from "@/components/landing/footer"
+
 export default function Home() {
   return (
-    <div className="flex min-h-screen items-center justify-center font-sans">
-      <main className="flex w-full max-w-3xl flex-col items-center gap-8 px-6 py-16 text-center sm:items-start sm:text-left">
-        <div className="flex flex-col gap-4">
-          <h1 className="text-4xl font-bold tracking-tight">
-            tishlang
-          </h1>
-          <p className="max-w-md text-lg text-muted-foreground">
-            To get started, send a prompt or modify this page directly.
-          </p>
-        </div>
+    <div className="min-h-screen bg-background text-foreground">
+      <Navbar />
+      <main>
+        <Hero />
+        <CodeShowcase />
+        <Features />
+        <Benchmarks />
+        <CTA />
       </main>
+      <Footer />
     </div>
-  );
+  )
 }
