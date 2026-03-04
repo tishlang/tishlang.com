@@ -16,7 +16,7 @@ export function Navbar() {
 
   return (
     <header className="fixed top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-sm">
-      <nav className="mx-auto flex max-w-5xl items-center justify-between px-8 py-5">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 sm:px-10 md:px-16">
         <Link href="/" className="text-sm text-foreground tracking-wide">
           tishlang
         </Link>
@@ -52,7 +52,7 @@ export function Navbar() {
       </nav>
 
       {mobileOpen && (
-        <div className="border-t border-border bg-background px-8 py-6 md:hidden">
+        <div className="border-t border-border bg-background px-6 py-6 sm:px-10 md:hidden">
           <div className="flex flex-col gap-4">
             {navLinks.map((link) => (
               <Link

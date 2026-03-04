@@ -8,21 +8,21 @@ const links = {
 
 export function Footer() {
   return (
-    <footer className="border-t border-border px-8 py-12">
-      <div className="mx-auto max-w-5xl">
-        <div className="flex flex-col gap-12 md:flex-row md:justify-between">
+    <footer className="border-t border-border px-6 py-16 sm:px-10 md:px-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="flex flex-col gap-16 md:flex-row md:justify-between">
           <div className="flex flex-col gap-4">
-            <span className="text-sm text-foreground">tishlang</span>
-            <p className="max-w-xs text-xs leading-relaxed text-muted-foreground">
+            <span className="text-base text-foreground">tishlang</span>
+            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
               a compiled language for the ai era. native performance
               with the syntax you already know.
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-12 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-16 sm:grid-cols-3">
             {Object.entries(links).map(([category, items]) => (
               <div key={category}>
-                <h4 className="mb-4 text-xs text-foreground">
+                <h4 className="mb-5 text-sm text-foreground">
                   {category}
                 </h4>
                 <ul className="flex flex-col gap-3">
@@ -30,7 +30,7 @@ export function Footer() {
                     <li key={item}>
                       <Link
                         href="#"
-                        className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                        className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                       >
                         {item}
                       </Link>
@@ -42,8 +42,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-border pt-8">
-          <p className="text-xs text-muted-foreground">
+        <div className="mt-16 border-t border-border pt-8">
+          <p className="text-sm text-muted-foreground">
             tishlang is open source under the mit license.
           </p>
         </div>

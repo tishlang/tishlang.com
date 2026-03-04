@@ -92,8 +92,8 @@ export function CodeShowcase() {
   const [activeTab, setActiveTab] = useState(0)
 
   return (
-    <section className="px-8 pb-32">
-      <div className="mx-auto max-w-5xl">
+    <section className="px-6 pb-32 sm:px-10 md:px-16">
+      <div className="mx-auto max-w-6xl">
         <div className="overflow-hidden rounded-lg border border-border bg-card">
           {/* Window chrome */}
           <div className="flex items-center gap-4 border-b border-border px-5 py-3">
@@ -120,8 +120,8 @@ export function CodeShowcase() {
           </div>
 
           {/* Code content */}
-          <div className="overflow-x-auto p-6">
-            <pre className="text-sm">
+          <div className="overflow-x-auto p-8">
+            <pre className="text-sm leading-7">
               <code>{highlightSyntax(tabs[activeTab].code)}</code>
             </pre>
           </div>

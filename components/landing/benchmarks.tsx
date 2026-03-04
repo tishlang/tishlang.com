@@ -9,50 +9,58 @@ const benchmarks = [
 
 export function Benchmarks() {
   return (
-    <section className="border-t border-border px-8 py-24">
-      <div className="mx-auto max-w-5xl">
-        <p className="mb-4 text-sm text-primary">performance</p>
-        <h2 className="mb-4 text-2xl font-normal text-foreground sm:text-3xl">
-          performance that speaks for itself
-        </h2>
-        <p className="mb-16 text-sm text-muted-foreground">
-          matrix multiplication benchmark (1024x1024, f32). lower is better.
-        </p>
+    <section className="border-b border-border px-6 py-24 sm:px-10 md:px-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
+          {/* Left column */}
+          <div>
+            <p className="mb-6 text-sm text-primary">performance</p>
+            <h2 className="mb-4 text-[clamp(1.75rem,3.5vw,2.75rem)] font-normal leading-[1.1] tracking-tight text-foreground">
+              performance that speaks for itself
+            </h2>
+            <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+              matrix multiplication benchmark (1024x1024, f32). tishlang compiles
+              to the same llvm ir as rust and c++, delivering native throughput
+              with higher-level syntax. lower is better.
+            </p>
+          </div>
 
-        <div className="flex flex-col gap-5">
-          {benchmarks.map((bench) => (
-            <div key={bench.label} className="flex items-center gap-4">
-              <span
-                className={`w-20 text-right text-xs ${
-                  bench.highlight
-                    ? "text-primary"
-                    : "text-muted-foreground"
-                }`}
-              >
-                {bench.label}
-              </span>
-              <div className="flex-1">
-                <div className="h-5 w-full rounded-sm bg-secondary">
-                  <div
-                    className={`flex h-full items-center rounded-sm px-3 ${
-                      bench.highlight ? "bg-primary" : "bg-muted-foreground/15"
-                    }`}
-                    style={{ width: `${bench.value}%` }}
-                  >
-                    <span
-                      className={`text-xs ${
-                        bench.highlight
-                          ? "text-primary-foreground"
-                          : "text-muted-foreground"
+          {/* Right column - bars */}
+          <div className="flex flex-col justify-end gap-4">
+            {benchmarks.map((bench) => (
+              <div key={bench.label} className="flex items-center gap-4">
+                <span
+                  className={`w-20 text-right text-sm ${
+                    bench.highlight
+                      ? "text-primary"
+                      : "text-muted-foreground"
+                  }`}
+                >
+                  {bench.label}
+                </span>
+                <div className="flex-1">
+                  <div className="h-6 w-full rounded-sm bg-secondary">
+                    <div
+                      className={`flex h-full items-center rounded-sm px-3 ${
+                        bench.highlight ? "bg-primary" : "bg-muted-foreground/15"
                       }`}
+                      style={{ width: `${bench.value}%` }}
                     >
-                      {bench.time}
-                    </span>
+                      <span
+                        className={`text-xs ${
+                          bench.highlight
+                            ? "text-primary-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
+                        {bench.time}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>

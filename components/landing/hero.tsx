@@ -2,19 +2,19 @@ import { ArrowRight } from "lucide-react"
 
 export function Hero() {
   return (
-    <section className="px-8 pt-40 pb-20">
-      <div className="mx-auto max-w-5xl">
-        <p className="mb-8 text-sm text-primary">
+    <section className="px-6 pt-36 pb-24 sm:px-10 md:px-16">
+      <div className="mx-auto max-w-6xl">
+        <p className="mb-6 text-sm tracking-wide text-primary">
           v0.4.0 -- beta now available
         </p>
 
-        <h1 className="mb-8 text-4xl font-normal leading-tight tracking-tight text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-          the native language{"\n"}
+        <h1 className="mb-8 text-balance text-[clamp(2.5rem,6vw,5rem)] font-normal leading-[1.05] tracking-tight text-foreground">
+          the native language
           <br />
           for ai & data
         </h1>
 
-        <p className="mb-10 max-w-xl text-base leading-relaxed text-muted-foreground">
+        <p className="mb-12 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
           write familiar javascript/typescript syntax, compile to
           native binaries, and ship ai inference and data pipelines
           at any scale. zero runtime overhead.
@@ -23,14 +23,14 @@ export function Hero() {
         <div className="flex items-center gap-4">
           <a
             href="#"
-            className="inline-flex items-center gap-2 rounded-md bg-primary px-6 py-3 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center gap-3 rounded-md bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            get started
+            start building
             <ArrowRight className="h-4 w-4" />
           </a>
           <a
             href="#"
-            className="rounded-md border border-border px-6 py-3 text-sm text-secondary-foreground transition-colors hover:bg-secondary"
+            className="rounded-md border border-border px-7 py-3.5 text-sm text-secondary-foreground transition-colors hover:bg-secondary"
           >
             read the docs
           </a>

@@ -1,65 +1,93 @@
-const features = [
+const sections = [
   {
-    title: "native compilation",
+    number: "01",
+    title: "ai compute",
+    subtitle: "models, inference, and agents at native speed",
     description:
-      "compiles to native machine code via llvm. no runtime overhead, no garbage collection pauses.",
+      "load onnx and safetensors models directly. built-in tensor operations, batched inference, and streaming pipelines. chain models into autonomous agents with tool calling and memory. all compiled to native machine code.",
+    capabilities: [
+      "native tensor operations with zero-copy memory",
+      "onnx and safetensors model loading out of the box",
+      "agent orchestration with built-in tool calling",
+      "batched inference with automatic parallelization",
+      "gpu acceleration via vulkan and metal backends",
+    ],
   },
   {
-    title: "built-in ai modules",
-    description:
-      "first-class tensor operations, model loading (onnx, safetensors), and inference. just import and use.",
-  },
-  {
+    number: "02",
     title: "data processing",
+    subtitle: "dataframes, streaming, and pipelines built in",
     description:
-      "native dataframe operations, csv/parquet/json parsing, and streaming pipelines out of the box.",
+      "native dataframe operations that compile to vectorized simd instructions. read csv, parquet, json, and arrow formats. stream gigabytes of data through typed pipelines with backpressure and fault tolerance. no pandas, no spark -- just your code.",
+    capabilities: [
+      "columnar dataframes with simd-accelerated operations",
+      "csv, parquet, json, and arrow format support",
+      "streaming pipelines with backpressure and batching",
+      "typed schemas with compile-time validation",
+      "parallel execution across all available cores",
+    ],
   },
   {
-    title: "familiar syntax",
+    number: "03",
+    title: "native compilation",
+    subtitle: "llvm backend, zero runtime overhead",
     description:
-      "arrow functions, destructuring, template literals, async/await -- it all works the way you expect.",
-  },
-  {
-    title: "zero-cost abstractions",
-    description:
-      "generics, traits, and pattern matching compile away completely. high-level code, low-level perf.",
-  },
-  {
-    title: "memory safe",
-    description:
-      "ownership-based memory model inspired by rust, with a simpler surface. no dangling pointers.",
+      "tishlang compiles to native machine code via llvm. no vm, no jit warmup, no garbage collection pauses. the language gives you javascript/typescript ergonomics -- arrow functions, destructuring, async/await, generics -- with the performance characteristics of c++ or rust.",
+    capabilities: [
+      "compiles to native via llvm for every major platform",
+      "ownership-based memory model with no gc pauses",
+      "zero-cost generics and trait-based polymorphism",
+      "sub-millisecond startup for cli and server workloads",
+      "cross-compile to linux, macos, and windows from any host",
+    ],
   },
 ]
 
 export function Features() {
   return (
-    <section id="features" className="border-t border-border px-8 py-24">
-      <div className="mx-auto max-w-5xl">
-        <p className="mb-4 text-sm text-primary">features</p>
-        <h2 className="mb-4 text-2xl font-normal text-foreground sm:text-3xl">
-          everything you need to ship native ai apps
-        </h2>
-        <p className="mb-16 max-w-xl text-sm leading-relaxed text-muted-foreground">
-          tishlang combines the ergonomics of typescript with the performance
-          of systems languages and an ml-first standard library.
-        </p>
+    <section id="features" className="border-t border-border">
+      {sections.map((section) => (
+        <div
+          key={section.number}
+          className="border-b border-border px-6 py-24 sm:px-10 md:px-16"
+        >
+          <div className="mx-auto max-w-6xl">
+            <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
+              {/* Left column */}
+              <div>
+                <p className="mb-6 text-sm text-primary">{section.number}</p>
+                <h2 className="mb-4 text-[clamp(1.75rem,3.5vw,2.75rem)] font-normal leading-[1.1] tracking-tight text-foreground">
+                  {section.title}
+                </h2>
+                <p className="mb-6 text-base text-muted-foreground sm:text-lg">
+                  {section.subtitle}
+                </p>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {section.description}
+                </p>
+              </div>
 
-        <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => (
-            <div
-              key={feature.title}
-              className="border border-border p-6"
-            >
-              <h3 className="mb-3 text-sm text-foreground">
-                {feature.title}
-              </h3>
-              <p className="text-xs leading-relaxed text-muted-foreground">
-                {feature.description}
-              </p>
+              {/* Right column - capabilities */}
+              <div className="flex flex-col justify-end">
+                <p className="mb-6 text-xs tracking-widest text-muted-foreground uppercase">
+                  {"// capabilities"}
+                </p>
+                <ul className="flex flex-col gap-4">
+                  {section.capabilities.map((cap) => (
+                    <li
+                      key={cap}
+                      className="flex items-start gap-3 text-sm leading-relaxed text-secondary-foreground"
+                    >
+                      <span className="mt-0.5 text-muted-foreground">-</span>
+                      <span>{cap}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
-      </div>
+      ))}
     </section>
   )
 }
