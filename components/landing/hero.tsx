@@ -63,7 +63,7 @@ export function Hero() {
         >
           <Link href="#">
             <Button size="sm" className="group h-8 text-xs">
-              start building
+              get started
               <ArrowRight className="ml-1.5 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
             </Button>
           </Link>

@@ -1,0 +1,13 @@
+/* Load this last - overrides any Tailwind/tw-animate :root values
+   Change --theme-accent to switch color scheme:
+   Rose: oklch(0.72 0.18 5) | Mint: oklch(0.75 0.18 160) | Blue: oklch(0.75 0.18 250)
+*/
+:root {
+  --theme-accent: oklch(0.72 0.18 295);
+  --primary: var(--theme-accent);
+  --accent: var(--theme-accent);
+  --ring: var(--theme-accent);
+  --chart-1: var(--theme-accent);
+  --sidebar-primary: var(--theme-accent);
+  --sidebar-ring: var(--theme-accent);
+}

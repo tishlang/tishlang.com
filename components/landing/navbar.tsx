@@ -3,15 +3,16 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
+import { Menu, X, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
-  { label: "docs", href: "#" },
-  { label: "playground", href: "#" },
-  { label: "modules", href: "#features" },
-  { label: "blog", href: "#" },
+  { label: "docs", href: "https://docs.tishlang.com" },
+  { label: "playground", href: "https://tish.sh" },
+  { label: "github", href: "https://github.com/tishlang/tish" },
+  { label: "deploy", href: "https://zectre.com", external: true },
+
 ]
 
 export function Navbar() {
@@ -45,14 +46,18 @@ export function Navbar() {
             <Link
               key={link.label}
               href={link.href}
+              {...(link.external && { target: "_blank", rel: "noopener noreferrer" })}
               className={cn(
-                "relative text-xs transition-colors hover:text-foreground",
+                "relative inline-flex items-center gap-1 text-xs transition-colors hover:text-foreground",
                 pathname === link.href
                   ? "text-foreground"
                   : "text-muted-foreground"
               )}
             >
               {link.label}
+              {link.external && (
+                <ExternalLink className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
+              )}
               {pathname === link.href && (
                 <span className="absolute -bottom-3.5 left-0 right-0 h-px bg-primary" />
               )}
@@ -61,19 +66,14 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link href="#">
+          {/* <Link href="#">
             <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground transition-colors hover:text-foreground">
               github
             </Button>
-          </Link>
-          <Link href="#">
-            <Button variant="outline" size="sm" className="h-7 text-xs border-border text-foreground transition-colors hover:border-primary/40 hover:bg-secondary">
-              read the docs
-            </Button>
-          </Link>
+          </Link> */}
           <Link href="#">
             <Button size="sm" className="h-7 text-xs">
-              start building
+              get started
             </Button>
           </Link>
         </div>
@@ -114,14 +114,18 @@ export function Navbar() {
                 <Link
                   key={link.label}
                   href={link.href}
+                  {...(link.external && { target: "_blank", rel: "noopener noreferrer" })}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    "px-2 py-2 text-xs transition-colors hover:text-foreground",
+                    "inline-flex items-center gap-1.5 px-2 py-2 text-xs transition-colors hover:text-foreground",
                     pathname === link.href ? "text-primary" : "text-muted-foreground"
                   )}
                 >
-                  {pathname === link.href && <span className="mr-1.5">{">"}</span>}
+                  {pathname === link.href && <span>{">"}</span>}
                   {link.label}
+                  {link.external && (
+                    <ExternalLink className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
+                  )}
                 </Link>
               ))}
             </div>

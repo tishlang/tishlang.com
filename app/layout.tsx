@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
+import './theme-override.css'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
