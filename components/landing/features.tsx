@@ -1,3 +1,7 @@
+"use client"
+
+import { useInView } from "@/hooks/use-in-view"
+
 const sections = [
   {
     number: "01",
@@ -44,39 +48,46 @@ const sections = [
 ]
 
 export function Features() {
+  const { ref, inView } = useInView()
+
   return (
-    <section id="features" className="border-t border-border">
-      {sections.map((section) => (
-        <div
-          key={section.number}
-          className="border-b border-border px-6 py-24 sm:px-10 md:px-16"
-        >
-          <div className="mx-auto max-w-6xl">
+    <section id="features" className="py-20 lg:py-28">
+      <div ref={ref} className="mx-auto max-w-5xl px-6">
+        {sections.map((section, i) => (
+          <div
+            key={section.number}
+            className="border-b border-border py-16 last:border-b-0"
+            style={{
+              opacity: inView ? 1 : 0,
+              transform: inView ? "none" : "translateY(8px)",
+              transition: `opacity 0.4s ease ${i * 80}ms, transform 0.4s ease ${i * 80}ms`,
+            }}
+          >
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
               {/* Left column */}
               <div>
-                <p className="mb-6 text-sm text-primary">{section.number}</p>
-                <h2 className="mb-4 text-[clamp(1.75rem,3.5vw,2.75rem)] font-normal leading-[1.1] tracking-tight text-foreground">
+                <p className="text-xs text-primary">{section.number}</p>
+                <h2 className="mt-2 text-xl font-medium leading-tight text-foreground md:text-2xl">
                   {section.title}
                 </h2>
-                <p className="mb-6 text-base text-muted-foreground sm:text-lg">
+                <p className="mt-2 text-xs text-muted-foreground">
                   {section.subtitle}
                 </p>
-                <p className="text-sm leading-relaxed text-muted-foreground">
+                <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
                   {section.description}
                 </p>
               </div>
 
               {/* Right column - capabilities */}
               <div className="flex flex-col justify-end">
-                <p className="mb-6 text-xs tracking-widest text-muted-foreground uppercase">
+                <p className="text-xs tracking-widest text-muted-foreground uppercase">
                   {"// capabilities"}
                 </p>
-                <ul className="flex flex-col gap-4">
+                <ul className="mt-6 flex flex-col gap-4">
                   {section.capabilities.map((cap) => (
                     <li
                       key={cap}
-                      className="flex items-start gap-3 text-sm leading-relaxed text-secondary-foreground"
+                      className="flex items-start gap-3 text-xs leading-relaxed text-secondary-foreground"
                     >
                       <span className="mt-0.5 text-muted-foreground">-</span>
                       <span>{cap}</span>
@@ -86,8 +97,8 @@ export function Features() {
               </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </section>
   )
 }

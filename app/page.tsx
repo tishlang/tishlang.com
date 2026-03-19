@@ -10,7 +10,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <main>
+      <main className="min-h-screen pt-[73px]">
         <Hero />
         <CodeShowcase />
         <Features />

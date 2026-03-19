@@ -1,3 +1,7 @@
+"use client"
+
+import { useInView } from "@/hooks/use-in-view"
+
 const benchmarks = [
   { label: "tishlang", value: 100, time: "0.42s", highlight: true },
   { label: "rust", value: 95, time: "0.44s", highlight: false },
@@ -8,17 +12,27 @@ const benchmarks = [
 ]
 
 export function Benchmarks() {
+  const { ref, inView } = useInView()
+
   return (
-    <section className="border-b border-border px-6 py-24 sm:px-10 md:px-16">
-      <div className="mx-auto max-w-6xl">
-        <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
+    <section className="border-b border-border py-20 lg:py-28">
+      <div className="mx-auto max-w-5xl px-6">
+        <div
+          ref={ref}
+          className="grid gap-12 lg:grid-cols-2 lg:gap-20"
+          style={{
+            opacity: inView ? 1 : 0,
+            transform: inView ? "none" : "translateY(12px)",
+            transition: "opacity 0.5s ease, transform 0.5s ease",
+          }}
+        >
           {/* Left column */}
           <div>
-            <p className="mb-6 text-sm text-primary">performance</p>
-            <h2 className="mb-4 text-[clamp(1.75rem,3.5vw,2.75rem)] font-normal leading-[1.1] tracking-tight text-foreground">
+            <p className="text-xs text-primary">performance</p>
+            <h2 className="mt-2 text-xl font-medium leading-tight text-foreground md:text-2xl">
               performance that speaks for itself
             </h2>
-            <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
               matrix multiplication benchmark (1024x1024, f32). tishlang compiles
               to the same llvm ir as rust and c++, delivering native throughput
               with higher-level syntax. lower is better.
@@ -30,7 +44,7 @@ export function Benchmarks() {
             {benchmarks.map((bench) => (
               <div key={bench.label} className="flex items-center gap-4">
                 <span
-                  className={`w-20 text-right text-sm ${
+                  className={`w-20 text-right text-xs ${
                     bench.highlight
                       ? "text-primary"
                       : "text-muted-foreground"

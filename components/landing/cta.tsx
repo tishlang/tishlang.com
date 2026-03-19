@@ -1,31 +1,58 @@
+"use client"
+
+import Link from "next/link"
 import { ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useInView } from "@/hooks/use-in-view"
 
 export function CTA() {
+  const { ref, inView } = useInView()
+
   return (
-    <section className="px-6 py-24 sm:px-10 md:px-16">
-      <div className="mx-auto max-w-6xl">
-        <p className="mb-6 text-sm text-primary">get started</p>
-        <h2 className="mb-6 text-[clamp(1.75rem,3.5vw,2.75rem)] font-normal leading-[1.1] tracking-tight text-foreground">
-          start building with tishlang
-        </h2>
-        <p className="mb-12 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-          join the growing community of developers shipping native ai
-          applications with a language that feels like home.
-        </p>
-        <div className="flex items-center gap-4">
-          <a
-            href="#"
-            className="inline-flex items-center gap-3 rounded-md bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            install tishlang
-            <ArrowRight className="h-4 w-4" />
-          </a>
-          <a
-            href="#"
-            className="rounded-md border border-border px-7 py-3.5 text-sm text-secondary-foreground transition-colors hover:bg-secondary"
-          >
-            view on github
-          </a>
+    <section className="py-20 lg:py-28">
+      <div className="mx-auto max-w-5xl px-6">
+        <div
+          ref={ref}
+          className="border border-border p-8 transition-colors duration-500 hover:border-primary/20 md:p-12"
+          style={{
+            opacity: inView ? 1 : 0,
+            transform: inView ? "none" : "translateY(12px)",
+            transition: "opacity 0.5s ease, transform 0.5s ease, border-color 0.5s",
+          }}
+        >
+          <p className="text-xs text-primary">get started</p>
+          <h2 className="mt-2 text-xl font-medium text-foreground md:text-2xl">
+            start building with tishlang
+          </h2>
+          <p className="mt-2 max-w-md text-xs leading-relaxed text-muted-foreground">
+            join the growing community of developers shipping native ai
+            applications with a language that feels like home.
+          </p>
+
+          {/* Interactive install line */}
+          <div className="mt-6 flex items-center gap-2 border border-border bg-card px-4 py-2.5 w-fit">
+            <span className="text-primary text-xs">$</span>
+            <code className="text-xs text-foreground">npx create-tish-app</code>
+            <span className="animate-blink inline-block h-3.5 w-1 bg-primary" />
+          </div>
+
+          <div className="mt-6 flex items-center gap-3">
+            <Link href="#">
+              <Button size="sm" className="group h-8 text-xs">
+                install tishlang
+                <ArrowRight className="ml-1.5 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+              </Button>
+            </Link>
+            <Link href="#">
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs border-border text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
+              >
+                view on github
+              </Button>
+            </Link>
+          </div>
         </div>
       </div>
     </section>

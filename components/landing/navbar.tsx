@@ -1,8 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { useState } from "react"
+import { usePathname } from "next/navigation"
+import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 const navLinks = [
   { label: "docs", href: "#" },
@@ -12,61 +15,136 @@ const navLinks = [
 ]
 
 export function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
+  const pathname = usePathname()
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 16)
+    window.addEventListener("scroll", onScroll, { passive: true })
+    return () => window.removeEventListener("scroll", onScroll)
+  }, [])
 
   return (
-    <header className="fixed top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-sm">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5 sm:px-10 md:px-16">
-        <Link href="/" className="text-sm text-foreground tracking-wide">
-          tishlang
+    <header
+      className={cn(
+        "fixed top-0 z-50 w-full border-b backdrop-blur-sm transition-all duration-300",
+        scrolled
+          ? "border-border bg-background/90"
+          : "border-transparent bg-background/50"
+      )}
+    >
+      <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
+        <Link href="/" className="group flex items-center gap-2 text-foreground">
+          <span className="text-primary transition-transform duration-200 group-hover:translate-x-0.5">{">"}</span>
+          <span className="text-sm font-medium">tishlang</span>
         </Link>
 
-        <div className="hidden items-center gap-8 md:flex">
+        <div className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
             <Link
               key={link.label}
               href={link.href}
-              className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              className={cn(
+                "relative text-xs transition-colors hover:text-foreground",
+                pathname === link.href
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              )}
             >
               {link.label}
+              {pathname === link.href && (
+                <span className="absolute -bottom-3.5 left-0 right-0 h-px bg-primary" />
+              )}
             </Link>
           ))}
         </div>
 
-        <div className="hidden items-center gap-6 md:flex">
-          <Link
-            href="#"
-            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-          >
-            github
+        <div className="hidden items-center gap-3 md:flex">
+          <Link href="#">
+            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground transition-colors hover:text-foreground">
+              github
+            </Button>
+          </Link>
+          <Link href="#">
+            <Button variant="outline" size="sm" className="h-7 text-xs border-border text-foreground transition-colors hover:border-primary/40 hover:bg-secondary">
+              read the docs
+            </Button>
+          </Link>
+          <Link href="#">
+            <Button size="sm" className="h-7 text-xs">
+              start building
+            </Button>
           </Link>
         </div>
 
         <button
-          className="md:hidden text-muted-foreground"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          aria-label="Toggle menu"
+          className="md:hidden"
+          onClick={() => setOpen(!open)}
+          aria-label={open ? "Close menu" : "Open menu"}
         >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          <div className="relative h-5 w-5">
+            <Menu
+              className={cn(
+                "absolute inset-0 h-5 w-5 text-foreground transition-all duration-200",
+                open ? "rotate-90 opacity-0" : "rotate-0 opacity-100"
+              )}
+            />
+            <X
+              className={cn(
+                "absolute inset-0 h-5 w-5 text-foreground transition-all duration-200",
+                open ? "rotate-0 opacity-100" : "-rotate-90 opacity-0"
+              )}
+            />
+          </div>
         </button>
       </nav>
 
-      {mobileOpen && (
-        <div className="border-t border-border bg-background px-6 py-6 sm:px-10 md:hidden">
-          <div className="flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
+      {/* Mobile menu with slide transition */}
+      <div
+        className={cn(
+          "grid overflow-hidden border-t border-border transition-all duration-300 ease-in-out md:hidden",
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr] border-transparent"
+        )}
+      >
+        <div className="overflow-hidden">
+          <div className="mx-auto max-w-5xl px-6 py-4">
+            <div className="flex flex-col gap-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className={cn(
+                    "px-2 py-2 text-xs transition-colors hover:text-foreground",
+                    pathname === link.href ? "text-primary" : "text-muted-foreground"
+                  )}
+                >
+                  {pathname === link.href && <span className="mr-1.5">{">"}</span>}
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+            <div className="mt-4 flex flex-col gap-2 border-t border-border pt-4">
+              <Link href="#" onClick={() => setOpen(false)}>
+                <Button variant="ghost" size="sm" className="w-full text-xs text-muted-foreground">
+                  github
+                </Button>
               </Link>
-            ))}
+              <Link href="#" onClick={() => setOpen(false)}>
+                <Button variant="outline" size="sm" className="w-full text-xs">
+                  read the docs
+                </Button>
+              </Link>
+              <Link href="#" onClick={() => setOpen(false)}>
+                <Button size="sm" className="w-full text-xs">
+                  start building
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </header>
   )
 }
