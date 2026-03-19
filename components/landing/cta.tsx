@@ -22,7 +22,7 @@ export function CTA() {
         >
           <p className="text-xs text-primary">get started</p>
           <h2 className="mt-2 text-xl font-medium text-foreground md:text-2xl">
-            start building with tishlang
+            start building with tish
           </h2>
           <p className="mt-2 max-w-md text-xs leading-relaxed text-muted-foreground">
             join the growing community of developers shipping native ai
@@ -39,7 +39,7 @@ export function CTA() {
           <div className="mt-6 flex items-center gap-3">
             <Link href="#">
               <Button size="sm" className="group h-8 text-xs">
-                install tishlang
+                install tish
                 <ArrowRight className="ml-1.5 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
               </Button>
             </Link>

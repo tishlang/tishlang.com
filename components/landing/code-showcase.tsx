@@ -24,11 +24,11 @@ fn main() {
     code: `import { Model, Tensor } from "std:ai"
 
 fn main() {
-  // load a model from ONNX or tishlang format
+  // load a model from ONNX or tish format
   const model = Model.load("./sentiment.onnx")
 
   // built-in tensor operations
-  const input = Tensor.from_text("tishlang is fast")
+  const input = Tensor.from_text("tish is fast")
   const result = model.predict(input)
 
   print(result.label)      // "positive"

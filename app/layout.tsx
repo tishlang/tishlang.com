@@ -9,7 +9,7 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'tishlang - Native Performance, Familiar Syntax',
+  title: 'Tish - Native Performance, Familiar Syntax',
   description: 'A JavaScript/TypeScript-like language that compiles to native code with built-in AI and data processing modules.',
 }
 

@@ -37,7 +37,7 @@ export function Navbar() {
       <nav className="mx-auto flex max-w-5xl items-center justify-between px-6 py-3">
         <Link href="/" className="group flex items-center gap-2 text-foreground">
           <span className="text-primary transition-transform duration-200 group-hover:translate-x-0.5">{">"}</span>
-          <span className="text-sm font-medium">tishlang</span>
+          <span className="text-sm font-medium">Tish</span>
         </Link>
 
         <div className="hidden items-center gap-6 md:flex">

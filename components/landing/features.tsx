@@ -36,7 +36,7 @@ const sections = [
     title: "native compilation",
     subtitle: "llvm backend, zero runtime overhead",
     description:
-      "tishlang compiles to native machine code via llvm. no vm, no jit warmup, no garbage collection pauses. the language gives you javascript/typescript ergonomics -- arrow functions, destructuring, async/await, generics -- with the performance characteristics of c++ or rust.",
+      "tish compiles to native machine code via llvm. no vm, no jit warmup, no garbage collection pauses. the language gives you javascript/typescript ergonomics -- arrow functions, destructuring, async/await, generics -- with the performance characteristics of c++ or rust.",
     capabilities: [
       "compiles to native via llvm for every major platform",
       "ownership-based memory model with no gc pauses",
@@ -70,30 +70,32 @@ export function Features() {
                 <h2 className="mt-2 text-xl font-medium leading-tight text-foreground md:text-2xl">
                   {section.title}
                 </h2>
-                <p className="mt-2 text-xs text-muted-foreground">
+                <p className="mt-2 text-xs text-primary">
                   {section.subtitle}
                 </p>
-                <p className="mt-6 text-xs leading-relaxed text-muted-foreground">
+                <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
                   {section.description}
                 </p>
               </div>
 
-              {/* Right column - capabilities */}
+              {/* Right column - capabilities (bordered box, source-style) */}
               <div className="flex flex-col justify-end">
-                <p className="text-xs tracking-widest text-muted-foreground uppercase">
-                  {"// capabilities"}
-                </p>
-                <ul className="mt-6 flex flex-col gap-4">
-                  {section.capabilities.map((cap) => (
-                    <li
-                      key={cap}
-                      className="flex items-start gap-3 text-xs leading-relaxed text-secondary-foreground"
-                    >
-                      <span className="mt-0.5 text-muted-foreground">-</span>
-                      <span>{cap}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="border border-border p-5 transition-colors duration-500 hover:border-primary/20">
+                  <p className="mb-4 text-xs text-muted-foreground/60">
+                    {"// capabilities"}
+                  </p>
+                  <ul className="flex flex-col gap-3">
+                    {section.capabilities.map((cap) => (
+                      <li
+                        key={cap}
+                        className="flex items-start gap-2 text-xs leading-relaxed"
+                      >
+                        <span className="mt-0.5 text-primary">-</span>
+                        <span className="text-foreground">{cap}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
           </div>

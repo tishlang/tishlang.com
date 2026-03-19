@@ -3,7 +3,7 @@
 import { useInView } from "@/hooks/use-in-view"
 
 const benchmarks = [
-  { label: "tishlang", value: 100, time: "0.42s", highlight: true },
+  { label: "tish", value: 100, time: "0.42s", highlight: true },
   { label: "rust", value: 95, time: "0.44s", highlight: false },
   { label: "c++", value: 92, time: "0.46s", highlight: false },
   { label: "go", value: 58, time: "0.72s", highlight: false },
@@ -33,7 +33,7 @@ export function Benchmarks() {
               performance that speaks for itself
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              matrix multiplication benchmark (1024x1024, f32). tishlang compiles
+              matrix multiplication benchmark (1024x1024, f32). tish compiles
               to the same llvm ir as rust and c++, delivering native throughput
               with higher-level syntax. lower is better.
             </p>

@@ -93,6 +93,29 @@
   }
 }
 
+/* Selection: primary background, black text (scoped to selection only; no -webkit-text-fill-color to avoid leaking to button hover) */
+::selection,
+*::selection {
+  background: var(--primary) !important;
+  color: #000 !important;
+}
+::-moz-selection,
+*::-moz-selection {
+  background: var(--primary) !important;
+  color: #000 !important;
+}
+
+/* Buttons: keep text color on hover/focus so it doesn’t turn black (e.g. from selection styles) */
+button:hover,
+button:focus,
+button:active,
+[data-slot="button"]:hover,
+[data-slot="button"]:focus,
+[data-slot="button"]:active {
+  color: inherit !important;
+  -webkit-text-fill-color: inherit !important;
+}
+
 /* Fade in up on scroll */
 @keyframes fade-in-up {
   from {
