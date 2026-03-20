@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { ArrowRight, ExternalLink } from "lucide-react";
 import { compileMDX } from "next-mdx-remote/rsc";
+import { Button } from "@/components/ui/button";
 import remarkGfm from "remark-gfm";
 import rehypeSlug from "rehype-slug";
 import rehypePrettyCode from "rehype-pretty-code";
@@ -57,23 +59,33 @@ export default async function DocsPage({
           <p className="mt-2 text-muted-foreground">{hero.tagline}</p>
           {hero.actions && hero.actions.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-3">
-              {hero.actions.map((a, i) => (
-                <Link
-                  key={i}
-                  href={
-                    a.link.startsWith("/")
-                      ? `/docs${a.link === "/" ? "" : a.link}`.replace(/\/$/, "") || "/docs"
-                      : a.link
-                  }
-                  className={`inline-flex items-center gap-1.5 rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                    a.variant === "primary"
-                      ? "bg-primary text-primary-foreground hover:opacity-90"
-                      : "border border-border hover:bg-muted"
-                  }`}
-                >
-                  {a.text}
-                </Link>
-              ))}
+              {hero.actions.map((a, i) => {
+                const href = a.link.startsWith("/")
+                  ? `/docs${a.link === "/" ? "" : a.link}`.replace(/\/$/, "") || "/docs"
+                  : a.link;
+                const isExternal = href.startsWith("http");
+                return (
+                  <Link key={i} href={href} {...(isExternal && { target: "_blank", rel: "noopener noreferrer" })}>
+                    {a.variant === "primary" ? (
+                      <Button size="sm" className="group h-8 text-xs lowercase">
+                        {a.text.toLowerCase()}
+                        <ArrowRight className="ml-1.5 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8 text-xs lowercase border-border text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
+                      >
+                        {a.text.toLowerCase()}
+                        {isExternal && (
+                          <ExternalLink className="ml-1.5 h-3 w-3 shrink-0 opacity-70" />
+                        )}
+                      </Button>
+                    )}
+                  </Link>
+                );
+              })}
             </div>
           )}
         </div>

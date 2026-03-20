@@ -30,7 +30,7 @@ const baseComponents: MDXComponents = {
       if (isBlock) {
         return (
           <code
-            className={`block overflow-x-auto text-sm ${className ?? ""}`}
+            className={`scrollbar-thin block overflow-x-auto text-sm ${className ?? ""}`}
             {...props}
           >
             {children}
@@ -45,14 +45,14 @@ const baseComponents: MDXComponents = {
     },
     pre: ({ children, ...props }) => (
       <pre
-        className="overflow-x-auto rounded-lg border border-border px-4 py-4 text-sm [&>code]:block [&>code]:bg-transparent [&>code]:p-0"
+        className="scrollbar-thin overflow-x-auto rounded-lg border border-border px-4 py-4 text-sm [&>code]:block [&>code]:bg-transparent [&>code]:p-0"
         {...props}
       >
         {children}
       </pre>
     ),
     table: ({ children, ...props }) => (
-      <div className="overflow-x-auto">
+      <div className="scrollbar-thin overflow-x-auto">
         <table className="w-full border-collapse text-sm" {...props}>
           {children}
         </table>
