@@ -1,0 +1,56 @@
+---
+title: Installation
+description: How to build and install the Tish compiler and runtime.
+---
+
+## Prerequisites
+
+- **Rust** 1.75+ ([rustup](https://rustup.rs/))
+
+## Build Tish (compiler/runtime)
+
+Tish lives in the [tish](https://github.com/.../tish) repository:
+
+```bash
+git clone <tish-repo-url>
+cd tish
+cargo build --release -p tish
+```
+
+The binary is at `target/release/tish`.
+
+### Editor tooling (optional, separate binaries)
+
+Formatting and linting are **not** part of `tish` — same idea as rustfmt/clippy vs rustc:
+
+```bash
+cargo build --release -p tish_fmt    # → tish-fmt
+cargo build --release -p tish_lint   # → tish-lint
+cargo build --release -p tish_lsp    # → tish-lsp
+```
+
+Add the binaries you need to your `PATH`. See [Editor and IDE setup](/getting-started/editor/).
+
+## Verify Installation
+
+```bash
+tish --help
+tish run --help
+tish compile --help
+tish-fmt --help
+tish-lint --help
+tish-lsp --help
+```
+
+## zectre CLI (optional)
+
+For deploying to the Zectre Platform, use the [zectre](https://github.com/.../zectre) CLI. Run from source (no install):
+
+```bash
+cd zectre
+zectre --help
+```
+
+## Next Steps
+
+- [First App](/getting-started/first-app/) — Run and compile your first Tish program

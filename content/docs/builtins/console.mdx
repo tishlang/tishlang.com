@@ -1,0 +1,43 @@
+---
+title: Console
+description: Console logging builtins in Tish.
+---
+
+## Methods
+
+| Method | Description | Output |
+|--------|-------------|--------|
+| `console.log(...)` | General output | stdout (default level) |
+| `console.info(...)` | Informational messages | stdout |
+| `console.debug(...)` | Debug messages | stdout (hidden by default) |
+| `console.warn(...)` | Warnings | stderr |
+| `console.error(...)` | Errors | stderr (always shown) |
+
+## Log level
+
+Log level is controlled via the `TISH_LOG_LEVEL` environment variable:
+
+| Value | Shown |
+|-------|-------|
+| `debug` | All messages |
+| `info` | info, log, warn, error |
+| `log` | log, warn, error (default) |
+| `warn` | warn, error |
+| `error` | error only |
+
+Example:
+
+```bash
+TISH_LOG_LEVEL=debug ./myapp
+TISH_LOG_LEVEL=warn ./myapp
+```
+
+## Example
+
+```javascript
+console.log("Hello, World!")
+console.info("Starting up...")
+console.debug("Debug info")
+console.warn("Warning")
+console.error("Error occurred")
+```

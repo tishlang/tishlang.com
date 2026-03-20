@@ -1,0 +1,48 @@
+---
+title: Strings
+description: String builtins in Tish.
+---
+
+## Properties
+
+| Property | Description |
+|----------|-------------|
+| `.length` | Character count |
+
+## Search and extract
+
+| Method | Description |
+|--------|-------------|
+| `.indexOf(str, fromIndex?)` | Index of substring, or -1 (optional start position) |
+| `.includes(str)` | True if substring exists |
+| `.slice(start, end?)` | Extract portion |
+| `.substring(start, end?)` | Extract portion (like slice) |
+| `.charAt(idx)` | Character at index |
+| `.charCodeAt(idx)` | Char code at index |
+
+## Transform
+
+| Method | Description |
+|--------|-------------|
+| `.split(sep)` | Split into array |
+| `.trim()` | Remove leading/trailing whitespace |
+| `.toUpperCase()` | Uppercase |
+| `.toLowerCase()` | Lowercase |
+| `.replace(search, rep)` | Replace. With RegExp + function: invokes function per match. |
+| `.replaceAll(search, rep)` | Replace all occurrences |
+| `.repeat(n)` | Repeat n times |
+| `.padStart(len, pad?)` | Pad at start |
+| `.padEnd(len, pad?)` | Pad at end |
+
+## Prefix/suffix
+
+| Method | Description |
+|--------|-------------|
+| `.startsWith(str)` | True if starts with str |
+| `.endsWith(str)` | True if ends with str |
+
+## String.fromCharCode
+
+| Function | Description |
+|----------|-------------|
+| `String.fromCharCode(n, ...)` | String from char codes |

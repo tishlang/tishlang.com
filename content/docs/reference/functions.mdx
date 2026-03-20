@@ -1,0 +1,86 @@
+---
+title: Functions
+description: Function declarations, arrow functions, and rest parameters in Tish.
+---
+
+## Named functions
+
+```javascript
+fn add(a, b) {
+    return a + b
+}
+
+fn double(x) = x * 2   // single-expression, implicit return
+```
+
+Both `fn` and `function` are supported.
+
+## Arrow functions
+
+```javascript
+// Single param, expression body
+let doubled = nums.map(x => x * 2)
+
+// Multiple params
+let sum = nums.reduce((acc, x) => acc + x, 0)
+
+// No params
+let getHello = () => "Hello"
+
+// Block body
+let process = (x) => {
+    let y = x * 2
+    return y + 1
+}
+```
+
+**Note**: Arrow functions work in interpreter mode. Compiler mode may require named functions for some use cases.
+
+## Rest parameters
+
+```javascript
+fn sum(...args) {
+    let total = 0
+    for (let x of args) total += x
+    return total
+}
+```
+
+## Closures
+
+Functions capture variables by name with lexical scope:
+
+```javascript
+fn makeCounter() {
+    let count = 0
+    fn inc() {
+        count++
+        return count
+    }
+    return inc
+}
+```
+
+## Async functions
+
+Use `async fn` to declare asynchronous functions that can use `await`:
+
+```javascript
+async fn fetchData(url) {
+    let res = await fetchAsync(url)
+    return res.ok ? res.body : null
+}
+
+async fn main() {
+    let data = await fetchData("https://api.example.com/data")
+    console.log(data)
+}
+
+main()
+```
+
+`await` pauses until the Promise settles. Use with `fetchAsync`, `fetchAllAsync`, or any `Promise` (requires the `http` feature).
+
+## No `this`
+
+Tish has no `this` keyword. Pass explicit parameters instead.

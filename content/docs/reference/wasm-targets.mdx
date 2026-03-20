@@ -1,0 +1,54 @@
+---
+title: WebAssembly Targets
+description: Compile Tish to WebAssembly for browser or Wasmtime.
+---
+
+Tish supports two WebAssembly targets:
+
+| Target | Output | Runtime | Use when |
+|--------|--------|---------|----------|
+| **wasm** | .wasm + .js + .html | Browser | Deploy to web |
+| **wasi** | Single .wasm | Wasmtime, wasmer, etc. | CLI, serverless, edge |
+
+## Browser (wasm)
+
+Produces files for browser execution:
+
+- `{output}_bg.wasm` — VM binary
+- `{output}.js` — wasm-bindgen glue
+- `{output}.html` — Loader (open via local server for CORS)
+
+```bash
+tish compile hello.tish -o app --target wasm
+```
+
+**Requirements**: `rustup target add wasm32-unknown-unknown`, `cargo install wasm-bindgen-cli`
+
+Serve and open in a browser:
+
+```bash
+python3 -m http.server 8765
+# Visit http://localhost:8765/app.html
+```
+
+## Wasmtime/WASI (wasi)
+
+Produces a single `.wasm` file with embedded bytecode. Run with [Wasmtime](https://wasmtime.dev/) or any WASI-compatible runtime:
+
+```bash
+tish compile hello.tish -o app --target wasi
+wasmtime app.wasm
+```
+
+**Requirements**: `rustup target add wasm32-wasip1`, [install Wasmtime](https://wasmtime.dev/)
+
+### Known limitations (WASI)
+
+WASI output uses the bytecode VM (same runtime as Cranelift). The same subset of Tish that works with Cranelift works with WASI. Some constructs and builtins may fail or produce incomplete output. For full compatibility, prefer the Rust native backend or the JS target.
+
+For Node.js or bundlers (no WebAssembly), use:
+
+```bash
+tish compile hello.tish -o app --target js
+node app.js
+```

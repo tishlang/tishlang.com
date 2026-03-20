@@ -1,0 +1,82 @@
+---
+title: Language server (tish-lsp)
+description: Install tish-lsp, LSP capabilities, editor examples, and troubleshooting.
+---
+
+**`tish-lsp`** implements the [Language Server Protocol](https://microsoft.github.io/language-server-protocol/) for Tish. One binary powers VS Code, Cursor, Neovim, Zed, Helix, and any LSP-aware editor.
+
+## Install
+
+From the Tish repository:
+
+```bash
+cargo build --release -p tish_lsp
+# Install on PATH, e.g.:
+cp target/release/tish-lsp ~/.local/bin/
+```
+
+**Stdin/stdout:** the server speaks LSP over stdio. Do not run it interactively expecting a prompt; editors spawn it as a child process.
+
+### Environment
+
+No required environment variables. Optional:
+
+| Variable | Use |
+|----------|-----|
+| `RUST_LOG` | If you build with tracing, can aid debugging (developer builds). |
+
+### Exit codes
+
+The server runs until the client disconnects. Normal exit is `0`. Startup failures may surface in the editor’s LSP log.
+
+## Capabilities (current)
+
+| LSP feature | Status |
+|-------------|--------|
+| Diagnostics (parse + lint) | Yes |
+| Document symbols (outline) | Yes |
+| Completion (keywords + top-level `fn` / `let` / `const`) | Yes |
+| Document formatting | Yes (`tish_fmt` via LSP) |
+| Go to definition | Same-file; relative `./` / `../` imports |
+| Workspace symbol | Yes (query required; scans `**/*.tish` under workspace roots) |
+
+Not yet: rename, hover types, semantic tokens, code actions, multi-root import graph for bare specifiers.
+
+## CLI contract
+
+- **Command:** `tish-lsp`
+- **Arguments:** none
+- **Transport:** JSON-RPC on stdio
+- **CI:** use standalone **`tish-fmt --check`** and **`tish-lint`** (not the `tish` compiler).
+
+## Editor examples
+
+### VS Code / Cursor
+
+Use the **Tish** extension; it starts `tish-lsp` by default. Override with **`tish.languageServerPath`**.
+
+### Neovim
+
+See [Editor and IDE setup](/getting-started/editor/) for an `nvim-lspconfig` snippet.
+
+### Helix (illustrative)
+
+```toml
+# languages.toml (conceptual — adjust to your Helix version)
+[[language]]
+name = "tish"
+language-servers = ["tish-lsp"]
+
+[language-server.tish-lsp]
+command = "tish-lsp"
+```
+
+## Troubleshooting
+
+1. **Output panel** — VS Code: set `tish.trace.server` to `verbose`, then **View → Output → Tish Language Server**.
+2. **Workspace folder** — open the project directory so `workspace/symbol` and import resolution see files on disk.
+3. **Canonical paths** — go-to-definition on imports uses resolved filesystem paths; unsaved buffers only work for same-file navigation.
+
+## Contributing
+
+See the Tish repo **`docs/tooling.md`** and **`crates/tish_lsp/README.md`** for how to extend the server (new LSP methods, tests).

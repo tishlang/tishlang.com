@@ -1,0 +1,37 @@
+---
+title: Deploy Overview
+description: Deploying Tish apps with zectre-cli and Zectre Platform.
+---
+
+## Flow
+
+1. **Build** — Compile Tish source to a native binary
+2. **Upload** — zectre uploads the project and triggers a build on the platform
+3. **Deploy** — Zectre Platform runs the binary and routes traffic to it
+
+## Components
+
+| Component | Role |
+|-----------|------|
+| **zectre** | CLI for auth, projects, deploy, logs, env vars |
+| **Zectre Platform** | Backend: API, scheduler, agents, proxy, registry, build service |
+
+See [Platform](/deploy/platform/) for architecture details.
+
+## Quick deploy (from example)
+
+1. Start Zectre Platform (in zectre-platform): `just run-all`
+2. Build Tish (in tish repo): `cargo build --release -p tish`
+3. From an example directory (e.g. `tish/examples/http-hello`):
+
+```bash
+zectre login
+zectre projects create http-hello
+zectre link
+zectre deploy --wait
+```
+
+## Config
+
+- **tish.yaml** — Build and deploy config (see [tish.yaml reference](/deploy/tish-yaml/))
+- **.tish/project.json** — Created by `link`; maps directory to platform project

@@ -1,0 +1,37 @@
+---
+title: Grammar
+description: Informal grammar for the Tish language.
+---
+
+## Grammar (informal)
+
+```
+Program     := Statement*
+Statement   := Block | VarDecl | ExprStmt | If | While | For | Return | Break | Continue | FunDecl | Import | Export
+Import      := 'import' ( '{' ImportSpec+ '}' | '*' 'as' Ident | Ident ) 'from' String
+Export      := 'export' ( 'default' Expr | 'const' VarDecl | 'let' VarDecl | FunDecl )
+Block       := Indent Statement* Dedent  |  '{' Statement* '}'
+VarDecl     := ('let' | 'const') Ident TypeAnn? ('=' Expr)? ';'?
+ExprStmt    := Expr ';'?
+If          := 'if' '(' Expr ')' Statement ('else' Statement)?
+While       := 'while' '(' Expr ')' Statement
+For         := 'for' '(' Init? ';' Cond? ';' Update? ')' Statement
+            |  'for' '(' ('let'|'const') Ident 'of' Expr ')' Statement
+Return      := 'return' Expr? ';'?
+FunDecl     := ('fn' | 'function') Ident '(' TypedParams? ')' TypeAnn? '=' Expr
+            |  ('fn' | 'function') Ident '(' TypedParams? ')' TypeAnn? Block
+Expr        := Assign | NullishCoalesce | Or | ...
+Assign      := Ident '=' Expr
+NullishCoalesce := Or ('??' Or)*
+
+TypeAnn     := ':' Type
+Type        := Ident | Type '[]' | '{' (Ident TypeAnn ',')* '}' | '(' (Type ',')* ')' '=>' Type | Type '|' Type
+TypedParams := TypedParam (',' TypedParam)*
+TypedParam  := Ident TypeAnn?
+```
+
+## Indentation
+
+- Blocks can use indentation instead of braces.
+- Tab and space are normalized: 1 tab = 1 level; 2 spaces = 1 level.
+- Consistent level matters; mixing styles is allowed.

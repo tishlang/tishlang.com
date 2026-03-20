@@ -1,0 +1,54 @@
+---
+title: Operators
+description: Operator reference for the Tish language.
+---
+
+## Arithmetic
+
+| Op | Meaning | Example |
+|----|---------|---------|
+| `+` | Add (numbers) / concat (strings) | `a + b` |
+| `-` | Subtract | `a - b` |
+| `*` | Multiply | `a * b` |
+| `/` | Divide | `a / b` |
+| `%` | Modulus | `a % b` |
+| `**` | Exponentiation (right-associative) | `a ** b` |
+
+## Bitwise (32-bit integer semantics)
+
+| Op | Meaning |
+|----|---------|
+| `&` | AND |
+| `\|` | OR |
+| `^` | XOR |
+| `~` | NOT |
+| `<<` | Left shift |
+| `>>` | Right shift |
+
+## Equality and comparison
+
+| Op | Meaning | Notes |
+|----|---------|-------|
+| `===` | Strict equality | No coercion |
+| `!==` | Strict inequality | No coercion |
+| `<` `<=` `>` `>=` | Comparison | |
+
+Tish has **no loose equality** (`==`).
+
+## Logical
+
+| Op | Meaning |
+|----|---------|
+| `&&` | Logical AND |
+| `\|\|` | Logical OR |
+| `!` | Logical NOT |
+
+## Other
+
+| Op | Meaning | Example |
+|----|---------|---------|
+| `? :` | Conditional (ternary) | `a ? b : c` |
+| `??` | Nullish coalescing | `a ?? b` |
+| `?.` | Optional chaining | `a?.b` |
+| `++` `--` | Increment / decrement (postfix and prefix) | `x++`, `--x` |
+| `+=` `-=` `*=` `/=` `%=` | Compound assignment | `x += 5` |

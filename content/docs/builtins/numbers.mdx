@@ -1,0 +1,23 @@
+---
+title: Numbers
+description: Number builtins in Tish.
+---
+
+## Number.prototype.toFixed
+
+| Method | Description |
+|--------|-------------|
+| `n.toFixed(digits?)` | Format number with fixed decimal places (0–20). Returns a string. Default `digits` is 0. |
+
+### Examples
+
+```tish
+let n = 3.14159
+console.log(n.toFixed(2))   // "3.14"
+console.log(n.toFixed(0))   // "3"
+console.log((42).toFixed(2)) // "42.00"
+console.log((0).toFixed(2))  // "0.00"
+console.log((-1.234).toFixed(2)) // "-1.23"
+```
+
+Useful for currency formatting: `"$" + total.toFixed(2)`.

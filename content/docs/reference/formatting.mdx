@@ -1,0 +1,54 @@
+---
+title: Formatting (tish-fmt)
+description: Rules used by tish-fmt and LSP format; CLI flags and CI usage.
+---
+
+**`tish-fmt`** is a **standalone** tool (like rustfmt vs rustc). The compiler CLI **`tish`** does not include formatting. The **`tish-lsp`** server uses the same `tish_fmt` library for **Format Document** in editors.
+
+## Install
+
+From the Tish repo:
+
+```bash
+cargo build --release -p tish_fmt
+# Binary: target/release/tish-fmt
+```
+
+## CLI
+
+```bash
+# Rewrite file in place
+tish-fmt path/to/file.tish
+
+# CI: fail if file would change (exit non-zero)
+tish-fmt --check path/to/file.tish
+```
+
+| Flag | Meaning |
+|------|---------|
+| (positional) | Path to a `.tish` file |
+| `--check` | Do not write; exit with error if formatting would change the file |
+
+**Exit codes:** `0` success; non-zero on parse error, I/O error, or `--check` mismatch.
+
+## Style rules
+
+- **Indentation:** 2 spaces per block level.
+- **Blocks:** Braced `{ ... }` in output where the AST represents blocks.
+- **Strings:** Double-quoted with standard escapes in formatted output.
+
+**Caveats:** Formatting can drop or move comments — the AST does not preserve all trivia. Review diffs after first format.
+
+## Editor integration
+
+Use **Format Document** via **`tish-lsp`**, or invoke **`tish-fmt`** in a task or pre-commit hook.
+
+## CI example
+
+```yaml
+- name: Check Tish formatting
+  run: |
+    for f in $(find . -name '*.tish'); do
+      tish-fmt --check "$f" || exit 1
+    done
+```

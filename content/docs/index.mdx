@@ -1,0 +1,50 @@
+---
+title: Tish Documentation
+description: Documentation for the Tish language — a minimal, JS-compatible language with interpretation and native compilation.
+template: splash
+hero:
+  tagline: A minimal, TS/JS-compatible language designed for both interpretation and native compilation. Same source runs identically in either backend.
+  actions:
+    - text: Get Started
+      link: /getting-started/installation/
+      icon: right-arrow
+      variant: primary
+    - text: Tish vs JavaScript
+      link: /language/vs-javascript/
+      icon: external
+---
+
+## Quick Start
+
+```bash
+# Run with interpreter
+tish run src/main.tish
+
+# Compile to native binary
+tish compile src/main.tish -o app
+./app
+```
+
+## What is Tish?
+
+Tish is a minimal language built in Rust that:
+- **Looks like JavaScript** — familiar syntax with `let`, `const`, `fn`, arrows, template literals
+- **Runs two ways** — interpret for fast iteration, compile to native for production
+- **Is secure by default** — network, filesystem, and process APIs are feature-gated
+- **Has no `undefined`** — uses `null` only; strict equality (`===`/`!==`) only
+
+## Documentation
+
+| Section | Description |
+|---------|-------------|
+| [Getting Started](/getting-started/installation/) | Install Tish, build your first app |
+| [Editor & IDE](/getting-started/editor/) | VS Code, LSP, tasks, Neovim |
+| [Language server](/reference/language-server/) | `tish-lsp` capabilities |
+| [Formatting](/reference/formatting/) | `tish-fmt` |
+| [Linting](/reference/linting/) | `tish-lint` |
+| [Interactive REPL](/getting-started/repl/) | Multi-line input, tab completion, history, colored output |
+| [Language](/language/overview/) | Syntax, keywords, semantics |
+| [Tish vs JavaScript](/language/vs-javascript/) | Differences and additions from JS |
+| [Builtins](/builtins/overview/) | Console, Math, JSON, Array, String, Object |
+| [Features](/features/http/) | `http`, `fs`, `process`, `regex` — feature-gated APIs |
+| [Deploy](/deploy/overview/) | zectre and Zectre Platform |

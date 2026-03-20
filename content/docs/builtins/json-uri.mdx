@@ -1,0 +1,29 @@
+---
+title: JSON and URI
+description: JSON and URI builtins in Tish.
+---
+
+## JSON
+
+| Function | Description |
+|----------|-------------|
+| `JSON.parse(s)` | Parse JSON string to value |
+| `JSON.stringify(v)` | Serialize value to JSON string |
+
+### Example
+
+```javascript
+let json = '{"name":"Alice","age":30}'
+let obj = JSON.parse(json)
+console.log(obj.name)   // "Alice"
+
+let str = JSON.stringify({ x: 1, y: 2 })
+console.log(str)        // '{"x":1,"y":2}'
+```
+
+## URI
+
+| Function | Description |
+|----------|-------------|
+| `encodeURI(s)` | Percent-encode URI |
+| `decodeURI(s)` | Decode percent-encoded URI |

@@ -1,0 +1,45 @@
+---
+title: Advanced tooling roadmap
+description: Debugging (DAP), Tree-sitter, playground, and ecosystem extras.
+---
+
+This page describes **planned or partial** tooling beyond the core LSP + VS Code extension.
+
+## Debugger (DAP)
+
+**Status:** Not shipped.
+
+Tish can run interpreted (VM) or as a **native** binary compiled to Rust. A solid debug story would require one of:
+
+1. **Interpreted debugging** — Debug Adapter Protocol talking to the VM with breakpoints mapped to Tish source lines (feasible for `tish run` / VM backend).
+2. **Native debugging** — Source-level mapping from generated Rust back to Tish (heavy; needs stable line tables or DWARF-style mapping).
+
+**Recommendation:** Start with (1) for development workflows; document **lldb/gdb** on the generated binary for advanced native debugging until (2) exists.
+
+## Tree-sitter grammar
+
+**Status:** Not shipped.
+
+A Tree-sitter grammar would enable:
+
+- Incremental parsing in editors
+- Better highlighting in Neovim/Helix/Zed
+- Potential WASM playground highlighter
+
+TextMate grammars in **`tish-vscode`** cover VS Code/Cursor today.
+
+## Playground
+
+**Status:** Not shipped.
+
+A web playground (similar to play.rust-lang.org) could compile Tish to **wasm** (already supported via `tish compile --target wasm`) and run in the browser. Needs hosting, bundling, and safety limits.
+
+## Other ideas
+
+| Idea | Notes |
+|------|--------|
+| **`js_to_tish` in editor** | Convert selection via CLI or future code action. |
+| **Test explorer** | LSP test API or extension integration. |
+| **Organize imports** | LSP code action once module graph is richer. |
+
+For current capabilities, see [Language server](/reference/language-server/) and [Editor setup](/getting-started/editor/).

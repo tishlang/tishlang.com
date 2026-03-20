@@ -1,0 +1,107 @@
+---
+title: Modules
+description: Import and export syntax for splitting code across files.
+---
+
+Tish supports ES-module style `import` and `export` for organizing code across multiple files, similar to Node.js and modern JavaScript.
+
+## Import
+
+### Named imports
+
+```javascript
+import { foo, bar } from "./utils.tish"
+```
+
+Import specific exports with optional renaming:
+
+```javascript
+import { foo as f, bar } from "./utils.tish"
+```
+
+### Namespace import
+
+```javascript
+import * as utils from "./utils.tish"
+utils.foo()
+utils.bar()
+```
+
+### Default import
+
+```javascript
+import main from "./app.tish"
+```
+
+## Export
+
+### Named exports
+
+```javascript
+export const PI = 3.14
+export fn add(a, b) { return a + b }
+export let counter = 0
+```
+
+### Default export
+
+```javascript
+export default fn main() { return "Hello" }
+```
+
+Each module may have at most one default export.
+
+## Native module imports
+
+Native modules (e.g. egui, Polars) are imported via the `tish:` specifier:
+
+```javascript
+import { Egui } from 'tish:egui'
+import { Polars } from 'tish:polars'
+
+Egui.run((ctx) => {
+  ctx.panel("Form", (ui) => {
+    ui.heading("Hello")
+    if (ui.button("Click")) console.log("clicked")
+  })
+})
+
+let df = Polars.read_csv("./data.csv")
+```
+
+- Use named imports: `import { Egui } from 'tish:egui'`
+- The module must be listed in your project's `package.json` dependencies (e.g. `tish-egui`)
+- Resolution walks `node_modules` and parent directories to find the package
+- No `--features` needed: native imports drive compilation and Cargo dependencies automatically
+
+Creating a native module? See [Native Modules (Author Guide)](/reference/native-modules-author/).
+
+## Path resolution
+
+- **Relative paths:** `./foo.tish`, `../lib/utils.tish` — resolved relative to the importing file's directory
+- **Native modules:** `tish:egui`, `tish:polars` — resolved via `package.json` and project layout
+- The `.tish` extension is optional for file imports; it is added if the path has no extension
+
+## Limits (Phase 1)
+
+- No bare specifier resolution (e.g. `import x from "lodash"`) for file modules
+- For native modules, add the package to `package.json` dependencies; use `tish:name` in imports
+
+## Example
+
+**greet.tish:**
+
+```javascript
+export fn greet(name) {
+  return "Hello, " + name
+}
+```
+
+**main.tish:**
+
+```javascript
+import { greet } from "./greet.tish"
+console.log(greet("World"))
+```
+
+Run with `zectre run src/main.tish` or compile with `zectre compile src/main.tish -o app`.

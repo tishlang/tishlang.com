@@ -1,0 +1,71 @@
+---
+title: JS Compatibility Gaps
+description: Gaps between JavaScript and Tish that may require workarounds.
+---
+
+This page documents gaps discovered when porting JavaScript patterns to Tish. Resolved gaps are listed for reference.
+
+## Test backends / deployment target matrix (2025-03 audit)
+
+Integration tests run per target. Results as of audit:
+
+| Target | Test | Status | Notes |
+|--------|------|--------|-------|
+| Native (Rust) | `test_mvp_programs_interpreter_vs_native` | Pass | 36 files; requires cargo (native compile) |
+| Cranelift | `test_mvp_programs_interpreter_vs_cranelift` | Pass | 17 curated files; subset only (see [Native backend](/reference/native-backend/)) |
+| WASI | `test_mvp_programs_interpreter_vs_wasi` | Pass | Same 17 curated; requires wasmtime, wasm32-wasip1 |
+| JS | `test_mvp_programs_interpreter_vs_js` | Pass | 36 files; requires Node.js |
+
+**Cranelift/WASI curated list** (17 files): fn_any, strict_equality, switch, do_while, typeof, try_catch, json, math, builtins, uri, inc_dec, exponentiation, void, rest_params, arrow_functions, array_methods, types.
+
+**Excluded from Cranelift/WASI** (stack-underflow/scope bugs): nested_loops, objects, optional_chaining, spread, template_literals, higher_order_methods, destructuring, and others.
+
+The bytecode VM (used by `tish run --backend vm`, Cranelift, and WASI) has known gaps. For example, `optional_chaining.tish` runs correctly with the interpreter (`--backend interp`) and Node, but with the VM it may error. Use the repo script `./scripts/run_parity_compare.sh` (or `just parity`) in the tish repo to compare outputs across runtimes (interp, vm, rust, cranelift, wasi, node).
+
+## Resolved (as of 2025-03)
+
+### `Number.prototype.toFixed(digits?)` ✓
+
+Tish now supports `n.toFixed(digits)` for formatting numbers with fixed decimal places (0–20). Returns a string.
+
+```tish
+console.log((3.14159).toFixed(2))  // "3.14"
+console.log("$" + total.toFixed(2))  // currency formatting
+```
+
+See [Numbers](/builtins/numbers/) for details.
+
+### `indexOf(search, fromIndex?)` ✓
+
+Tish now supports the optional `fromIndex` parameter: `s.indexOf("x", 5)`.
+
+### String index semantics ✓
+
+All string methods now use **character (Unicode scalar) indices** consistently: `indexOf`, `slice`, `substring`, `charAt`, `length`. No more byte-offset confusion with multi-byte UTF-8.
+
+### RegExp `exec()` result `index` property ✓
+
+`exec()` returns an array-like object with `[0]`, `[1]`, ... and `"index"` (match start as character offset). Access via `m["index"]`.
+
+```tish
+let m = RegExp("(\\d+)").exec("abc123")
+console.log(m[0])       // "123"
+console.log(m["index"]) // 3
+```
+
+### `String.prototype.replace` with function replacer ✓
+
+When the search value is a RegExp and the replacement is a function, the function is invoked for each match. Callback receives `(match, g1, g2, ..., index, fullString)`.
+
+```tish
+let result = "hello 123 world 456".replace(RegExp("(\\d+)", "g"), (match, g1) => "[" + g1 + "]")
+// result: "hello [123] world [456]"
+```
+
+Supported in both interpreter and compiled modes.
+
+## See also
+
+- [Tish vs JavaScript](/language/vs-javascript/) — High-level differences
+- [Strings](/builtins/strings/) — String builtin reference
+- [ECMA Alignment](/resources/ecma-alignment/) — Plan alignment

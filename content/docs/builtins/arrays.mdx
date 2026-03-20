@@ -1,0 +1,55 @@
+---
+title: Arrays
+description: Array builtins in Tish.
+---
+
+## Array.isArray
+
+| Method | Description |
+|--------|-------------|
+| `Array.isArray(v)` | True if v is an array |
+
+## Mutating methods
+
+| Method | Description |
+|--------|-------------|
+| `.push(val, ...)` | Add to end, returns new length |
+| `.pop()` | Remove and return last element |
+| `.shift()` | Remove and return first element |
+| `.unshift(val, ...)` | Add to beginning, returns new length |
+| `.reverse()` | Reverse in place |
+| `.sort()` | Sort in place (default: string order) |
+| `.splice(start, deleteCount?, ...items)` | Remove/insert elements |
+| `.flat(depth?)` | Flatten nested arrays |
+
+## Non-mutating methods
+
+| Method | Description |
+|--------|-------------|
+| `.indexOf(val)` | Index of element, or -1 |
+| `.includes(val)` | True if element exists |
+| `.join(sep?)` | Join with separator (default ",") |
+| `.slice(start, end?)` | Extract portion |
+| `.concat(arr, ...)` | Combine arrays |
+
+## Higher-order methods
+
+| Method | Description |
+|--------|-------------|
+| `.map(fn)` | Transform each element |
+| `.filter(fn)` | Keep elements where fn returns truthy |
+| `.reduce(fn, init)` | Accumulate to single value |
+| `.find(fn)` | First matching element |
+| `.findIndex(fn)` | Index of first match |
+| `.forEach(fn)` | Execute fn for each element |
+| `.some(fn)` | True if any element passes |
+| `.every(fn)` | True if all elements pass |
+| `.flatMap(fn)` | Map then flatten |
+
+## Sort variants
+
+| Method | Description |
+|--------|-------------|
+| `.sort()` | Default (string) order |
+| `.sort(fn)` | Custom comparator (return negative, 0, or positive) |
+| `.sort()` (numeric) | Use comparator for numeric sort |

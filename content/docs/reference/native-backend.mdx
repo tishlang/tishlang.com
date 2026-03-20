@@ -1,0 +1,59 @@
+---
+title: Native Backend
+description: Choose between the Rust and Cranelift backends when compiling to native.
+---
+
+When compiling Tish to a native binary (`tish compile --target native`), you can select the native backend with `--native-backend`.
+
+## Backends
+
+| Backend | Flag | Native imports | Build |
+|---------|------|----------------|-------|
+| **rust** | `--native-backend rust` (default) | ✅ Supported | Rust codegen + cargo build |
+| **cranelift** | `--native-backend cranelift` | ❌ Not supported | Bytecode → Cranelift → native |
+
+## When to use each
+
+### Rust backend (default)
+
+Use when your program:
+
+- Imports native modules (`import { Egui } from 'tish:egui'` or `@scope/pkg`)
+- Needs the full Rust ecosystem
+- Uses any `tish:*` or `@scope/` imports
+
+```bash
+tish compile main.tish -o app
+# or explicitly:
+tish compile main.tish -o app --native-backend rust
+```
+
+### Cranelift backend
+
+Use when your program:
+
+- Has **no** native imports (pure Tish + file imports only)
+- Benefits from a faster build (no cargo invocation)
+- Does not need `tish:*` or `@scope/pkg` modules
+
+```bash
+tish compile main.tish -o app --native-backend cranelift
+```
+
+If your program uses native imports, the Cranelift backend will error:
+
+```
+Cranelift backend does not support native imports (tish:*, @scope/pkg). Use --native-backend rust.
+```
+
+## Known limitations (Cranelift)
+
+The Cranelift backend compiles bytecode to native via Cranelift JIT. Only a subset of Tish constructs are known to work reliably. Some constructs (e.g. nested loops, objects, optional chaining, spread, template literals, higher-order methods with certain patterns) may cause stack-underflow or scope bugs. The integration test suite uses a curated list of 17 core tests that pass. For full compatibility, use the Rust backend (`--native-backend rust`).
+
+## Target and feature flags
+
+`--native-backend` applies only when `--target native` (the default). Other targets (`js`, `wasm`, `wasi`) ignore it.
+
+For WebAssembly targets, see [WASM Targets](/reference/wasm-targets/).
+
+Feature flags (`--feature http`, etc.) apply to both backends when compiling to native.

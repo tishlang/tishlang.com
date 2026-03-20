@@ -1,0 +1,76 @@
+---
+title: Control Flow
+description: Control flow statements in Tish.
+---
+
+## Conditionals
+
+```javascript
+if (cond) stmt
+if (cond) stmt else stmt
+```
+
+## Loops
+
+```javascript
+while (cond) stmt
+do stmt while (cond)
+
+for (init; cond; update) stmt
+for (let x of arr) stmt
+for (const x of arr) stmt
+```
+
+- **C-style for**: `init`, `cond`, `update` are optional.
+- **for-of**: Iterate over arrays and strings. Use `let` for mutable binding, `const` for immutable.
+
+## Switch
+
+```javascript
+switch (expr) {
+    case val1: stmt...
+    case val2: stmt...
+    default: stmt
+}
+```
+
+## Return, break, continue
+
+```javascript
+return expr
+break
+continue
+```
+
+## Error handling
+
+```javascript
+throw expr
+try stmt catch (e) stmt
+```
+
+## typeof and void
+
+```javascript
+typeof expr   // returns "number", "string", "boolean", "null", "object", "function"
+void expr     // evaluates expr, returns null
+```
+
+**`typeof null`** returns `"null"` in Tish (unlike JavaScript, where `typeof null === "object"`). Since Tish has no `undefined`, it uses `null` as the absence-of-value type, and `typeof` reflects that.
+
+## Blocks
+
+Blocks use braces `{ }` or indentation:
+
+```javascript
+if (x > 0) {
+    console.log("positive")
+} else {
+    console.log("non-positive")
+}
+
+if (x > 0)
+    console.log("positive")
+else
+    console.log("non-positive")
+```

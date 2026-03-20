@@ -1,0 +1,76 @@
+---
+title: Syntax
+description: Full syntax reference for the Tish language.
+---
+
+## Keywords
+
+- `fn` — function declaration (replaces `function`; `function` also supported)
+- `let` — mutable variable declaration (block-scoped)
+- `const` — immutable variable declaration (block-scoped, error on reassignment)
+- `if`, `else`, `while`, `for`, `return`, `break`, `continue`, `switch`, `case`, `default`, `do`, `throw`, `try`, `catch`, `typeof`
+- `true`, `false`, `null`
+
+## Literals
+
+- Numbers: `1`, `1.5`, `0.5`
+- Strings: `"hello"`, `'world'` (escapes: `\n`, `\r`, `\t`, `\\`, `\"`, `\'`)
+- Booleans: `true`, `false`
+- Null: `null`
+- Arrays: `[1, 2, 3]`
+- Objects: `{ x: 1, y: 2 }` (fixed keys at parse time)
+
+## Functions
+
+```javascript
+fn name(a, b) { return a + b }
+fn double(x) = x * 2   // single-expression, implicit return
+```
+
+## Assignment
+
+- `x = expr` — assigns to existing `let` variable
+- Compound: `x += expr`, `x -= expr`, `x *= expr`, `x /= expr`, `x %= expr`
+- **const variables cannot be reassigned** (runtime error)
+
+## Modules
+
+- `import { a, b } from "./mod.tish"` — named imports
+- `import * as M from "./mod.tish"` — namespace import
+- `import X from "./mod.tish"` — default import
+- `export const x`, `export fn f`, `export default expr` — exports
+
+See [Modules](/language/modules/) for full details.
+
+## Indentation
+
+- Braces optional: use indentation for blocks.
+- Tab and space normalized: 1 tab = 1 level; 2 spaces = 1 level.
+- No mixing errors: both styles work; only consistent level matters.
+
+## Grammar (informal)
+
+```
+Program     := Statement*
+Statement   := Block | VarDecl | ExprStmt | If | While | For | Return | Break | Continue | FunDecl | Import | Export
+Import      := 'import' ( '{' ImportSpec+ '}' | '*' 'as' Ident | Ident ) 'from' String
+Export      := 'export' ( 'default' Expr | 'const' VarDecl | 'let' VarDecl | FunDecl )
+Block       := Indent Statement* Dedent  |  '{' Statement* '}'
+VarDecl     := ('let' | 'const') Ident TypeAnn? ('=' Expr)? ';'?
+ExprStmt    := Expr ';'?
+If          := 'if' '(' Expr ')' Statement ('else' Statement)?
+While       := 'while' '(' Expr ')' Statement
+For         := 'for' '(' Init? ';' Cond? ';' Update? ')' Statement
+             | 'for' '(' ('let'|'const') Ident 'of' Expr ')' Statement
+Return      := 'return' Expr? ';'?
+FunDecl     := ('fn' | 'function') Ident '(' TypedParams? ')' TypeAnn? '=' Expr
+             | ('fn' | 'function') Ident '(' TypedParams? ')' TypeAnn? Block
+Expr        := Assign | NullishCoalesce | Or | ...
+Assign      := Ident '=' Expr
+NullishCoalesce := Or ('??' Or)*
+
+TypeAnn     := ':' Type
+Type        := Ident | Type '[]' | '{' (Ident TypeAnn ',')* '}' | Type '|' Type
+TypedParams := TypedParam (',' TypedParam)*
+TypedParam  := Ident TypeAnn?
+```

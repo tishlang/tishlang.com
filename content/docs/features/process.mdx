@@ -1,0 +1,45 @@
+---
+title: Process
+description: "Process control APIs in Tish (feature flag: process)."
+---
+
+Requires the `process` feature. Build tish with it for run: `cargo run -p tish --features process -- run main.tish`. For compile: `tish compile main.tish -o app --feature process`.
+
+## process.exit(code)
+
+Exit the process with the given code. `0` = success, non-zero = error.
+
+```javascript
+if (error) {
+    process.exit(1)
+}
+```
+
+## process.cwd()
+
+Return the current working directory as a string.
+
+```javascript
+let cwd = process.cwd()
+console.log("Working dir:", cwd)
+```
+
+## process.argv
+
+Array of command-line arguments. First element is the program path.
+
+```javascript
+// tish run main.tish foo bar
+console.log(process.argv)  // ["./main.tish", "foo", "bar"]
+```
+
+## process.env
+
+Object of environment variable names to values.
+
+```javascript
+let port = "PORT" in process.env ? parseInt(process.env.PORT) : 8080
+let apiKey = process.env.API_KEY
+```
+
+Check for a key with `"KEY" in process.env` before accessing.

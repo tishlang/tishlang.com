@@ -1,0 +1,56 @@
+---
+title: File System
+description: "File system APIs in Tish (feature flag: fs)."
+---
+
+Requires the `fs` feature. Build tish with it for run: `cargo run -p tish --features fs -- run main.tish`. For compile: `tish compile main.tish -o app --feature fs`.
+
+## readFile(path)
+
+Read a file as a string. Returns the file contents or `null` on error.
+
+```javascript
+let content = readFile("config.json")
+if (content !== null) {
+    let obj = JSON.parse(content)
+}
+```
+
+## writeFile(path, content)
+
+Write a string to a file. Returns `true` on success, `false` on error.
+
+```javascript
+writeFile("output.txt", "Hello, World!")
+```
+
+## fileExists(path)
+
+Check if a path exists (file or directory). Returns boolean.
+
+```javascript
+if (fileExists("data.json")) {
+    let data = JSON.parse(readFile("data.json"))
+}
+```
+
+## readDir(path)
+
+Read directory contents. Returns an array of filenames, or `null` on error.
+
+```javascript
+let files = readDir("./src")
+if (files !== null) {
+    for (let f of files) {
+        console.log(f)
+    }
+}
+```
+
+## mkdir(path)
+
+Create directory (and parents). Returns `true` on success, `false` on error.
+
+```javascript
+mkdir("./logs")
+```

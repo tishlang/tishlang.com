@@ -1,0 +1,49 @@
+---
+title: RegExp
+description: "Regular expression support in Tish (feature flag: regex)."
+---
+
+Requires the `regex` feature. Build tish with it for run: `cargo run -p tish --features regex -- run main.tish`. For compile: `tish compile main.tish -o app --feature regex`.
+
+## RegExp(pattern, flags?)
+
+Create a regular expression. Flags include `i` (case-insensitive), `g` (global), etc.
+
+```javascript
+let re = RegExp("\\d+", "g")
+let matches = "a1b2".match(re)
+```
+
+## String.match(regex)
+
+Match string against regex. Returns array of matches or `null`.
+
+```javascript
+let re = RegExp("\\w+")
+"hello world".match(re)   // ["hello"]
+```
+
+## String.replace(search, replacement)
+
+Replace matches. With string `search`, replaces first occurrence. With RegExp and `g` flag, replaces all. When `replacement` is a function and `search` is a RegExp, the function is invoked for each match with `(match, g1, g2, ..., index, fullString)`.
+
+```javascript
+"hello world".replace("world", "Tish")
+"a1b2".replace(RegExp("\\d", "g"), "x")   // "axbx"
+"x1y2".replace(RegExp("(\\d)", "g"), (m, d) => "[" + d + "]")   // "x[1]y[2]"
+```
+
+## RegExp.exec and match index
+
+`exec()` returns an array-like object with `[0]`, `[1]`, ... and `"index"` (match start position).
+
+```javascript
+let m = RegExp("(\\d+)").exec("abc123")
+m[0]        // "123"
+m["index"]  // 3
+```
+
+## Notes
+
+- RegExp support is optional and enabled via the `regex` feature.
+- Without the feature, `RegExp`, `match`, and `replace` with regex are not available.

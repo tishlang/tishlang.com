@@ -1,0 +1,36 @@
+---
+title: Objects
+description: Object builtins in Tish.
+---
+
+## Object methods
+
+| Method | Description |
+|--------|-------------|
+| `Object.keys(obj)` | Array of property names |
+| `Object.values(obj)` | Array of property values |
+| `Object.entries(obj)` | Array of [key, value] pairs |
+| `Object.assign(target, ...sources)` | Copy enumerable properties to target |
+| `Object.fromEntries(entries)` | Object from array of [key, value] |
+
+## in operator
+
+```javascript
+"key" in obj   // true if obj has property "key"
+```
+
+## Example
+
+```javascript
+let person = { name: "Alice", age: 30 }
+Object.keys(person)      // ["name", "age"]
+Object.values(person)    // ["Alice", 30]
+Object.entries(person)   // [["name","Alice"], ["age",30]]
+
+let merged = Object.assign({}, person, { age: 31 })
+let fromArr = Object.fromEntries([["a", 1], ["b", 2]])
+
+if ("name" in person) {
+    console.log(person.name)
+}
+```

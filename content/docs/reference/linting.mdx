@@ -1,0 +1,46 @@
+---
+title: Linting (tish-lint)
+description: Rule IDs, severities, and running tish-lint in CI.
+---
+
+**`tish-lint`** is a **standalone** linter (like Clippy vs rustc). The compiler CLI **`tish`** does not run lints. **`tish-lsp`** uses the same `tish_lint` library for editor diagnostics.
+
+## Install
+
+```bash
+cargo build --release -p tish_lint
+# Binary: target/release/tish-lint
+```
+
+## CLI
+
+```bash
+tish-lint src/main.tish
+tish-lint src/
+```
+
+**Exit codes:** non-zero if any file fails to parse or reports error-severity issues.
+
+**Output:**
+
+```text
+path/to/file.tish:LINE:COL: warning [RULE_ID] message
+```
+
+## Rule catalog
+
+| ID | Severity | Description |
+|----|----------|-------------|
+| `tish-empty-catch` | Warning | Empty `catch` block. |
+| `tish-duplicate-key` | Warning | Duplicate keys in an object literal. |
+
+## CI example
+
+```yaml
+- name: Lint Tish sources
+  run: tish-lint ./src
+```
+
+```yaml
+- run: tish-fmt --check src/main.tish && tish-lint src/
+```

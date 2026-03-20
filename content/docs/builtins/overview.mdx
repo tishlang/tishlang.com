@@ -1,0 +1,42 @@
+---
+title: Builtins Overview
+description: Built-in APIs and feature flags in Tish.
+---
+
+## Secure by default
+
+Tish runs in **secure mode** with no I/O features enabled by default. Only core builtins (console, Math, JSON, parsing, etc.) are available.
+
+## Feature flags
+
+To enable network, filesystem, or process APIs:
+
+- **Run:** The tish binary must be built with features, e.g. `cargo run -p tish --features http -- run main.tish`. The `tish run` command does not accept feature flags.
+- **Compile:** Pass `--feature` (singular, repeatable) when compiling: `tish compile main.tish -o app --feature http --feature fs --feature process`
+
+| Flag | Enables |
+|------|---------|
+| `http` | `fetch`, `fetchAll`, `fetchAsync`, `fetchAllAsync`, `serve`; `Promise`; `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` |
+| `fs` | `readFile`, `writeFile`, `fileExists`, `readDir`, `mkdir` |
+| `process` | `process.exit`, `process.cwd`, `process.argv`, `process.env` |
+| `regex` | `RegExp`, `String.match`, `String.replace` with regex |
+| `full` | All features above |
+
+In `tish.yaml`, configure features under `build.features` for platform deploys.
+
+## Builtin categories
+
+| Category | Feature | APIs |
+|----------|---------|------|
+| [Console](/builtins/console/) | Always | `console.log`, `console.info`, `console.debug`, `console.warn`, `console.error` |
+| [Math](/builtins/math/) | Always | `Math.abs`, `Math.sqrt`, `Math.min`, `Math.max`, `Math.floor`, `Math.ceil`, `Math.round`, `Math.random`, `Math.pow`, `Math.sin`, `Math.cos`, `Math.tan`, `Math.log`, `Math.exp`, `Math.sign`, `Math.trunc`, etc. |
+| [JSON & URI](/builtins/json-uri/) | Always | `JSON.parse`, `JSON.stringify`, `encodeURI`, `decodeURI` |
+| [Parsing](/builtins/parsing/) | Always | `parseInt`, `parseFloat`, `isFinite`, `isNaN` |
+| [Objects](/builtins/objects/) | Always | `Object.keys`, `Object.values`, `Object.entries`, `Object.assign`, `Object.fromEntries` |
+| [Numbers](/builtins/numbers/) | Always | `toFixed` |
+| [Arrays](/builtins/arrays/) | Always | `Array.isArray`, `push`, `pop`, `map`, `filter`, `reduce`, etc. |
+| [Strings](/builtins/strings/) | Always | `indexOf`, `includes`, `slice`, `split`, `replace`, etc. |
+| [HTTP](/features/http/) | `http` | `fetch`, `fetchAll`, `fetchAsync`, `fetchAllAsync`, `serve`; `Promise`; `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` |
+| [File system](/features/fs/) | `fs` | `readFile`, `writeFile`, `fileExists`, `readDir`, `mkdir` |
+| [Process](/features/process/) | `process` | `process.exit`, `process.cwd`, `process.argv`, `process.env` |
+| [RegExp](/features/regex/) | `regex` | `RegExp`, `String.match`, `String.replace` with regex |

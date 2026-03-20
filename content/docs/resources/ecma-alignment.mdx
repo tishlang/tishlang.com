@@ -1,0 +1,56 @@
+---
+title: ECMA Alignment
+description: How Tish maps to ECMA-262 and test262.
+---
+
+This page summarizes Tish behavior relative to ECMA-262. Each concept has a decision: **Follow**, **Omit**, or **Simplify**.
+
+## Types
+
+- Undefined → Null (Tish uses `null` only; `typeof null` returns `"null"`, not `"object"`)
+- Boolean, Number, String, Object — Follow
+- No Symbol, BigInt in MVP
+
+## Equality and coercion
+
+- Strict equality only (`===`, `!==`)
+- No loose equality (`==`)
+- No implicit coercion
+
+## Expressions and statements
+
+| Category | Decision |
+|----------|----------|
+| block, break, continue, for, if, return, while | Follow |
+| switch, do-while | Follow |
+| throw, try/catch | Follow |
+| addition, array, assignment, call | Follow |
+| coalesce (`??`), conditional (`? :`) | Follow |
+| member, optional-chaining (`?.`) | Follow |
+| class, new, super, this | Omit |
+| async, await | Follow (simplify) |
+| generators | Omit |
+| for-in | Omit; for-of follows (arrays and strings) |
+
+## Builtins
+
+| Builtin | Decision |
+|---------|----------|
+| Array, Math, String, Object | Follow (simplify) |
+| JSON (parse, stringify) | Follow |
+| console | Follow (with TISH_LOG_LEVEL) |
+| parseInt, parseFloat, isFinite, isNaN | Follow |
+| encodeURI, decodeURI | Follow |
+| Promise | Follow (§27.2): constructor, .then, .catch, .finally, resolve, reject, all, race. Host: setTimeout, setInterval, clearTimeout, clearInterval (non-blocking; callbacks run after delay) |
+| Proxy, Reflect, Symbol | Omit |
+| RegExp | Optional (regex feature) |
+
+## Tish-specific
+
+- `fn` / `function` — both supported
+- Optional braces (indentation)
+- Tab/space normalized
+- No `this`, `with`, `eval`
+- No `var` — `let`/`const` only
+
+For the full alignment document, see the [tish/docs/ecma-alignment.md](https://github.com/.../tish/blob/main/docs/ecma-alignment.md) in the tish repo.

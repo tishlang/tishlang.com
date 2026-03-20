@@ -1,0 +1,115 @@
+---
+title: Editor and IDE setup
+description: VS Code, Cursor, Neovim — syntax highlighting, LSP, tasks, and troubleshooting.
+---
+
+Use an editor with **syntax highlighting** at minimum. For the best experience, install **`tish-lsp`** and the **Tish** VS Code extension (or wire the server into Neovim / Zed / Helix).
+
+## Prerequisites
+
+1. **`tish`** on your `PATH` — Run / Compile tasks.
+2. **`tish-lsp`** on your `PATH` — diagnostics, outline, completion, format, go-to-definition (LSP embeds the formatter/linter **libraries**, not the `tish` binary).
+
+```bash
+cargo build --release -p tish_lsp
+# target/release/tish-lsp
+```
+
+For **CLI** format/lint in CI or hooks, install **`tish-fmt`** and **`tish-lint`** separately (`cargo build -p tish_fmt` / `-p tish_lint`).
+
+Copy or symlink `tish-lsp` somewhere on your `PATH`, or set **`tish.languageServerPath`** in VS Code to the full path.
+
+## VS Code / Cursor
+
+### Extension
+
+Install the **Tish** extension (folder `tish-vscode` from the Tish tooling repo, or publish to Marketplace when available). It provides:
+
+- Syntax highlighting for `.tish` and `.tishx` (JSX)
+- Snippets (`fn`, `for`, `try`, `import`, …)
+- Spawns **`tish-lsp`** automatically
+- Optional format-on-save (via LSP)
+
+### Settings
+
+| Setting | Description |
+|---------|-------------|
+| `tish.languageServerPath` | Path to `tish-lsp`. Empty = search `PATH`. |
+| `tish.trace.server` | `off` / `messages` / `verbose` — log LSP traffic under **Output → Tish Language Server**. |
+| `tish.format.enable` | When true, format on save for `.tish` / `.tishx`. |
+
+### Tasks (Run / Compile)
+
+Copy or merge into your workspace **`.vscode/tasks.json`**:
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "tish: run current file",
+      "type": "shell",
+      "command": "tish",
+      "args": ["run", "${file}"],
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "tish: compile (native)",
+      "type": "shell",
+      "command": "tish",
+      "args": ["compile", "${file}", "--output", "${workspaceFolder}/tish_out", "--target", "native"],
+      "group": "build",
+      "problemMatcher": ["$tish-rustc"]
+    }
+  ]
+}
+```
+
+After **native compile**, rustc errors are picked up by the **`$tish-rustc`** problem matcher contributed by the extension.
+
+## Neovim (nvim-lspconfig)
+
+Example using a built `tish-lsp` binary:
+
+```lua
+local lspconfig = require('lspconfig')
+local configs = require('lspconfig.configs')
+
+if not configs.tish_lsp then
+  configs.tish_lsp = {
+    default_config = {
+      cmd = { 'tish-lsp' },
+      filetypes = { 'tish' },
+      root_dir = function(fname)
+        return vim.fs.dirname(vim.fs.find({ 'tish.yaml', 'package.json', '.git' }, { path = fname, upward = true })[1])
+      end,
+      single_file_support = true,
+    },
+  }
+end
+lspconfig.tish_lsp.setup({})
+```
+
+Register the `tish` filetype and a grammar (e.g. Tree-sitter or runtime path to a syntax file). Until a Neovim grammar ships, you can temporarily `set filetype=javascript` for `.tish` as a fallback.
+
+## Zed / Helix
+
+Point the editor’s generic LSP config at **`tish-lsp`** with **stdio** transport and file types **`tish`** / **`tish-jsx`** (or map `.tish` to a supported grammar). Exact config keys vary by editor; see their LSP documentation.
+
+## Troubleshooting
+
+| Problem | What to check |
+|---------|----------------|
+| **LSP won’t start** | Run `tish-lsp` in a terminal (should block reading stdin — that’s normal). Fix `PATH` or `tish.languageServerPath`. |
+| **No diagnostics** | Open a folder (workspace), not only a single loose file, so the server receives `didOpen`. |
+| **Format does nothing** | Parse errors block format; fix syntax first. Try **`tish-fmt`** on the file from a terminal. |
+| **Go to definition fails on imports** | Relative imports (`./foo.tish`) are resolved from the current file’s directory; file must be saved on disk with a real path. |
+| **Wrong `tish` in tasks** | Which `tish` runs: `which tish` — align with the toolchain you built. |
+
+## See also
+
+- [Language server](/reference/language-server/) — capabilities and CLI reference
+- [Formatting](/reference/formatting/)
+- [Linting](/reference/linting/)
+- [Advanced tooling](/reference/advanced-tooling/) — debugging, playground, Tree-sitter roadmap

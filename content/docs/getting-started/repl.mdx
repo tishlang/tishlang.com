@@ -1,0 +1,88 @@
+---
+title: Interactive REPL
+description: Use the Tish REPL with multi-line input, tab completion, history, and colored output.
+---
+
+## Starting the REPL
+
+With no arguments, Tish starts the interactive REPL (VM backend by default):
+
+```bash
+tish
+```
+
+Or explicitly:
+
+```bash
+tish repl
+tish repl --backend vm    # default: line editing, completion, history
+tish repl --backend interp  # interpreter backend (same multi-line, no completion)
+```
+
+Exit with **Ctrl-D** (Unix) or **Ctrl-Z** then Enter (Windows).
+
+## Multi-line input (Python-style)
+
+The REPL uses a **continuation prompt** when the parser needs more input:
+
+- **`> `** — new statement
+- **`... `** — continuation (e.g. unclosed `{`, `(`, `[` or mid-statement)
+
+Type until the statement is complete; then it runs and the result is printed.
+
+**Example**
+
+```
+> fn greet(name) {
+...   return "Hello, " + name
+... }
+> greet("World")
+"Hello, World"
+```
+
+Pasting multi-line code works: keep typing or paste, and the REPL runs when the program is complete.
+
+## Tab completion
+
+- **Bare-word**: Complete variable names, keywords, and globals (`console`, `JSON`, `Math`, etc.).  
+  Example: type `con` then **Tab** → `console`.
+- **After a dot**: Complete properties and methods of the value before the dot.  
+  Example: `[1,2,3].` then **Tab** → list of array methods (`length`, `map`, `filter`, …).
+
+Press **Tab** once to see the full list when there are multiple matches (Node-style). A grey preview hint appears as you type.
+
+## History
+
+- **Up/Down** — move through previous lines.
+- **History file** — history is saved to `~/.tish_history` (or `%USERPROFILE%\.tish_history` on Windows) and restored in the next session (Python-style).
+
+## Colored output
+
+When stdout is a terminal, values are printed with type-based colors (Node/Bun-style):
+
+- **Numbers** — yellow  
+- **Strings** — green (with quotes)  
+- **Booleans** — blue  
+- **Null** — dim grey  
+- **Object keys** — cyan  
+- **Punctuation** — dim grey  
+
+Piped or non-TTY output is plain text (no ANSI codes).
+
+## Keybindings and .inputrc
+
+When running in a terminal that uses GNU Readline (or compatible), keybindings can be configured via **`~/.inputrc`** (or `~/.editrc` on some macOS setups). For example:
+
+```text
+# ~/.inputrc
+set editing-mode emacs
+set completion-ignore-case on
+```
+
+This applies to the same readline-style editing (arrow keys, Ctrl-A/E, kill-line, etc.) that tools like Python and Bash use.
+
+## Tips
+
+- **Ctrl-C** — cancel current input and clear the line (or multi-line buffer).
+- **Ctrl-D** at the primary `> ` prompt — exit. If you're in a continuation (`... `), the current buffer is parsed and run once (or a parse error is shown) before exit.
+- Tab completion and grey hints require an **interactive terminal (TTY)**. If you run with stdin not connected to a TTY, you'll see a note and editing/completion will be limited.

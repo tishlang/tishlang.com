@@ -1,0 +1,55 @@
+---
+title: Zectre Platform
+description: Architecture and services of the Zectre Platform.
+---
+
+The Zectre Platform is a Nomad-inspired orchestration platform for running Tish native binaries. For full details, see the [zectre-platform README](https://github.com/.../zectre-platform) (and [zectre-cli README](https://github.com/.../zectre-cli) for the CLI).
+
+## Architecture
+
+```
+Clients (zectre, Web UI)
+    ↓
+Control Plane: zectre-api, zectre-scheduler, zectre-registry
+    ↓
+Workers: zectre-agent (one or more nodes)
+    ↓
+Proxy: zectre-proxy (ingress / load balancing)
+```
+
+## Services
+
+| Service | Role |
+|---------|------|
+| zectre-api | REST API gateway (apps, auth, deployments, builds, etc.) |
+| zectre-scheduler | Job scheduling, allocation, deployment orchestration |
+| zectre-agent | Runs and supervises Tish binaries on worker nodes |
+| zectre-proxy | Reverse proxy, dynamic routing, cold start handling |
+| zectre-registry | Artifact storage for compiled binaries |
+| zectre-build | Builds Tish source via `zectre compile` |
+
+## Quick start
+
+In zectre-platform:
+
+```bash
+just setup
+just run-all
+```
+
+## Custom domains
+
+You can map your own domains (e.g. `api.example.com`) to an application’s latest deployment.
+
+1. **Dashboard**: Open your app → **Domains** tab → **Add custom domain**. Enter the domain and choose the target environment (e.g. production).
+
+2. **API**: `POST /api/v1/apps/{id}/custom-domains` with body `{ "domain": "api.example.com", "environment": "production" }`.
+
+3. **DNS**: Point your domain’s DNS (A or CNAME) to the platform proxy. The proxy routes requests by the `Host` header.
+
+Custom domains route to the promoted “latest” deployment for the chosen environment. The platform generates a default domain (e.g. `myapp-default.tish.localhost`); custom domains are in addition to that.
+
+## See also
+
+- [zectre-platform](https://github.com/.../zectre-platform) — Platform repo
+- [zectre](https://github.com/.../zectre) — CLI repo

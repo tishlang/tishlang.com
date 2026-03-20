@@ -1,0 +1,85 @@
+---
+title: tish.yaml
+description: Deployment configuration reference for tish.yaml.
+---
+
+The `tish.yaml` file configures deployment settings. Build config (`source`, `features`) lives in `package.json` under `tish`.
+
+## Example
+
+```yaml
+name: my-app
+
+deploy:
+  replicas: 1
+  strategy: rolling
+
+resources:
+  cpu: 100m
+  memory: 128Mi
+
+networking:
+  port: 3000
+  protocol: http
+  health_check:
+    path: /health
+    interval: 10s
+    timeout: 5s
+```
+
+## deploy
+
+| Key | Description | Default |
+|-----|-------------|---------|
+| `replicas` | Number of instances | 1 |
+| `strategy` | Deployment strategy | rolling |
+
+## resources
+
+| Key | Description |
+|-----|-------------|
+| `cpu` | CPU limit (e.g. 100m) |
+| `memory` | Memory limit (e.g. 128Mi) |
+
+## networking
+
+| Key | Description |
+|-----|-------------|
+| `port` | Port to expose |
+| `protocol` | http, tcp, grpc |
+| `health_check.path` | Health check endpoint |
+| `health_check.interval` | Check interval |
+| `health_check.timeout` | Request timeout |
+
+## Build config (package.json)
+
+Build settings are in `package.json`:
+
+```json
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "tish": {
+    "source": "./src/main.tish",
+    "features": ["http", "process"]
+  }
+}
+```
+
+| Key | Description |
+|-----|-------------|
+| `tish.source` | Entry point file |
+| `tish.features` | Feature flags: http, fs, process, regex, polars |
+
+**Backward compatibility:** If `package.json` has no `tish` section, build config is read from `build` in `tish.yaml`.
+
+## Project structure
+
+```
+example-name/
+├── package.json    # name, version, tish.source, tish.features, dependencies
+├── tish.yaml       # deploy, resources, networking
+├── README.md
+└── src/
+    └── main.tish
+```

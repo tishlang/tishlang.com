@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
-  { label: "docs", href: "https://docs.tishlang.com" },
+  { label: "docs", href: "/docs" },
   { label: "playground", href: "https://tish.sh" },
   { label: "github", href: "https://github.com/tishlang/tish" },
   { label: "deploy", href: "https://zectre.com", external: true },
@@ -49,7 +49,7 @@ export function Navbar() {
               {...(link.external && { target: "_blank", rel: "noopener noreferrer" })}
               className={cn(
                 "relative inline-flex items-center gap-1 text-xs transition-colors hover:text-foreground",
-                pathname === link.href
+                pathname === link.href || (link.href === "/docs" && pathname.startsWith("/docs"))
                   ? "text-foreground"
                   : "text-muted-foreground"
               )}
@@ -58,7 +58,7 @@ export function Navbar() {
               {link.external && (
                 <ExternalLink className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
               )}
-              {pathname === link.href && (
+              {              (pathname === link.href || (link.href === "/docs" && pathname.startsWith("/docs"))) && (
                 <span className="absolute -bottom-3.5 left-0 right-0 h-px bg-primary" />
               )}
             </Link>
@@ -71,7 +71,7 @@ export function Navbar() {
               github
             </Button>
           </Link> */}
-          <Link href="#">
+          <Link href="/docs/getting-started/installation">
             <Button size="sm" className="h-7 text-xs">
               get started
             </Button>
@@ -118,10 +118,14 @@ export function Navbar() {
                   onClick={() => setOpen(false)}
                   className={cn(
                     "inline-flex items-center gap-1.5 px-2 py-2 text-xs transition-colors hover:text-foreground",
-                    pathname === link.href ? "text-primary" : "text-muted-foreground"
+                    pathname === link.href || (link.href === "/docs" && pathname.startsWith("/docs"))
+                    ? "text-primary"
+                    : "text-muted-foreground"
                   )}
                 >
-                  {pathname === link.href && <span>{">"}</span>}
+                  {(pathname === link.href || (link.href === "/docs" && pathname.startsWith("/docs"))) && (
+                    <span>{">"}</span>
+                  )}
                   {link.label}
                   {link.external && (
                     <ExternalLink className="h-3 w-3 shrink-0 opacity-70" aria-hidden />
@@ -135,12 +139,12 @@ export function Navbar() {
                   github
                 </Button>
               </Link>
-              <Link href="#" onClick={() => setOpen(false)}>
+              <Link href="/docs" onClick={() => setOpen(false)}>
                 <Button variant="outline" size="sm" className="w-full text-xs">
                   read the docs
                 </Button>
               </Link>
-              <Link href="#" onClick={() => setOpen(false)}>
+              <Link href="/docs/getting-started/installation" onClick={() => setOpen(false)}>
                 <Button size="sm" className="w-full text-xs">
                   start building
                 </Button>

@@ -1,0 +1,72 @@
+---
+title: Tish vs JavaScript
+description: What differs from JavaScript and what is additional in Tish.
+---
+
+This page documents how Tish differs from JavaScript and what Tish adds. Since Tish is not pure JS, developers coming from JS/TS need this reference.
+
+## Differences from JavaScript
+
+| Topic | JavaScript | Tish |
+|-------|------------|------|
+| **Undefined** | `undefined` exists | `null` only |
+| **`typeof null`** | `"object"` | `"null"` (Tish has no `undefined`, so null is the absence-of-value type) |
+| **Equality** | `==` (loose) and `===` | `===` / `!==` only; no coercion |
+| **Variable declaration** | `var`, `let`, `const` | `let`, `const` only (no `var`) |
+| **Function keyword** | `function` | `fn` (or `function`) |
+| **Block syntax** | Braces required | Optional braces (indentation) |
+| **`this`** | `this` keyword | No `this`; use explicit parameters |
+| **Prototypes** | Prototype chain | Plain objects only |
+| **Optional chaining** | Returns `undefined` | Returns `null` |
+| **Other omissions** | `class`, `new`, `super`, `delete`, `instanceof`, `for..in`, generators, modules, Symbol, BigInt, Map, Set | Not in Tish |
+
+## Additions (Tish-specific)
+
+| Feature | Description |
+|---------|-------------|
+| `fn` keyword | Shorthand for `function` |
+| Indentation blocks | Tab/space for blocks instead of `{}` |
+| Optional type annotations | Parsed, not enforced (gradual typing) |
+| Feature flags | `http`, `fs`, `process`, `regex` — secure-by-default |
+| `serve(port, handler)` | Built-in HTTP server (no Express) |
+| `fetch` / `fetchAll` / `fetchAsync` / `fetchAllAsync` | HTTP client APIs (sync and async; async return Promises) |
+| `Promise`, `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` | ECMA-style Promises and non-blocking timers (with `http` feature) |
+| `async fn` / `await` | Async functions and await expressions |
+| `readFile` / `writeFile` / etc. | File system APIs (feature-gated) |
+| Interpreter + native compile | Same source runs both ways |
+
+## Semantic Details
+
+### No `undefined`
+
+Tish has only `null`. Optional chaining (`?.`) and missing properties return `null` where JavaScript returns `undefined`. Because of this, **`typeof null`** returns `"null"` in Tish, unlike JavaScript where it returns `"object"`.
+
+### Strict equality only
+
+Loose equality (`==`) is not supported. Use `===` and `!==` only. There is no implicit type coercion in comparisons.
+
+### No `this`, `with`, `eval`
+
+Tish omits these for security and compileability. Pass explicit parameters instead of relying on `this`.
+
+### No prototypes
+
+Objects and arrays are plain data structures. No `Object.create`, prototype chain, or `instanceof`.
+
+### No classes, `new`, `super`
+
+Use plain objects and functions. No OOP class syntax.
+
+### Async/await support
+
+Tish supports `async fn` and `await` for asynchronous I/O. Use `fetchAsync` and `fetchAllAsync` with `await` for non-blocking HTTP requests. **Promises** (ECMA-262 §27.2) are supported: `Promise(executor)`, `.then`, `.catch`, `.finally`, `Promise.resolve`, `Promise.reject`, `Promise.all`, `Promise.race`. Host APIs **setTimeout**, **setInterval**, **clearTimeout**, and **clearInterval** are non-blocking (callbacks run after the delay; setTimeout returns immediately). Generators are not supported.
+
+### No modules (import/export)
+
+Single-file programs for now. Module support is deferred.
+
+## See also
+
+- [ECMA Alignment](/resources/ecma-alignment/) — Mapping to ECMA-262
+- [JS Compatibility Gaps](/resources/js-compatibility-gaps/) — Implementation gaps requiring workarounds
+- [Builtins Overview](/builtins/overview/) — Feature flags and secure-by-default

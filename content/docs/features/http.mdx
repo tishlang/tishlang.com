@@ -1,0 +1,123 @@
+---
+title: HTTP
+description: "HTTP client and server APIs in Tish (feature flag: http)."
+---
+
+Requires the `http` feature. Build tish with it for run: `cargo run -p tish --features http -- run main.tish`. For compile: `tish compile main.tish -o app --feature http`.
+
+## fetch(url, options?)
+
+Perform an HTTP request. Returns a response object.
+
+### Parameters
+
+- **url** (string): URL to fetch
+- **options** (object, optional):
+  - `method`: `"GET"`, `"POST"`, `"PUT"`, `"DELETE"`, `"PATCH"`, `"HEAD"`
+  - `headers`: Object of header name → value
+  - `body`: Request body string
+
+### Response object
+
+- `status`: Status code (number)
+- `ok`: Boolean (true if 2xx)
+- `body`: Response body string
+- `headers`: Object of header name → value
+
+### Example
+
+```javascript
+let res = fetch("https://api.example.com/data")
+console.log(res.status, res.body)
+
+let postRes = fetch("https://api.example.com/post", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ key: "value" })
+})
+```
+
+## fetchAsync(url, options?)
+
+Async HTTP fetch. Returns a **Promise**. Use with `await`:
+
+```javascript
+let res = await fetchAsync("https://api.example.com/data")
+console.log(res.ok ? res.body : "Error")
+```
+
+Same parameters and response shape as `fetch`. `await` works on any Promise (fetchAsync, fetchAllAsync, or `Promise(executor)`).
+
+## fetchAllAsync(requests)
+
+Async version of `fetchAll`. Use with `await` in async functions. Same parameters and return shape as `fetchAll`.
+
+## fetchAll(requests)
+
+Perform multiple HTTP requests in parallel (sync). Each request is a string URL or object with `url` (and optional `method`, `headers`, `body`).
+
+### Returns
+
+Array of response objects (same shape as `fetch`).
+
+### Example
+
+```javascript
+let results = fetchAll([
+    "https://api.example.com/a",
+    { url: "https://api.example.com/b", method: "POST" }
+])
+```
+
+## Promise and timers
+
+With the `http` feature, Tish also provides:
+
+- **Promise** (ECMA-262 §27.2): `Promise(executor)`, `.then`, `.catch`, `.finally`, `Promise.resolve`, `Promise.reject`, `Promise.all`, `Promise.race`
+- **setTimeout(callback, delayMs, ...args)** — Schedule callback to run after delay (non-blocking; returns immediately)
+- **setInterval(callback, delayMs, ...args)** — Schedule callback to run repeatedly (non-blocking)
+- **clearTimeout(id)**, **clearInterval(id)** — Cancel timers
+
+## serve(port, handler)
+
+Start an HTTP server. The handler receives a request object and returns a response object or string.
+
+### Request object
+
+- `method`: HTTP method (string)
+- `path`: Path without query (string)
+- `url`: Full URL (string)
+- `query`: Query string (string)
+- `headers`: Object of header name → value
+- `body`: Request body (string)
+
+### Response
+
+Return an object:
+
+- `status`: Status code (number, default 200)
+- `body`: Response body (string)
+- `headers`: Object of header name → value (optional, e.g. `{ contentType: "application/json" }`)
+
+Or return a string (200, no headers).
+
+### Example
+
+```javascript
+fn handleRequest(req) {
+    if (req.path === "/health") {
+        return { status: 200, body: "OK" }
+    }
+    if (req.path === "/") {
+        return {
+            status: 200,
+            headers: { contentType: "application/json" },
+            body: JSON.stringify({ message: "Hello" })
+        }
+    }
+    return { status: 404, body: "Not Found" }
+}
+
+let port = "PORT" in process.env ? parseInt(process.env.PORT) : 8080
+serve(port, handleRequest)
+```
