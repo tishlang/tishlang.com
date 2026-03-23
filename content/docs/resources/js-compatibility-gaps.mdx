@@ -28,7 +28,7 @@ The bytecode VM (used by `tish run --backend vm`, Cranelift, and WASI) has known
 
 Tish now supports `n.toFixed(digits)` for formatting numbers with fixed decimal places (0–20). Returns a string.
 
-```tish
+```javascript
 console.log((3.14159).toFixed(2))  // "3.14"
 console.log("$" + total.toFixed(2))  // currency formatting
 ```
@@ -47,7 +47,7 @@ All string methods now use **character (Unicode scalar) indices** consistently: 
 
 `exec()` returns an array-like object with `[0]`, `[1]`, ... and `"index"` (match start as character offset). Access via `m["index"]`.
 
-```tish
+```javascript
 let m = RegExp("(\\d+)").exec("abc123")
 console.log(m[0])       // "123"
 console.log(m["index"]) // 3
@@ -57,7 +57,7 @@ console.log(m["index"]) // 3
 
 When the search value is a RegExp and the replacement is a function, the function is invoked for each match. Callback receives `(match, g1, g2, ..., index, fullString)`.
 
-```tish
+```javascript
 let result = "hello 123 world 456".replace(RegExp("(\\d+)", "g"), (match, g1) => "[" + g1 + "]")
 // result: "hello [123] world [456]"
 ```
