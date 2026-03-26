@@ -14,7 +14,7 @@ Tish lives in the [tish](https://github.com/.../tish) repository:
 ```bash
 git clone <tish-repo-url>
 cd tish
-cargo build --release -p tish
+cargo build --release -p tishlang
 ```
 
 The binary is at `target/release/tish`.
@@ -24,9 +24,9 @@ The binary is at `target/release/tish`.
 Formatting and linting are **not** part of `tish` — same idea as rustfmt/clippy vs rustc:
 
 ```bash
-cargo build --release -p tish_fmt    # → tish-fmt
-cargo build --release -p tish_lint   # → tish-lint
-cargo build --release -p tish_lsp    # → tish-lsp
+cargo build --release -p tishlang_fmt    # → tish-fmt
+cargo build --release -p tishlang_lint   # → tish-lint
+cargo build --release -p tishlang_lsp    # → tish-lsp
 ```
 
 Add the binaries you need to your `PATH`. See [Editor and IDE setup](/getting-started/editor/).
