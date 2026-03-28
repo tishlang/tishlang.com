@@ -52,7 +52,7 @@ const baseComponents: MDXComponents = {
       </pre>
     ),
     table: ({ children, ...props }) => (
-      <div className="scrollbar-thin overflow-x-auto">
+      <div className="scrollbar-thin overflow-x-auto rounded">
         <table className="w-full border-collapse text-sm" {...props}>
           {children}
         </table>

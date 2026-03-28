@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { Menu, X, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { SearchButton } from "@/components/docs/search-button"
 
 const navLinks = [
   { label: "docs", href: "/docs" },
@@ -66,11 +67,7 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          {/* <Link href="#">
-            <Button variant="ghost" size="sm" className="h-7 text-xs text-muted-foreground transition-colors hover:text-foreground">
-              github
-            </Button>
-          </Link> */}
+          <SearchButton />
           <Link href="/docs/getting-started/installation">
             <Button size="sm" className="h-7 text-xs">
               get started
