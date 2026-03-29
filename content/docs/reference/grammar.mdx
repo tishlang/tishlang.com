@@ -18,15 +18,21 @@ While       := 'while' '(' Expr ')' Statement
 For         := 'for' '(' Init? ';' Cond? ';' Update? ')' Statement
             |  'for' '(' ('let'|'const') Ident 'of' Expr ')' Statement
 Return      := 'return' Expr? ';'?
-FunDecl     := ('fn' | 'function') Ident '(' TypedParams? ')' TypeAnn? '=' Expr
-            |  ('fn' | 'function') Ident '(' TypedParams? ')' TypeAnn? Block
+FunDecl     := ('fn' | 'function') Ident '(' FunFormals? ')' TypeAnn? '=' Expr
+            |  ('fn' | 'function') Ident '(' FunFormals? ')' TypeAnn? Block
 Expr        := Assign | NullishCoalesce | Or | ...
 Assign      := Ident '=' Expr
 NullishCoalesce := Or ('??' Or)*
 
 TypeAnn     := ':' Type
 Type        := Ident | Type '[]' | '{' (Ident TypeAnn ',')* '}' | '(' (Type ',')* ')' '=>' Type | Type '|' Type
-TypedParams := TypedParam (',' TypedParam)*
+FunFormals  := FunFormal (',' FunFormal)*
+FunFormal   := Ident TypeAnn? ('=' Expr)?
+            |  DestructPattern TypeAnn? ('=' Expr)?
+DestructPattern
+            := '[' /* array pattern: identifiers, holes, nested patterns, ...rest */ ']'
+            |  '{' /* object pattern: keys, renaming, nested patterns */ '}'
+TypedParams := TypedParam (',' TypedParam)*   /* legacy alias: use FunFormals */
 TypedParam  := Ident TypeAnn?
 ```
 

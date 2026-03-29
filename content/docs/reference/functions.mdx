@@ -1,6 +1,6 @@
 ---
 title: Functions
-description: Function declarations, arrow functions, and rest parameters in Tish.
+description: Function declarations, arrow functions, destructuring parameters, and rest parameters in Tish.
 ---
 
 ## Named functions
@@ -14,6 +14,38 @@ fn double(x) = x * 2   // single-expression, implicit return
 ```
 
 Both `fn` and `function` are supported.
+
+## Destructuring parameters
+
+Formal parameters can be a plain identifier (with optional type and default) or an **array or object destructuring pattern**, same shapes as `let` / `const` destructuring. Each formal still consumes one argument from the call.
+
+```javascript
+// Object props (e.g. component-style APIs)
+export fn Sidebar({ width, children }) {
+    return <div style={`width: ${width}px`}>{children}</div>
+}
+
+// Mix simple and destructuring formals
+fn line({ x, y }, label) {
+    console.log(label, x, y)
+}
+```
+
+Arrow functions use the same rules inside parentheses (object patterns need parens so `{` is not parsed as a block):
+
+```javascript
+let norm = (({ x, y }) => x * x + y * y)
+let pair = ([a, b]) => a + b
+```
+
+Optional **per-parameter** type (`: Type`) and **default** (`= expr`) are allowed on destructuring formals, matching simple parameters.
+
+**Backends**
+
+- **Interpreter**, **Rust native codegen** (`--native-backend rust`), and **JavaScript** compile target support destructuring parameters.
+- The **bytecode VM** (`tish run --backend vm`, and the Cranelift native path that lowers through bytecode) does **not** support destructuring parameters yet; use a single object argument and destructure in the body with `let { ... } = arg` instead.
+
+**Limitations** (same as `let` destructuring): object **rest** (`{ a, ...rest }`) is not supported in patterns.
 
 ## Arrow functions
 

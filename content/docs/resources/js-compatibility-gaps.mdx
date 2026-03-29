@@ -18,9 +18,9 @@ Integration tests run per target. Results as of audit:
 
 **Cranelift/WASI curated list** (17 files): fn_any, strict_equality, switch, do_while, typeof, try_catch, json, math, builtins, uri, inc_dec, exponentiation, void, rest_params, arrow_functions, array_methods, types.
 
-**Excluded from Cranelift/WASI** (stack-underflow/scope bugs): nested_loops, objects, optional_chaining, spread, template_literals, higher_order_methods, destructuring, and others.
+**Excluded from Cranelift/WASI** (stack-underflow/scope bugs): nested_loops, objects, optional_chaining, spread, template_literals, higher_order_methods, the `destructuring.tish` integration file (and other full-language tests), and others.
 
-The bytecode VM (used by `tish run --backend vm`, Cranelift, and WASI) has known gaps. For example, `optional_chaining.tish` runs correctly with the interpreter (`--backend interp`) and Node, but with the VM it may error. Use the repo script `./scripts/run_parity_compare.sh` (or `just parity`) in the tish repo to compare outputs across runtimes (interp, vm, rust, cranelift, wasi, node).
+The bytecode VM (used by `tish run --backend vm`, Cranelift, and WASI) has known gaps. For example, `optional_chaining.tish` runs correctly with the interpreter (`--backend interp`) and Node, but with the VM it may error. **Destructuring in function parameters** is implemented for the interpreter, Rust codegen, and JS target, but **not** for the VM (use `fn f(props) { let { a } = props; ... }` on VM-only paths). Use the repo script `./scripts/run_parity_compare.sh` (or `just parity`) in the tish repo to compare outputs across runtimes (interp, vm, rust, cranelift, wasi, node).
 
 ## Resolved (as of 2025-03)
 

@@ -21,6 +21,7 @@ Use when your program:
 - Imports native modules (`import { Egui } from 'tish:egui'` or `@scope/pkg`)
 - Needs the full Rust ecosystem
 - Uses any `tish:*` or `@scope/` imports
+- Uses **destructuring in function parameters** (e.g. `fn f({ a, b }) {}`, JSX-style `props` patterns)
 
 ```bash
 tish compile main.tish -o app
@@ -48,7 +49,7 @@ Cranelift backend does not support native imports (tish:*, @scope/pkg). Use --na
 
 ## Known limitations (Cranelift)
 
-The Cranelift backend compiles bytecode to native via Cranelift JIT. Only a subset of Tish constructs are known to work reliably. Some constructs (e.g. nested loops, objects, optional chaining, spread, template literals, higher-order methods with certain patterns) may cause stack-underflow or scope bugs. The integration test suite uses a curated list of 17 core tests that pass. For full compatibility, use the Rust backend (`--native-backend rust`).
+The Cranelift backend compiles bytecode to native via Cranelift JIT. Only a subset of Tish constructs are known to work reliably. Some constructs (e.g. nested loops, objects, optional chaining, spread, template literals, higher-order methods with certain patterns) may cause stack-underflow or scope bugs. **Destructuring parameters** are not supported in bytecode (use the Rust backend or destructure inside the function body). The integration test suite uses a curated list of 17 core tests that pass. For full compatibility, use the Rust backend (`--native-backend rust`).
 
 ## Target and feature flags
 

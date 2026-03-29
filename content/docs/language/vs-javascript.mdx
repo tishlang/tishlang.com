@@ -14,6 +14,7 @@ This page documents how Tish differs from JavaScript and what Tish adds. Since T
 | **Equality** | `==` (loose) and `===` | `===` / `!==` only; no coercion |
 | **Variable declaration** | `var`, `let`, `const` | `let`, `const` only (no `var`) |
 | **Function keyword** | `function` | `fn` (or `function`) |
+| **Destructuring parameters** | `function f({ a }) {}`, `(({ x }) => x)` | Supported (Rust / interpreter / JS compile); bytecode-backed runtimes require a single arg + `let` destructure in the body |
 | **Block syntax** | Braces required | Optional braces (indentation) |
 | **`this`** | `this` keyword | No `this`; use explicit parameters |
 | **Prototypes** | Prototype chain | Plain objects only |
