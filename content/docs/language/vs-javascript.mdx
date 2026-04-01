@@ -19,7 +19,7 @@ This page documents how Tish differs from JavaScript and what Tish adds. Since T
 | **`this`** | `this` keyword | No `this`; use explicit parameters |
 | **Prototypes** | Prototype chain | Plain objects only |
 | **Optional chaining** | Returns `undefined` | Returns `null` |
-| **Other omissions** | `class`, `new`, `super`, `delete`, `instanceof`, `for..in`, generators, modules, Symbol, BigInt, Map, Set | Not in Tish |
+| **Other omissions** | `class`, `super`, `delete`, `instanceof`, `for..in`, generators, Symbol, BigInt, Map, Set | Not in Tish |
 
 ## Additions (Tish-specific)
 
@@ -34,6 +34,8 @@ This page documents how Tish differs from JavaScript and what Tish adds. Since T
 | `Promise`, `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` | ECMA-style Promises and non-blocking timers (with `http` feature) |
 | `async fn` / `await` | Async functions and await expressions |
 | `readFile` / `writeFile` / etc. | File system APIs (feature-gated) |
+| `new` expressions | Parsed and lowered on every backend; semantics are **not** full ECMA `[[Construct]]` on VM, interpreter, and native Rust (see below). **`tish compile --target js`** emits real JavaScript `new`. |
+| `import` / `export` | Modules for builtins (`http`, etc.), native `tish:*` specs (Rust native backend), and multi-file resolution where the toolchain supports it — not arbitrary npm package graphs on all targets (see below). |
 | Interpreter + native compile | Same source runs both ways |
 
 ## Semantic Details
@@ -54,17 +56,21 @@ Tish omits these for security and compileability. Pass explicit parameters inste
 
 Objects and arrays are plain data structures. No `Object.create`, prototype chain, or `instanceof`.
 
-### No classes, `new`, `super`
+### No classes or `super`
 
-Use plain objects and functions. No OOP class syntax.
+There is no `class` syntax and no `super`. Use plain objects and functions.
+
+### `new` expressions (limited)
+
+Tish accepts **`new`** (including argument lists and spread) like JavaScript syntax, but **without `class` there are no user-defined class constructors** in the JS sense. On the **VM**, **interpreter**, and **native Rust** output, construction uses a **host `construct` path** (roughly: call a plain function value with the args, or an object constructor exposed via an internal `__construct` hook), **not** full ECMA **`[[Construct]]`** — no `this` binding, no prototype wiring, and still no **`instanceof`**. Some builtins are **approximations** (for example, **`new Uint8Array(n)`** may yield a numeric array of zeros rather than a real typed byte buffer; some globals like **`AudioContext`** are stubs). The **interpreter** may accept **`new`** on a slightly wider set of builtin values than the **VM**; if you need identical behavior, test your target. With **`tish compile --target js`**, emitted code uses the engine’s real **`new`** (wrapped with `?? null` for Tish’s null rules).
+
+### Modules (`import` / `export`)
+
+Tish supports **`import`** and **`export`** for **language builtins** (e.g. `import { serve } from 'http'` with the `http` feature), **native module specs** such as **`tish:fs`**, **`tish:http`**, **`tish:process`**, **`tish:ws`**, etc. on the **Rust native compile** path, and **multi-file** programs where the resolver is enabled. **`tish:*` and npm-linked native modules** require **`tish compile --native-backend rust`** (not the Cranelift/LLVM “embedded bytecode only” binary paths). This is **not** “every npm package on every target”; dynamic **`import()`** / **`import.meta`** are out of scope for ECMA alignment in the same way as in the main Tish docs.
 
 ### Async/await support
 
-Tish supports `async fn` and `await` for asynchronous I/O. Use `fetchAsync` and `fetchAllAsync` with `await` for non-blocking HTTP requests. **Promises** (ECMA-262 §27.2) are supported: `Promise(executor)`, `.then`, `.catch`, `.finally`, `Promise.resolve`, `Promise.reject`, `Promise.all`, `Promise.race`. Host APIs **setTimeout**, **setInterval**, **clearTimeout**, and **clearInterval** are non-blocking (callbacks run after the delay; setTimeout returns immediately). Generators are not supported.
-
-### No modules (import/export)
-
-Single-file programs for now. Module support is deferred.
+Tish supports `async fn` and `await` for asynchronous I/O. Use `fetchAsync` and `fetchAllAsync` with `await` for non-blocking HTTP requests. **Promises** (ECMA-262 Promise objects) are supported: `Promise(executor)`, `.then`, `.catch`, `.finally`, `Promise.resolve`, `Promise.reject`, `Promise.all`, `Promise.race`. Host APIs **setTimeout**, **setInterval**, **clearTimeout**, and **clearInterval** are non-blocking (callbacks run after the delay; setTimeout returns immediately). Generators are not supported.
 
 ## See also
 
