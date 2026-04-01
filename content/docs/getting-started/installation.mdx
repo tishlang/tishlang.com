@@ -1,56 +1,78 @@
 ---
 title: Installation
-description: How to build and install the Tish compiler and runtime.
+description: Tish can be used as a local `npm` package, global `npm` binary, native `brew` binary or as individual `cargo` crates.
 ---
 
 ## Prerequisites
 
-- **Rust** 1.75+ ([rustup](https://rustup.rs/))
+For rust native backends rust and cargo are required
+- **Rust** 1.75+ ([rustup](https://rustup.rs/)) — **only when you need to:**
 
-## Build Tish (compiler/runtime)
+## Install as a package
+### Install via npm
 
-Tish lives in the [tish](https://github.com/.../tish) repository:
+Add the published CLI package to a Node project (requires **Node 22+**):
 
 ```bash
-git clone <tish-repo-url>
+npm install @tishlang/tish
+```
+
+### Install via bun
+
+Add the published CLI package to a Bun project
+
+```bash
+bun add @tishlang/tish
+```
+
+### Install via yarn
+
+Add the published CLI package to a Bun project
+
+```bash
+yarn add @tishlang/tish
+```
+
+The `tish` command is available via `npx tish` or `./node_modules/.bin/tish`.
+
+Run without installing into a project:
+
+```bash
+npx @tishlang/tish run hello.tish
+npx @tishlang/tish compile hello.tish -o hello
+```
+
+Scaffold a new app:
+
+```bash
+npx @tishlang/create-tish-app my-app
+cd my-app && npx @tishlang/tish run src/main.tish
+```
+
+## Install via Homebrew (macOS and Linux)
+
+Install the CLI from the project tap:
+
+```bash
+brew tap tishlang/tish https://github.com/tishlang/tish
+brew install tish
+```
+
+## Build from source (compiler/runtime)
+
+Clone the [tish](https://github.com/tishlang/tish) repository — **Rust required**:
+
+```bash
+git clone https://github.com/tishlang/tish.git
 cd tish
 cargo build --release -p tishlang
 ```
 
 The binary is at `target/release/tish`.
 
-### Editor tooling (optional, separate binaries)
-
-Formatting and linting are **not** part of `tish` — same idea as rustfmt/clippy vs rustc:
-
-```bash
-cargo build --release -p tishlang_fmt    # → tish-fmt
-cargo build --release -p tishlang_lint   # → tish-lint
-cargo build --release -p tishlang_lsp    # → tish-lsp
-```
-
-Add the binaries you need to your `PATH`. See [Editor and IDE setup](/getting-started/editor/).
-
-## Verify Installation
+## Verify installation
 
 ```bash
 tish --help
-tish run --help
-tish compile --help
-tish-fmt --help
-tish-lint --help
-tish-lsp --help
+tish -V
 ```
-
-## zectre CLI (optional)
-
-For deploying to the Zectre Platform, use the [zectre](https://github.com/.../zectre) CLI. Run from source (no install):
-
-```bash
-cd zectre
-zectre --help
-```
-
-## Next Steps
-
-- [First App](/getting-started/first-app/) — Run and compile your first Tish program

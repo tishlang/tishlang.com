@@ -10,8 +10,8 @@ import { SearchButton } from "@/components/docs/search-button"
 
 const navLinks = [
   { label: "docs", href: "/docs" },
-  { label: "playground", href: "https://tish.sh" },
-  { label: "github", href: "https://github.com/tishlang/tish" },
+  { label: "playground", href: "https://tish.sh", external: true },
+  { label: "github", href: "https://github.com/tishlang/tish", external: true },
   { label: "deploy", href: "https://zectre.com", external: true },
 
 ]

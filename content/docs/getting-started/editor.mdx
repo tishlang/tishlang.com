@@ -11,9 +11,13 @@ Use an editor with **syntax highlighting** at minimum. For the best experience, 
 2. **`tish-lsp`** on your `PATH` — diagnostics, outline, completion, format, go-to-definition (LSP embeds the formatter/linter **libraries**, not the `tish` binary).
 
 ```bash
-cargo build --release -p tish_lsp
-# target/release/tish-lsp
+cargo build --release -p tishlang_fmt    # → tish-fmt
+cargo build --release -p tishlang_lint   # → tish-lint
+cargo build --release -p tishlang_lsp    # → tish-lsp
 ```
+
+Add the binaries you need to your `PATH`. See [Editor and IDE setup](/getting-started/editor/).
+
 
 For **CLI** format/lint in CI or hooks, install **`tish-fmt`** and **`tish-lint`** separately (`cargo build -p tish_fmt` / `-p tish_lint`).
 

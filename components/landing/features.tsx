@@ -5,7 +5,7 @@ import { useInView } from "@/hooks/use-in-view"
 const sections = [
   {
     number: "01",
-    title: "familiar syntax",
+    title: "opinionated syntax",
     subtitle: "javascript/typescript feel, multiple compile targets",
     description:
       "tish is a minimal js/ts-like language: let/const, arrow functions, async/await, template literals, and modules. the same source runs in an interpreter or compiles to native (rust or cranelift backend), wasm, or javascript — pick the target that fits.",
@@ -38,8 +38,22 @@ const sections = [
     capabilities: [
       "tish compile — native, wasm, wasi, or js targets",
       "cranelift or rust codegen paths depending on backend",
-      "examples: http-hello, json-api, json-file-edit, async-await",
-      "deploy with zectre or run the binary anywhere",
+      "zero config, zero runtime, hardened dependencies",
+      "first class support from zectre deploy",
+    ],
+  },
+  ,
+  {
+    number: "04",
+    title: "ecosystem synergy",
+    subtitle: "cargo, npm, bun, deno, brew",
+    description:
+      "compile tish to a native executable for servers and cli tools, or to wasm for the browser and wasi, or to js for bundlers. no made-up tensor stack in the core language — you interop with rust and native crates where you need heavy numeric or ml work.",
+    capabilities: [
+      "tish compile — native, wasm, wasi, or js targets",
+      "cranelift or rust codegen paths depending on backend",
+      "zero config, zero runtime, hardened dependencies",
+      "first class support from zectre deploy",
     ],
   },
 ]
