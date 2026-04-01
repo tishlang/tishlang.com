@@ -7,14 +7,51 @@ import { useEffect, useState } from "react"
 import { useInView } from "@/hooks/use-in-view"
 
 const codeLines = [
-  { parts: [{ text: "import", cls: "text-primary" }, { text: " { print } ", cls: "text-foreground" }, { text: "from", cls: "text-primary" }, { text: ' "std:io"', cls: "text-primary/70" }] },
-  { parts: [] }, // blank line
-  { parts: [{ text: "fn", cls: "text-primary" }, { text: " main() {", cls: "text-foreground" }] },
-  { parts: [{ text: "  const", cls: "text-primary" }, { text: " name = ", cls: "text-foreground" }, { text: '"world"', cls: "text-primary/70" }, { text: ",", cls: "text-muted-foreground" }] },
-  { parts: [{ text: "  print", cls: "text-foreground" }, { text: "(", cls: "text-muted-foreground" }, { text: "`hello, ${name}!`", cls: "text-primary/70" }, { text: ")", cls: "text-muted-foreground" }] },
-  { parts: [] }, // blank line
-  { parts: [{ text: "  await", cls: "text-primary" }, { text: " serve", cls: "text-foreground" }, { text: "(", cls: "text-muted-foreground" }, { text: '":8080"', cls: "text-primary/70" }, { text: ", async (req) => ", cls: "text-muted-foreground" }, { text: "Response.json(data)", cls: "text-foreground" }, { text: ") // native speed", cls: "text-muted-foreground/30" }] },
+  {
+    parts: [
+      { text: "import", cls: "text-primary" },
+      { text: " { serve } ", cls: "text-foreground" },
+      { text: "from", cls: "text-primary" },
+      { text: " 'http'", cls: "text-primary/70" },
+    ],
+  },
+  { parts: [] },
+  {
+    parts: [
+      { text: "fn", cls: "text-primary" },
+      { text: " handle(req) {", cls: "text-foreground" },
+    ],
+  },
+  {
+    parts: [
+      { text: "  console", cls: "text-foreground" },
+      { text: ".", cls: "text-muted-foreground" },
+      { text: "log", cls: "text-foreground" },
+      { text: "(req.method, req.path)", cls: "text-muted-foreground" },
+    ],
+  },
+  {
+    parts: [
+      { text: "  return { status: 200, headers: { contentType: ", cls: "text-foreground" },
+      { text: '"application/json"', cls: "text-primary/70" },
+      { text: " },", cls: "text-foreground" },
+    ],
+  },
+  {
+    parts: [
+      { text: "    body: JSON.stringify({ message: ", cls: "text-foreground" },
+      { text: '"hello"', cls: "text-primary/70" },
+      { text: " }) }", cls: "text-foreground" },
+    ],
+  },
   { parts: [{ text: "}", cls: "text-muted-foreground" }] },
+  { parts: [] },
+  {
+    parts: [
+      { text: "serve", cls: "text-foreground" },
+      { text: "(8080, handle)", cls: "text-muted-foreground" },
+    ],
+  },
 ]
 
 export function Hero() {
@@ -78,7 +115,7 @@ export function Hero() {
           </Link>
         </div>
 
-        {/* Terminal block with typewriter — matches source hero */}
+        {/* Terminal block with typewriter — real Tish: http + console */}
         <div
           ref={termRef}
           className="animate-fade-in-up mt-16 border border-border transition-colors hover:border-primary/20"
@@ -90,11 +127,11 @@ export function Hero() {
             <div className="h-2 w-2 rounded-full bg-muted-foreground/20" />
             <span className="ml-2 text-xs text-muted-foreground">main.tish</span>
           </div>
-          <div className="p-5 text-xs leading-7">
+          <div className="overflow-x-auto p-5 text-xs leading-7">
             {codeLines.map((line, i) => (
               <div
                 key={i}
-                className="transition-opacity duration-300"
+                className="whitespace-pre transition-opacity duration-300"
                 style={{
                   opacity: i < visibleLines ? 1 : 0,
                   transform: i < visibleLines ? "none" : "translateY(4px)",
@@ -110,7 +147,6 @@ export function Hero() {
                 )}
               </div>
             ))}
-            {/* Blinking cursor */}
             <span
               className="animate-blink inline-block h-4 w-1.5 bg-primary"
               style={{ opacity: visibleLines >= codeLines.length ? 1 : 0 }}

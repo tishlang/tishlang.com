@@ -45,5 +45,6 @@ fn sum(...args: number[]): number { ... }
 ## Notes
 
 - Type annotations are optional; omitting them is equivalent to dynamic typing.
-- Types are parsed and stored in the AST but **not enforced** during evaluation.
-- Future phases may add type inference and type checking.
+- Types are parsed and stored in the AST but **not enforced** during evaluation (no runtime type errors for mismatches).
+- **`--native-backend rust`:** Variable declarations annotated with `number`, `string`, or `boolean` already lower to native Rust primitives (`f64`, `String`, `bool`) in the emitted Rust source — no `Value` boxing for those bindings. Function parameters with type annotations similarly emit typed Rust parameters.
+- **Inference (in progress):** The compiler is gaining a type-inference pass that propagates primitive types through arithmetic, loop counters, and homogeneous array literals automatically, so you get native codegen without having to annotate everything manually. See `docs/LANGUAGE.md` → *Native compile (implementation status)* in the language repo for current progress.

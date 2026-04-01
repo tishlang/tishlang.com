@@ -7,55 +7,55 @@ import { useInView } from "@/hooks/use-in-view"
 const tabs = [
   {
     label: "hello.tish",
-    code: `import { print } from "std:io"
+    code: `// Core builtins — same as tish/examples/hello-world
+let name = "world"
+console.log(\`hello, \${name}!\`)
 
-fn main() {
-  const name: string = "world"
-  print(\`hello, \${name}!\`)
-
-  const numbers = [1, 2, 3, 4, 5]
-  const doubled = numbers.map(n => n * 2)
-
-  print(doubled) // [2, 4, 6, 8, 10]
-}`,
+const numbers = [1, 2, 3, 4, 5]
+const doubled = numbers.map(n => n * 2)
+console.log(doubled)`,
   },
   {
-    label: "inference.tish",
-    code: `import { Model, Tensor } from "std:ai"
+    label: "api.tish",
+    code: `// HTTP + JSON — same patterns as tish/examples/json-api
+import { serve } from 'http'
 
-fn main() {
-  // load a model from ONNX or tish format
-  const model = Model.load("./sentiment.onnx")
+let users = [
+  { id: 1, name: "Alice" },
+  { id: 2, name: "Bob" }
+]
 
-  // built-in tensor operations
-  const input = Tensor.from_text("tish is fast")
-  const result = model.predict(input)
+fn handle(req) {
+  console.log("Request:", req.method, req.path)
+  if (req.path === "/users") {
+    return {
+      status: 200,
+      headers: { contentType: "application/json" },
+      body: JSON.stringify(users)
+    }
+  }
+  return { status: 404, body: "not found" }
+}
 
-  print(result.label)      // "positive"
-  print(result.confidence) // 0.9847
-}`,
+serve(3000, handle)`,
   },
   {
-    label: "pipeline.tish",
-    code: `import { DataFrame } from "std:data"
-import { serve } from "std:http"
+    label: "config.tish",
+    code: `// Filesystem — same as tish/examples/json-file-edit
+import { readFile, writeFile } from 'tish:fs'
 
-fn main() {
-  const df = DataFrame.read_csv("./sales.csv")
-    .filter(row => row.revenue > 1000)
-    .group_by("region")
-    .agg({ total: "sum(revenue)" })
-
-  serve(":8080", async (req) => {
-    return Response.json(df.to_records())
-  })
-}`,
+let path = "config.json"
+let data = JSON.parse(readFile(path))
+data.version = data.version + 1
+writeFile(path, JSON.stringify(data))
+console.log("updated version to", data.version)`,
   },
 ]
 
 /** Index of `//` line comment, only outside strings (matches source-style highlighting safety). */
 function findLineCommentStart(line: string): number {
   let inDouble = false
+  let inSingle = false
   let inBacktick = false
   let escape = false
   for (let i = 0; i < line.length - 1; i++) {
@@ -69,6 +69,11 @@ function findLineCommentStart(line: string): number {
       else if (c === '"') inDouble = false
       continue
     }
+    if (inSingle) {
+      if (c === "\\") escape = true
+      else if (c === "'") inSingle = false
+      continue
+    }
     if (inBacktick) {
       if (c === "\\") escape = true
       else if (c === "`") inBacktick = false
@@ -76,6 +81,10 @@ function findLineCommentStart(line: string): number {
     }
     if (c === '"') {
       inDouble = true
+      continue
+    }
+    if (c === "'") {
+      inSingle = true
       continue
     }
     if (c === "`") {
@@ -120,6 +129,17 @@ function tokenizeCodeSegment(code: string, keyPrefix: string): ReactNode[] {
         </span>
       )
       i += dq[0].length
+      continue
+    }
+
+    const sq = rest.match(/^'(?:[^'\\]|\\.)*'/)
+    if (sq) {
+      out.push(
+        <span key={nextKey()} className="text-primary/70">
+          {sq[0]}
+        </span>
+      )
+      i += sq[0].length
       continue
     }
 
@@ -208,7 +228,7 @@ function highlightLine(line: string, lineIndex: number): ReactNode {
   const commentStart = findLineCommentStart(line)
   if (commentStart === -1) {
     return (
-      <div key={lineIndex} className="leading-7">
+      <div key={lineIndex} className="whitespace-pre leading-7">
         {tokenizeCodeSegment(line, `l${lineIndex}`)}
       </div>
     )
@@ -217,7 +237,7 @@ function highlightLine(line: string, lineIndex: number): ReactNode {
   const codePart = line.slice(0, commentStart)
   const commentPart = line.slice(commentStart)
   return (
-    <div key={lineIndex} className="leading-7">
+    <div key={lineIndex} className="whitespace-pre leading-7">
       {tokenizeCodeSegment(codePart, `l${lineIndex}c`)}
       <span className="text-muted-foreground/30 italic">{commentPart}</span>
     </div>
@@ -228,7 +248,7 @@ function highlightCode(code: string): ReactNode[] {
   const lines = code.split("\n")
   return lines.map((line, i) =>
     line.length === 0 ? (
-      <div key={i} className="leading-7">
+      <div key={i} className="whitespace-pre leading-7">
         &nbsp;
       </div>
     ) : (
@@ -285,6 +305,16 @@ export function CodeShowcase() {
             <code className="block text-foreground">{highlightCode(active.code)}</code>
           </div>
         </div>
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          <a
+            href="https://github.com/tishlang/tish/tree/main/examples"
+            className="underline decoration-muted-foreground/40 underline-offset-2 hover:text-foreground"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Examples in the tish repo
+          </a>
+        </p>
       </div>
     </section>
   )

@@ -7,21 +7,21 @@ When compiling Tish to a native binary (`tish compile --target native`), you can
 
 ## Backends
 
-| Backend | Flag | Native imports | Build |
-|---------|------|----------------|-------|
-| **rust** | `--native-backend rust` (default) | ✅ Supported | Rust codegen + cargo build |
-| **cranelift** | `--native-backend cranelift` | ❌ Not supported | Bytecode → Cranelift → native |
+| Backend | Flag | Native imports | What it actually produces |
+|---------|------|----------------|--------------------------|
+| **rust** | `--native-backend rust` (default) | ✅ Supported | Rust source (via `tish_compile`) linked against **`tishlang_runtime`** — cargo builds the final binary |
+| **cranelift** | `--native-backend cranelift` | ❌ Not supported | Serialized bytecode **embedded** in the binary; executable runs **`tishlang_vm`** at startup (not CLIF lowering of opcodes) |
+| **llvm** | `--native-backend llvm` | ❌ Not supported | Same embedded-bytecode + **`tishlang_vm`** pattern as cranelift, linked via clang instead of the Cranelift object builder |
 
 ## When to use each
 
 ### Rust backend (default)
 
-Use when your program:
+The Rust backend transpiles your Tish program to Rust source calling **`tishlang_runtime`** — dynamic operations on `Value` — then invokes `cargo build --release`. This gives:
 
-- Imports native modules (`import { Egui } from 'tish:egui'` or `@scope/pkg`)
-- Needs the full Rust ecosystem
-- Uses any `tish:*` or `@scope/` imports
-- Uses **destructuring in function parameters** (e.g. `fn f({ a, b }) {}`, JSX-style `props` patterns)
+- Full native-module support (`import { Egui } from 'tish:egui'`, `@scope/pkg`)
+- Access to the full Rust ecosystem
+- Destructuring in function parameters
 
 ```bash
 tish compile main.tish -o app
@@ -29,12 +29,16 @@ tish compile main.tish -o app
 tish compile main.tish -o app --native-backend rust
 ```
 
+> **Primitive lowering (in progress):** Where types are annotated or can be inferred, the Rust backend emits native Rust primitives (`f64`, `Vec<f64>`, direct arithmetic) instead of `Value`. See [Type Annotations](/language/type-annotations/) for the current status.
+
 ### Cranelift backend
+
+The Cranelift backend produces a standalone binary **without a cargo invocation** — build is fast. However, the binary **runs the same `tishlang_vm`** on embedded bytecode; it is **not** AOT machine-code compilation of Tish opcodes. Throughput is VM-class, similar to `tish run --backend vm`.
 
 Use when your program:
 
 - Has **no** native imports (pure Tish + file imports only)
-- Benefits from a faster build (no cargo invocation)
+- Benefits from a fast build (no cargo + rustc overhead)
 - Does not need `tish:*` or `@scope/pkg` modules
 
 ```bash
@@ -47,9 +51,9 @@ If your program uses native imports, the Cranelift backend will error:
 Cranelift backend does not support native imports (tish:*, @scope/pkg). Use --native-backend rust.
 ```
 
-## Known limitations (Cranelift)
+## Known limitations (Cranelift / LLVM)
 
-The Cranelift backend compiles bytecode to native via Cranelift JIT. Only a subset of Tish constructs are known to work reliably. Some constructs (e.g. nested loops, objects, optional chaining, spread, template literals, higher-order methods with certain patterns) may cause stack-underflow or scope bugs. **Destructuring parameters** are not supported in bytecode (use the Rust backend or destructure inside the function body). The integration test suite uses a curated list of 17 core tests that pass. For full compatibility, use the Rust backend (`--native-backend rust`).
+Because the binary runs **`tishlang_vm`**, any construct the VM supports is supported; constructs not yet implemented in the VM (e.g. certain destructuring patterns) are equally unsupported here. **Destructuring parameters** are not supported in bytecode — use the Rust backend or destructure inside the function body.
 
 ## Target and feature flags
 
@@ -57,4 +61,4 @@ The Cranelift backend compiles bytecode to native via Cranelift JIT. Only a subs
 
 For WebAssembly targets, see [WASM Targets](/reference/wasm-targets/).
 
-Feature flags (`--feature http`, etc.) apply to both backends when compiling to native.
+Feature flags (`--feature http`, etc.) apply to the Rust backend when compiling to native; the Cranelift/LLVM paths support only pure Tish.

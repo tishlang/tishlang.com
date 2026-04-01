@@ -3,13 +3,14 @@ title: Examples
 description: Example Tish applications.
 ---
 
-Ready-to-deploy example applications live in the [tish repository](https://github.com/.../tish) under `examples/`.
+Ready-to-deploy example applications live in the [tish](https://github.com/tishlang/tish) repository under `examples/`.
 
 ## Available examples
 
 | Example | Description | Features |
 |---------|-------------|----------|
 | hello-world | Minimal app that logs and exits | None |
+| matmul | Dense matrix multiply: VM, Rust+runtime native, embedded-VM binary, JS, WASI | None |
 | modules-example | Import/export across files | None |
 | data-processing | Array sorting, splice, nested loops, filter/map/reduce for sales report | None |
 | wasmtime-modules | Multi-module WASI (main, math, greet) — each compiles to separate .wasm | None |
@@ -26,12 +27,14 @@ Ready-to-deploy example applications live in the [tish repository](https://githu
 
 ## Run locally
 
+From the [tish](https://github.com/tishlang/tish) repo:
+
 ```bash
-cd tish/examples/http-hello
-cargo run -p tishlang--features http -- run src/main.tish
+cd examples/http-hello
+cargo run -p tishlang --features http -- run src/main.tish
 ```
 
-Or compile:
+Or use the `tish` binary after install:
 
 ```bash
 tish compile src/main.tish -o server --feature http
@@ -42,4 +45,4 @@ For native modules (e.g. egui, Polars), add the package to `package.json` depend
 
 ## Deploy
 
-Use the zectre CLI from the example directory. See [Deploy Overview](/deploy/overview/).
+Use the zectre CLI from the example directory. See [Deploy overview](/deploy/overview/).

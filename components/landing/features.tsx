@@ -5,44 +5,41 @@ import { useInView } from "@/hooks/use-in-view"
 const sections = [
   {
     number: "01",
-    title: "ai compute",
-    subtitle: "models, inference, and agents at native speed",
+    title: "familiar syntax",
+    subtitle: "javascript/typescript feel, multiple compile targets",
     description:
-      "load onnx and safetensors models directly. built-in tensor operations, batched inference, and streaming pipelines. chain models into autonomous agents with tool calling and memory. all compiled to native machine code.",
+      "tish is a minimal js/ts-like language: let/const, arrow functions, async/await, template literals, and modules. the same source runs in an interpreter or compiles to native (rust or cranelift backend), wasm, or javascript — pick the target that fits.",
     capabilities: [
-      "native tensor operations with zero-copy memory",
-      "onnx and safetensors model loading out of the box",
-      "agent orchestration with built-in tool calling",
-      "batched inference with automatic parallelization",
-      "gpu acceleration via vulkan and metal backends",
+      "strict equality, no undefined — null and familiar typeof",
+      "import/export and native tish:* modules on the rust backend",
+      "optional type annotations (parsed; enforcement evolving)",
+      "secure-by-default: network, fs, and process behind feature flags",
     ],
   },
   {
     number: "02",
-    title: "data processing",
-    subtitle: "dataframes, streaming, and pipelines built in",
+    title: "batteries you actually have",
+    subtitle: "console, json, http, filesystem — not fictional std:*",
     description:
-      "native dataframe operations that compile to vectorized simd instructions. read csv, parquet, json, and arrow formats. stream gigabytes of data through typed pipelines with backpressure and fault tolerance. no pandas, no spark -- just your code.",
+      "use global console.log and json like node. pull in real modules: import from 'http' for fetch and serve, tish:fs for readFile/writeFile, tish:process for env and argv. for dataframes, the ecosystem provides tish:polars when the embedder registers it — not a fake std:data.",
     capabilities: [
-      "columnar dataframes with simd-accelerated operations",
-      "csv, parquet, json, and arrow format support",
-      "streaming pipelines with backpressure and batching",
-      "typed schemas with compile-time validation",
-      "parallel execution across all available cores",
+      "http: fetch, fetchAll, serve (with the http feature)",
+      "tish:fs: readFile, writeFile, readDir, mkdir (fs feature)",
+      "optional polars: import { Polars } from 'tish:polars' when available",
+      "same patterns as the examples in the tish repo",
     ],
   },
   {
     number: "03",
     title: "native compilation",
-    subtitle: "llvm backend, zero runtime overhead",
+    subtitle: "ship binaries, not a language runtime",
     description:
-      "tish compiles to native machine code via llvm. no vm, no jit warmup, no garbage collection pauses. the language gives you javascript/typescript ergonomics -- arrow functions, destructuring, async/await, generics -- with the performance characteristics of c++ or rust.",
+      "compile tish to a native executable for servers and cli tools, or to wasm for the browser and wasi, or to js for bundlers. no made-up tensor stack in the core language — you interop with rust and native crates where you need heavy numeric or ml work.",
     capabilities: [
-      "compiles to native via llvm for every major platform",
-      "ownership-based memory model with no gc pauses",
-      "zero-cost generics and trait-based polymorphism",
-      "sub-millisecond startup for cli and server workloads",
-      "cross-compile to linux, macos, and windows from any host",
+      "tish compile — native, wasm, wasi, or js targets",
+      "cranelift or rust codegen paths depending on backend",
+      "examples: http-hello, json-api, json-file-edit, async-await",
+      "deploy with zectre or run the binary anywhere",
     ],
   },
 ]
@@ -64,7 +61,6 @@ export function Features() {
             }}
           >
             <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-              {/* Left column */}
               <div>
                 <p className="text-xs text-primary">{section.number}</p>
                 <h2 className="mt-2 text-xl font-medium leading-tight text-foreground md:text-2xl">
@@ -78,7 +74,6 @@ export function Features() {
                 </p>
               </div>
 
-              {/* Right column - capabilities (bordered box, source-style) */}
               <div className="flex flex-col justify-end">
                 <div className="border border-border p-5 transition-colors duration-500 hover:border-primary/20">
                   <p className="mb-4 text-xs text-muted-foreground/60">

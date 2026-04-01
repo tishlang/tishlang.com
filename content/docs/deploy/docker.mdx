@@ -1,0 +1,52 @@
+---
+title: Docker on Zectre
+description: Deploy container images to the Zectre Platform.
+---
+
+Use this when your app is already packaged as a **Docker** (or Podman) image — any stack, not only Tish. The platform schedules it like a native Tish process: same routing, scaling, and environments.
+
+## Requirements
+
+- Image pushed to a registry the agents can pull (Docker Hub, GHCR, etc.).
+- At least one agent with **`container_enabled = true`** and access to a container socket. See the platform doc below for agent config.
+
+## Minimal `tish.yaml`
+
+```yaml
+name: my-service
+
+deploy:
+  process_type: docker
+  image: ghcr.io/your-org/my-service:latest
+  replicas: 1
+
+networking:
+  port: 8080
+  protocol: http
+```
+
+Set `deploy.image` to your real tag. For production promotion, use `zectre deploy --prod` when your workflow uses separate environments.
+
+## Commands
+
+From the project directory (linked with `zectre link`):
+
+```bash
+zectre deploy --wait
+```
+
+Override the image for one deploy:
+
+```bash
+zectre deploy --image ghcr.io/your-org/my-service:v2 --wait
+```
+
+You do **not** need the `tish` compiler on your machine for Docker deploys.
+
+## Example repo
+
+A minimal Node HTTP image plus `tish.yaml` lives in [tish-container-example](https://github.com/tishlang/tish-container-example).
+
+## Full reference
+
+Volumes, API payloads, and operator details: [Container deployments](https://github.com/tishlang/zectre-platform/blob/main/docs/CONTAINER_DEPLOYMENTS.md) in the zectre-platform repository.

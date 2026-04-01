@@ -2,12 +2,13 @@
 
 import { useInView } from "@/hooks/use-in-view"
 
+/** Illustrative only — same workload, not a certified benchmark suite. */
 const benchmarks = [
   { label: "tish", value: 100, time: "0.42s", highlight: true },
-  { label: "rust", value: 95, time: "0.44s", highlight: false },
-  { label: "c++", value: 92, time: "0.46s", highlight: false },
   { label: "go", value: 58, time: "0.72s", highlight: false },
-  { label: "node.js", value: 12, time: "3.51s", highlight: false },
+  { label: "deno", value: 24, time: "1.75s", highlight: false },
+  { label: "node.js", value: 22, time: "1.91s", highlight: false },
+  { label: "quickjs", value: 14, time: "3.0s", highlight: false },
   { label: "python", value: 3, time: "14.2s", highlight: false },
 ]
 
@@ -28,14 +29,15 @@ export function Benchmarks() {
         >
           {/* Left column */}
           <div>
-            <p className="text-xs text-primary">performance</p>
+            <p className="text-xs text-primary">sample workload</p>
             <h2 className="mt-2 text-xl font-medium leading-tight text-foreground md:text-2xl">
-              performance that speaks for itself
+              1024×1024 matrix multiply (illustrative)
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              matrix multiplication benchmark (1024x1024, f32). tish compiles
-              to the same llvm ir as rust and c++, delivering native throughput
-              with higher-level syntax. lower is better.
+              Directional comparison only. Today’s Tish native targets still use a dynamic
+              value model or embedded VM — not yet lowered to flat numeric kernels — while
+              Deno, Node, and QuickJS JIT similar loops aggressively. Bars are not an
+              audited benchmark suite; see the language repo for native-codegen status.
             </p>
           </div>
 

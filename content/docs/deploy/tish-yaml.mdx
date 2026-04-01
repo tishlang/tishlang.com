@@ -1,0 +1,126 @@
+---
+title: tish.yaml
+description: Deployment and project configuration for Zectre (`tish.yaml`).
+---
+
+Zectre reads **`tish.yaml`** in the project root for deploy settings (and for Tish build settings when `package.json` does not define them). The CLI binary is `zectre`; only `zectre dev` / `zectre build` invoke the **`tish`** compiler for the native Tish runtime.
+
+## Example (native Tish)
+
+```yaml
+name: my-app
+
+deploy:
+  replicas: 1
+  strategy: rolling
+  process_type: tish
+  env:
+    LOG_LEVEL: info
+
+resources:
+  cpu: 100m
+  memory: 128Mi
+
+networking:
+  port: 3000
+  protocol: http
+  health_check:
+    path: /health
+    interval: 10s
+    timeout: 5s
+```
+
+## Example (Docker)
+
+```yaml
+name: my-container-app
+
+deploy:
+  process_type: docker
+  image: ghcr.io/org/app:latest
+  replicas: 1
+
+networking:
+  port: 8080
+  protocol: http
+```
+
+## Top-level keys
+
+| Key | Description |
+|-----|-------------|
+| `name` | Application name |
+| `namespace` | Optional namespace string |
+| `build` | Tish entry + features (used only if `package.json` has no `tish` section) |
+| `deploy` | Deployment spec |
+| `resources` | CPU / memory limits |
+| `networking` | Port, protocol, optional health check |
+
+## deploy
+
+| Key | Description | Default |
+|-----|-------------|---------|
+| `replicas` | Instance count | `1` |
+| `strategy` | Deployment strategy | `rolling` |
+| `process_type` | `tish` (native binary) or `docker` | `tish` |
+| `image` | Container image ref (required when `process_type` is `docker`) | — |
+| `env` | Environment variables merged with app-level vars from the CLI/API | — |
+| `max_runtime_secs` | Task max runtime (seconds); effective value is capped by the platform | — |
+| `volumes` | For Docker: bind mounts `[{ host_path, container_path }]` | — |
+
+## resources
+
+| Key | Description |
+|-----|-------------|
+| `cpu` | CPU limit (e.g. `100m`) |
+| `memory` | Memory limit (e.g. `128Mi`) |
+
+## networking
+
+| Key | Description |
+|-----|-------------|
+| `port` | Port the proxy should target |
+| `protocol` | e.g. `http`, `tcp`, `grpc` |
+| `health_check.path` | Health check path (parsed locally; platform support may vary) |
+| `health_check.interval` | Interval string (e.g. `10s`) |
+| `health_check.timeout` | Timeout string |
+
+## Build config: `package.json` vs `tish.yaml`
+
+**Precedence:** If `package.json` includes a **`tish`** section (`source`, `features`), that is used for local `zectre build` / `zectre dev` and platform builds. Otherwise Zectre uses the **`build`** block in `tish.yaml`.
+
+`package.json` example:
+
+```json
+{
+  "name": "my-app",
+  "version": "1.0.0",
+  "tish": {
+    "source": "./src/main.tish",
+    "features": ["http", "process"]
+  }
+}
+```
+
+YAML `build` when there is no `tish` key in `package.json`:
+
+```yaml
+build:
+  source: ./src/main.tish
+  features:
+    - http
+    - fs
+```
+
+Feature names align with Tish capabilities (`http`, `fs`, `process`, `regex`, `polars`, etc.). Extra features may be inferred from `tish-*` dependencies in `package.json`.
+
+## Project layout
+
+```
+my-app/
+├── package.json     # optional: name, version, tish.source, tish.features
+├── tish.yaml        # deploy (+ optional build)
+├── README.md
+└── src/
+    └── main.tish
+```

@@ -11,7 +11,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: 'Tish - Native Performance, Familiar Syntax',
-  description: 'A JavaScript/TypeScript-like language that compiles to native code with built-in AI and data processing modules.',
+  description:
+    'A JavaScript/TypeScript-like language: interpreter, native (Rust or Cranelift), WebAssembly, or JS. Feature-gated HTTP, filesystem, and process APIs; optional Polars via tish:polars when embedded.',
 }
 
 export const viewport: Viewport = {
