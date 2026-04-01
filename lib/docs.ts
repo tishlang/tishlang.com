@@ -27,6 +27,8 @@ export interface DocMeta {
 export interface Doc {
   meta: DocMeta;
   content: string;
+  /** Path from repo root, e.g. `content/docs/getting-started/installation.mdx` */
+  sourcePath: string;
 }
 
 const docsSidebar = [
@@ -101,6 +103,7 @@ export async function getDocBySlug(slug: string): Promise<Doc | null> {
       const { data, content } = matter(raw);
       const actualSlug = getSlugFromPath(fullPath);
       const slugSegments = actualSlug ? actualSlug.split("/") : [];
+      const sourcePath = path.posix.join("content/docs", rel.split(path.sep).join("/"));
 
       return {
         meta: {
@@ -112,6 +115,7 @@ export async function getDocBySlug(slug: string): Promise<Doc | null> {
           hero: data.hero,
         },
         content,
+        sourcePath,
       };
     }
   }

@@ -10,6 +10,8 @@ import { getDocBySlug, getDocPaths, getPrevNext } from "@/lib/docs";
 import { mdxComponents } from "@/components/docs/mdx-components";
 import { TableOfContents } from "@/components/docs/table-of-contents";
 import { PrevNext } from "@/components/docs/prev-next";
+import { DocDescription } from "@/components/docs/doc-description";
+import { ImproveDocLink } from "@/components/docs/improve-doc-link";
 
 export async function generateStaticParams() {
   const paths = await getDocPaths();
@@ -94,9 +96,7 @@ export default async function DocsPage({
       {!isSplash && (
         <header className="mb-6">
           <h1 className="text-2xl font-semibold sm:text-3xl">{doc.meta.title}</h1>
-          {doc.meta.description && (
-            <p className="mt-1 text-muted-foreground">{doc.meta.description}</p>
-          )}
+          {doc.meta.description && <DocDescription>{doc.meta.description}</DocDescription>}
         </header>
       )}
 
@@ -118,6 +118,7 @@ export default async function DocsPage({
             {content}
           </div>
           <PrevNext prev={prev} next={next} />
+          <ImproveDocLink sourcePath={doc.sourcePath} showTopRule={!prev && !next} />
         </div>
         <TableOfContents />
       </div>
