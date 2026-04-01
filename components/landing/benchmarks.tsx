@@ -2,14 +2,21 @@
 
 import { useInView } from "@/hooks/use-in-view"
 
-/** Illustrative only — same workload, not a certified benchmark suite. */
+/**
+ * Tish native (Rust, release build), Node, Bun, Deno, QuickJS: measured averages from
+ * the Tish core test suite (tish/docs/perf.md, latest release run, 47 tests, TOTAL ÷ 47).
+ *   rust=576ms  bun=669ms  quickjs=579ms  deno=1218ms  node=1412ms  (47-test totals)
+ * Go and Python (~): indicative from public benchmarks (benchmarks game, pyperformance).
+ * Bar = relative throughput. Higher = faster. Ceiling: Go ~10ms avg.
+ */
 const benchmarks = [
-  { label: "tish", value: 100, time: "0.42s", highlight: true },
-  { label: "go", value: 58, time: "0.72s", highlight: false },
-  { label: "deno", value: 24, time: "1.75s", highlight: false },
-  { label: "node.js", value: 22, time: "1.91s", highlight: false },
-  { label: "quickjs", value: 14, time: "3.0s", highlight: false },
-  { label: "python", value: 3, time: "14.2s", highlight: false },
+  { label: "go",      value: 100, time: "~10ms",  highlight: false, estimated: true  },
+  { label: "tish",    value: 81,  time: "12ms",   highlight: true,  estimated: false },
+  { label: "quickjs", value: 81,  time: "12ms",   highlight: false, estimated: false },
+  { label: "bun",     value: 70,  time: "14ms",   highlight: false, estimated: false },
+  { label: "deno",    value: 39,  time: "26ms",   highlight: false, estimated: false },
+  { label: "node.js", value: 33,  time: "30ms",   highlight: false, estimated: false },
+  { label: "python",  value: 2,   time: "~600ms", highlight: false, estimated: true  },
 ]
 
 export function Benchmarks() {
@@ -29,15 +36,16 @@ export function Benchmarks() {
         >
           {/* Left column */}
           <div>
-            <p className="text-xs text-primary">sample workload</p>
+            <p className="text-xs text-primary">core language suite · avg per test</p>
             <h2 className="mt-2 text-xl font-medium leading-tight text-foreground md:text-2xl">
-              1024×1024 matrix multiply (illustrative)
+              faster is better
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Directional comparison only. Today’s Tish native targets still use a dynamic
-              value model or embedded VM — not yet lowered to flat numeric kernels — while
-              Deno, Node, and QuickJS JIT similar loops aggressively. Bars are not an
-              audited benchmark suite; see the language repo for native-codegen status.
+              Average execution time across 47 core language tests — arrays, objects,
+              math, strings, and control flow. Tish native (Rust release), Node, Bun,
+              Deno, and QuickJS are measured on identical workloads from the Tish test
+              suite. Go and Python (~) are reference points from public benchmarks
+              (benchmarks game, pyperformance). Higher bar = faster.
             </p>
           </div>
 
@@ -49,30 +57,47 @@ export function Benchmarks() {
                   className={`w-20 text-right text-xs ${
                     bench.highlight
                       ? "text-primary"
-                      : "text-muted-foreground"
+                      : bench.estimated
+                        ? "text-muted-foreground/50"
+                        : "text-muted-foreground"
                   }`}
                 >
                   {bench.label}
                 </span>
-                <div className="flex-1">
-                  <div className="h-6 w-full rounded-sm bg-secondary">
-                    <div
-                      className={`flex h-full items-center rounded-sm px-3 ${
-                        bench.highlight ? "bg-primary" : "bg-muted-foreground/15"
-                      }`}
-                      style={{ width: `${bench.value}%` }}
-                    >
-                      <span
-                        className={`text-xs ${
+                <div className="flex flex-1 items-center gap-2">
+                  <div className="flex-1">
+                    <div className="h-6 w-full rounded-sm bg-secondary">
+                      <div
+                        className={`flex h-full min-w-1 items-center rounded-sm ${
+                          bench.value >= 15 ? "px-3" : ""
+                        } ${
                           bench.highlight
-                            ? "text-primary-foreground"
-                            : "text-muted-foreground"
+                            ? "bg-primary"
+                            : bench.estimated
+                              ? "bg-muted-foreground/10"
+                              : "bg-muted-foreground/15"
                         }`}
+                        style={{ width: `${bench.value}%` }}
                       >
-                        {bench.time}
-                      </span>
+                        {bench.value >= 15 && (
+                          <span
+                            className={`text-xs ${
+                              bench.highlight
+                                ? "text-primary-foreground"
+                                : "text-muted-foreground"
+                            }`}
+                          >
+                            {bench.time}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
+                  {bench.value < 15 && (
+                    <span className="w-16 text-xs text-muted-foreground/50">
+                      {bench.time}
+                    </span>
+                  )}
                 </div>
               </div>
             ))}

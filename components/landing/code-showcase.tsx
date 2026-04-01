@@ -263,7 +263,7 @@ export function CodeShowcase() {
   const active = tabs[activeTab]
 
   return (
-    <section className="py-20 lg:py-28">
+    <section className="">
       <div className="mx-auto max-w-5xl px-6">
         <div
           ref={ref}

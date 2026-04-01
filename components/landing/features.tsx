@@ -18,8 +18,8 @@ const sections = [
   },
   {
     number: "02",
-    title: "batteries you actually have",
-    subtitle: "console, json, http, filesystem — not fictional std:*",
+    title: "rechargeable batteries",
+    subtitle: "the features and functionality you keep coming back for",
     description:
       "use global console.log and json like node. pull in real modules: import from 'http' for fetch and serve, tish:fs for readFile/writeFile, tish:process for env and argv. for dataframes, the ecosystem provides tish:polars when the embedder registers it — not a fake std:data.",
     capabilities: [
@@ -32,7 +32,7 @@ const sections = [
   {
     number: "03",
     title: "native compilation",
-    subtitle: "ship binaries, not a language runtime",
+    subtitle: "more metal, more native, more blazingly fast",
     description:
       "compile tish to a native executable for servers and cli tools, or to wasm for the browser and wasi, or to js for bundlers. no made-up tensor stack in the core language — you interop with rust and native crates where you need heavy numeric or ml work.",
     capabilities: [

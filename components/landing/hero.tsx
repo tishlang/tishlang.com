@@ -116,7 +116,7 @@ export function Hero() {
         </div>
 
         {/* Terminal block with typewriter — real Tish: http + console */}
-        <div
+        {/* <div
           ref={termRef}
           className="animate-fade-in-up mt-16 border border-border transition-colors hover:border-primary/20"
           style={{ animationDelay: "400ms", opacity: 0 }}
@@ -152,7 +152,7 @@ export function Hero() {
               style={{ opacity: visibleLines >= codeLines.length ? 1 : 0 }}
             />
           </div>
-        </div>
+        </div> */}
       </div>
     </section>
   )
