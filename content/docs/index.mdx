@@ -20,6 +20,9 @@ hero:
 # Run with interpreter
 tish run src/main.tish
 
+# Run piped source (stdin), like node - / bun
+echo 'console.log("hi")' | tish
+
 # Compile to native binary
 tish compile src/main.tish -o app
 ./app

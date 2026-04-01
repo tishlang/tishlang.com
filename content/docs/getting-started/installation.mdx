@@ -43,6 +43,28 @@ npx @tishlang/tish run hello.tish
 npx @tishlang/tish compile hello.tish -o hello
 ```
 
+## Run from stdin (piped input)
+
+Same idea as **`node -`** or piping to **`bun`**: you can execute Tish source from stdin.
+
+- **`echo '…' | tish`** — If stdin is **not** a TTY (piped or redirected), read the whole program and run it once (default VM backend).
+- **`echo '…' | tish -`** — Same; `-` is handled before the normal CLI parser (so it is not mistaken for a subcommand).
+- **`echo '…' | tish run -`** — Explicit stdin; **empty stdin** is an error.
+- **`tish`** with no args in an **interactive** terminal — Starts the [REPL](/getting-started/repl/), not stdin execution.
+
+Relative **`import`** paths from stdin are resolved from the **current working directory**, like a file in that folder.
+
+```bash
+echo "console.log('what')" | tish
+echo "console.log('the')" | tish -
+echo "console.log('tish')" | tish run -
+
+npx @tishlang/tish run -
+# pipe or heredoc into the same patterns with npx
+```
+
+Use **`tish run --backend interp -`** (or the same with **`npx @tishlang/tish`**) when you want the interpreter instead of the VM.
+
 ## Scaffold a new app:
 
 ```bash

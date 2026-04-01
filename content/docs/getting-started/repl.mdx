@@ -5,11 +5,13 @@ description: Use the Tish REPL with multi-line input, tab completion, history, a
 
 ## Starting the REPL
 
-With no arguments, Tish starts the interactive REPL (VM backend by default):
+With no arguments, Tish starts the interactive REPL (VM backend by default) **when stdin is a terminal**:
 
 ```bash
 tish
 ```
+
+If stdin is **not** a TTY (for example you **pipe** or **redirect** input), `tish` with no subcommand runs the piped content as a **single script** instead of opening the REPL—similar to **`bun`** with a pipe. For an explicit stdin entry point you can also use **`tish run -`** or **`tish -`**. Details: [Installation — Run from stdin](/getting-started/installation/).
 
 Or explicitly:
 

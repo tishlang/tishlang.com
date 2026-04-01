@@ -73,7 +73,7 @@ export function Hero() {
     <section className="py-24 lg:py-32">
       <div className="mx-auto max-w-5xl px-6">
         <p className="animate-fade-in-up text-xs text-primary" style={{ animationDelay: "0ms" }}>
-          experimental. dont use me yet.
+          v1.1.3 - GPU + MLX
         </p>
 
         <h1
@@ -82,16 +82,16 @@ export function Hero() {
         >
           the native language
           <br />
-          for ai & data
+          for awesomeness
         </h1>
 
         <p
           className="animate-fade-in-up mt-4 max-w-lg text-sm leading-relaxed text-muted-foreground"
           style={{ animationDelay: "160ms", opacity: 0 }}
         >
-          write familiar javascript/typescript syntax, compile to
-          native binaries, and ship ai inference and data pipelines
-          at any scale. zero runtime overhead.
+          write familiar javascript syntax, compile to
+          native binaries, and ship ai inference &amp; data pipelines
+          at any scale. tools, bare metal &amp; zero cost abstractions that just work.
         </p>
 
         <div

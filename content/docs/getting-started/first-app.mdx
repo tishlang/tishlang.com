@@ -23,7 +23,19 @@ tish run main.tish
 
 Output: `Hello, World!`
 
-To try code interactively with multi-line input, tab completion, and history, use the [Interactive REPL](/getting-started/repl/): run `tish` with no arguments.
+To try code interactively with multi-line input, tab completion, and history, use the [Interactive REPL](/getting-started/repl/): run `tish` with no arguments **in a normal terminal** (stdin is a TTY).
+
+## Run from stdin
+
+You can pipe a program instead of using a file (like **`node -`** or **`bun`** with a pipe):
+
+```bash
+echo 'console.log(greet("World"))' | tish
+echo 'console.log(1)' | tish run -
+echo 'console.log(1)' | tish -
+```
+
+When stdin is **not** a terminal, bare **`tish`** reads the full script from stdin and runs it once. See [Installation](/getting-started/installation/) for the full table of variants.
 
 ## Compile to native binary
 
