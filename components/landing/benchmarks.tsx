@@ -13,7 +13,7 @@ const benchmarks = [
 
   { label: "tish",    value: 100,  time: "12ms",   highlight: true,  estimated: false },
   { label: "go",      value: 90, time: "~12ms",  highlight: false, estimated: true  },
-  { label: "quickjs", value: 81,  time: "12ms",   highlight: false, estimated: false },
+  { label: "quickjs", value: 81,  time: "13ms",   highlight: false, estimated: false },
   { label: "bun",     value: 70,  time: "14ms",   highlight: false, estimated: false },
   { label: "deno",    value: 39,  time: "26ms",   highlight: false, estimated: false },
   { label: "node.js", value: 33,  time: "30ms",   highlight: false, estimated: false },
