@@ -5,22 +5,15 @@ const sections = {
     { name: "documentation", href: "/docs" },
     { name: "playground", href: "https://tish.sh" },
     { name: "changelog", href: "https://github.com/tishlang/tish/releases" },
-    { name: "roadmap", href: "https://github.com/tishlang/tish/milestones" },
-  ],
-  community: [
-    { name: "github", href: "https://github.com/tishlang/tish" },
-    { name: "discord", href: "#" },
-    { name: "twitter", href: "#" },
-    { name: "forum", href: "#" },
   ],
   resources: [
-    { name: "blog", href: "#" },
+    { name: "github", href: "https://github.com/tishlang/tish" },
+
     {
       name: "examples",
       href: "https://github.com/tishlang/tish/tree/main/examples",
     },
     { name: "benchmarks", href: "/#benchmarks" },
-    { name: "faq", href: "/docs" },
   ],
 } as const
 
@@ -38,6 +31,8 @@ export function Footer() {
               a compiled language for the ai era. native performance
               with the syntax you already know.
             </p>
+          </div>
+          <div className="col-span-2 md:col-span-1">
           </div>
 
           {Object.entries(sections).map(([title, links]) => (
@@ -68,7 +63,8 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 md:flex-row">
           <p className="text-xs text-muted-foreground">
-            Tish is free and open source under the PIF license.
+            Tish is free and open source under the <a href="https://github.com/piffoundation/payitforward" target="_blank" rel="noopener noreferrer">Pay It Forward</a> license.
+            &copy; 2026 Tish. 
           </p>
         </div>
       </div>

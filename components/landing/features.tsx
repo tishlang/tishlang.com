@@ -6,6 +6,7 @@ const sections = [
   {
     number: "01",
     title: "opinionated syntax",
+    capabilitiesHeader: "// you dont have to rewrite everything in rust",
     subtitle: "javascript/typescript feel, multiple compile targets",
     description:
       "tish is a hardened js/ts-like surface: let/const, arrow functions, async/await, template literals, and modules. one source tree runs in a tree-walking interpreter or bytecode vm, transpiles to javascript, or ships as wasm/wasi or a native binary — pick the backend and target that fit your deploy story.",
@@ -19,6 +20,7 @@ const sections = [
   {
     number: "02",
     title: "rechargeable batteries",
+    capabilitiesHeader: "// js with rust batteries",
     subtitle: "the features and functionality you keep coming back for",
     description:
       "javascript- and node-shaped builtins out of the box: console, math, json, arrays, strings, promises when http is enabled. on the rust backend, pull in vetted native surface area — fetch, serve, filesystem, process env — without hand-rolled c ffi; extend the host with rust modules the compiler understands.",
@@ -32,6 +34,7 @@ const sections = [
   {
     number: "03",
     title: "native compilation",
+    capabilitiesHeader: "// cloud & embedded",
     subtitle: "more metal, more native, more blazingly fast",
     description:
       "`tish build` turns the same program into a standalone native binary, browser wasm, wasi for wasmtime-style runtimes, or plain javascript for any js engine. the default rust backend emits rust that links `tishlang_runtime` and can load `tish:*` modules; cranelift and llvm paths embed bytecode and run the vm inside a small native shell — ideal when you want a quick compile with no cargo in the loop.",
@@ -45,6 +48,7 @@ const sections = [
   {
     number: "04",
     title: "ecosystem synergy",
+    capabilitiesHeader: "// write less, ship more",
     subtitle: "cargo, npm, bun, deno, brew",
     description:
       "install the cli from homebrew or run it ad hoc with npx. compile from source with cargo when you are hacking the compiler. emit javascript and drop the output beside existing npm, bun, or deno projects. editor support ships as fmt, lint, and an lsp that editors can wire up — including the tish vscode extension.",
@@ -90,7 +94,7 @@ export function Features() {
               <div className="flex flex-col justify-end">
                 <div className="border border-border p-5 transition-colors duration-500 hover:border-primary/20">
                   <p className="mb-4 text-xs text-muted-foreground/60">
-                    {"// capabilities"}
+                    {section.capabilitiesHeader}
                   </p>
                   <ul className="flex flex-col gap-3">
                     {section.capabilities.map((cap) => (
