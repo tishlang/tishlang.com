@@ -74,7 +74,7 @@ export function Hero() {
       <div className="mx-auto max-w-5xl px-6">
         <p className="animate-fade-in-up text-xs text-primary" style={{ animationDelay: "0ms" }}>
           {/* UPDATE HEADER */}
-          <a href="https://github.com/tishlang/tish/releases/tag/v1.3.4">v1.1.3 - GPU + MLX</a>
+          <a href="https://github.com/tishlang/tish/releases/tag/v1.3.4">v1.3.4 - GPU + MLX</a>
         </p>
 
         <h1
