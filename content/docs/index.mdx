@@ -5,7 +5,7 @@ template: splash
 hero:
   tagline: A minimal, TS/JS-compatible language designed for both interpretation and native compilation. Same source runs identically in either backend.
   actions:
-    - text: Get Started
+    - text: Installation
       link: /getting-started/installation/
       icon: right-arrow
       variant: primary
@@ -17,24 +17,28 @@ hero:
 ## Quick Start
 
 ```bash
+# Install and run
+brew install tish
+
 # Run with interpreter
-tish run src/main.tish
+echo 'console.log("sup")' > sup.tish
+tish run sup.tish
 
-# Run piped source (stdin), like node - / bun
-echo 'console.log("hi")' | tish
+# Or run piped source (stdin)
+echo 'console.log("sup")' | tish
 
-# Compile to native binary
-tish build src/main.tish -o app
-./app
+# Or compile to native binary
+tish build sup.tish -o sup
+./sup
 ```
 
 ## What is Tish?
 
-Tish is a minimal language built in Rust that:
+Tish is a scalable language built in Rust that:
 - **Looks like JavaScript** — familiar syntax with `let`, `const`, `fn`, arrows, template literals
 - **Runs two ways** — interpret for fast iteration, compile to native for production
 - **Is secure by default** — network, filesystem, and process APIs are feature-gated
-- **Has no `undefined`** — uses `null` only; strict equality (`===`/`!==`) only
+- **Has no `undefined`** — uses `null` only; strict equality, memory safety
 
 ## Documentation
 
@@ -50,4 +54,4 @@ Tish is a minimal language built in Rust that:
 | [Tish vs JavaScript](/language/vs-javascript/) | Differences and additions from JS |
 | [Builtins](/builtins/overview/) | Console, Math, JSON, Array, String, Object |
 | [Features](/features/http/) | `http`, `fs`, `process`, `regex` — feature-gated APIs |
-| [Deploy](/deploy/overview/) | zectre and Zectre Platform |
+| [Deploy](/deploy/overview/) | zectre |

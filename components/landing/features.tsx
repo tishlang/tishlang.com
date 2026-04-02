@@ -8,12 +8,12 @@ const sections = [
     title: "opinionated syntax",
     subtitle: "javascript/typescript feel, multiple compile targets",
     description:
-      "tish is a minimal js/ts-like language: let/const, arrow functions, async/await, template literals, and modules. the same source runs in an interpreter or compiles to native (rust or cranelift backend), wasm, or javascript — pick the target that fits.",
+      "tish is a hardened js/ts-like surface: let/const, arrow functions, async/await, template literals, and modules. one source tree runs in a tree-walking interpreter or bytecode vm, transpiles to javascript, or ships as wasm/wasi or a native binary — pick the backend and target that fit your deploy story.",
     capabilities: [
-      "strict equality, no undefined — null and familiar typeof",
-      "import/export and native tish:* modules on the rust backend",
-      "optional type annotations (parsed; enforcement evolving)",
-      "secure-by-default: network, fs, and process behind feature flags",
+      "strict equality only; no undefined — null or a real value",
+      "native modules on the rust backend: tish:http, tish:fs, tish:process, and more",
+      "optional type syntax parsed at compile time (checked types and codegen still evolving)",
+      "secure-by-default: http, fs, process, and regex behind explicit feature flags",
     ],
   },
   {
@@ -21,12 +21,12 @@ const sections = [
     title: "rechargeable batteries",
     subtitle: "the features and functionality you keep coming back for",
     description:
-      "use global console.log and json like node. pull in real modules: import from 'http' for fetch and serve, tish:fs for readFile/writeFile, tish:process for env and argv. for dataframes, the ecosystem provides tish:polars when the embedder registers it — not a fake std:data.",
+      "javascript- and node-shaped builtins out of the box: console, math, json, arrays, strings, promises when http is enabled. on the rust backend, pull in vetted native surface area — fetch, serve, filesystem, process env — without hand-rolled c ffi; extend the host with rust modules the compiler understands.",
     capabilities: [
-      "http: fetch, fetchAll, serve (with the http feature)",
-      "tish:fs: readFile, writeFile, readDir, mkdir (fs feature)",
-      "optional polars: import { Polars } from 'tish:polars' when available",
-      "same patterns as the examples in the tish repo",
+      "http feature: fetch, fetchAll, serve, timers; tish:ws for websocket clients/servers when enabled",
+      "fs feature: readFile, writeFile, readDir, mkdir for local io",
+      "optional polars: import { Polars } from 'tish:polars' when the embedder registers it",
+      "examples and tests in the tish repo mirror what the toolchain actually supports",
     ],
   },
   {
@@ -34,26 +34,25 @@ const sections = [
     title: "native compilation",
     subtitle: "more metal, more native, more blazingly fast",
     description:
-      "compile tish to a native executable for servers and cli tools, or to wasm for the browser and wasi, or to js for bundlers. no made-up tensor stack in the core language — you interop with rust and native crates where you need heavy numeric or ml work.",
+      "`tish build` turns the same program into a standalone native binary, browser wasm, wasi for wasmtime-style runtimes, or plain javascript for any js engine. the default rust backend emits rust that links `tishlang_runtime` and can load `tish:*` modules; cranelift and llvm paths embed bytecode and run the vm inside a small native shell — ideal when you want a quick compile with no cargo in the loop.",
     capabilities: [
-      "tish build — native, wasm, wasi, or js targets",
-      "cranelift or rust codegen paths depending on backend",
-      "zero config, zero runtime, hardened dependencies",
-      "first class support from zectre deploy",
+      "tish build — native (rust, cranelift, or llvm), wasm, wasi, or js",
+      "rust backend: full interop with native tish modules; cranelift/llvm: pure tish, vm-class throughput today",
+      "standalone binaries: ship without asking users to install the tish toolchain",
+      "deploy to the zectre platform with the same artifacts you build locally",
     ],
   },
-  ,
   {
     number: "04",
     title: "ecosystem synergy",
     subtitle: "cargo, npm, bun, deno, brew",
     description:
-      "compile tish to a native executable for servers and cli tools, or to wasm for the browser and wasi, or to js for bundlers. no made-up tensor stack in the core language — you interop with rust and native crates where you need heavy numeric or ml work.",
+      "install the cli from homebrew or run it ad hoc with npx. compile from source with cargo when you are hacking the compiler. emit javascript and drop the output beside existing npm, bun, or deno projects. editor support ships as fmt, lint, and an lsp that editors can wire up — including the tish vscode extension.",
     capabilities: [
-      "tish build — native, wasm, wasi, or js targets",
-      "cranelift or rust codegen paths depending on backend",
-      "zero config, zero runtime, hardened dependencies",
-      "first class support from zectre deploy",
+      "brew tap tishlang/tish and brew install tish on macos and linux",
+      "npx @tishlang/tish run or build without a global install; create-tish-app for scaffolds",
+      "tish build --target js for bundlers and runtimes that already speak javascript",
+      "tish-fmt, tish-lint, tish-lsp, and crates published to crates.io for deeper integration",
     ],
   },
 ]
@@ -62,7 +61,7 @@ export function Features() {
   const { ref, inView } = useInView()
 
   return (
-    <section id="features" className="py-20 lg:py-28">
+    <section id="features" className="border-b border-border pb-20 py-6 lg:py-6">
       <div ref={ref} className="mx-auto max-w-5xl px-6">
         {sections.map((section, i) => (
           <div

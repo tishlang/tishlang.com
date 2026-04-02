@@ -6,9 +6,9 @@ import { useInView } from "@/hooks/use-in-view"
 
 const tabs = [
   {
-    label: "hello.tish",
-    code: `// Core builtins — same as tish/examples/hello-world
-let name = "world"
+    label: "cli.tish",
+    code: `// Core builtins — same as tish/examples/hello-universe
+let name = "universe"
 console.log(\`hello, \${name}!\`)
 
 const numbers = [1, 2, 3, 4, 5]
@@ -40,15 +40,75 @@ fn handle(req) {
 serve(3000, handle)`,
   },
   {
-    label: "config.tish",
-    code: `// Filesystem — same as tish/examples/json-file-edit
-import { readFile, writeFile } from 'tish:fs'
+    label: "matmul.tish",
+    code: `// Matrix multiply — same as tish/examples/matmul
+import { matmul, device_name } from 'tish:metal'
 
-let path = "config.json"
-let data = JSON.parse(readFile(path))
-data.version = data.version + 1
-writeFile(path, JSON.stringify(data))
-console.log("updated version to", data.version)`,
+console.log("=== Metal GPU matmul (f32, tiled MSL compute) ===")
+console.log("device:", device_name())
+
+fn bench(N: number) {
+  let len: number = N * N
+  let a: number[] = []
+  let b: number[] = []
+  for (let i: number = 0; i < len; i++) {
+    a.push((i % 997) / 997)
+    b.push((i % 991) / 991)
+  }
+
+  matmul(a, b, N, N, N)
+
+  let t0: number = Date.now()
+  let c = matmul(a, b, N, N, N)
+  let t1: number = Date.now()
+
+  let check = c[0] + c[N - 1] + c[(N - 1) * N] + c[len - 1]
+  console.log(\`metal  \${N}x\${N}  ms=\${t1 - t0}  check=\${check}\`)
+}`,
+  },
+  {
+    label: "stream-proxy.tish",
+    code: `// Third-party LLM streaming → WebSocket text frames (http + ws + process)
+import { fetch } from 'http'
+import { Server } from 'tish:ws'
+
+async fn streamToSocket(socket, res) {
+  let reader = res.body.getReader()
+  let part = await reader.read()
+  while (!part.done) {
+    let buf = part.value
+    let text = ""
+    for (let j = 0; j < buf.length; j++) {
+      text = text + String.fromCharCode(buf[j])
+    }
+    socket.send(text)
+    part = await reader.read()
+  }
+}
+
+async fn handleClient(socket) {
+  let ev = socket.receive()
+  let input = JSON.parse(ev.data)
+  let res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + process.env.OPENAI_API_KEY,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      stream: true,
+      messages: [{ role: "user", content: input.prompt }]
+    })
+  })
+  await streamToSocket(socket, res)
+  socket.close()
+}
+
+let wss = new Server({ port: 3001 })
+wss.on("connection", handleClient)
+wss.listen()
+console.log("WebSocket AI proxy on ws://localhost:3001")`,
   },
 ]
 
@@ -97,7 +157,7 @@ function findLineCommentStart(line: string): number {
 }
 
 const KEYWORD_RE =
-  /^(import|from|fn|const|let|async|return|if|else|for|await|true|false|null)\b/
+  /^(import|from|fn|const|let|async|return|if|else|for|while|await|new|true|false|null)\b/
 const TYPE_RE = /^(string|number|boolean|void)\b/
 
 /**
@@ -263,7 +323,7 @@ export function CodeShowcase() {
   const active = tabs[activeTab]
 
   return (
-    <section className="">
+    <section className="border-b border-border pb-20">
       <div className="mx-auto max-w-5xl px-6">
         <div
           ref={ref}
@@ -305,14 +365,14 @@ export function CodeShowcase() {
             <code className="block text-foreground">{highlightCode(active.code)}</code>
           </div>
         </div>
-        <p className="mt-4 text-center text-xs text-muted-foreground">
+        <p className="mt-4 text-xs text-muted-foreground">
           <a
             href="https://github.com/tishlang/tish/tree/main/examples"
             className="underline decoration-muted-foreground/40 underline-offset-2 hover:text-foreground"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Examples in the tish repo
+            More examples
           </a>
         </p>
       </div>

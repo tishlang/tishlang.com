@@ -1,10 +1,28 @@
 import Link from "next/link"
 
-const links = {
-  product: ["documentation", "playground", "changelog", "roadmap"],
-  community: ["github", "discord", "twitter", "forum"],
-  resources: ["blog", "examples", "benchmarks", "faq"],
-}
+const sections = {
+  product: [
+    { name: "documentation", href: "/docs" },
+    { name: "playground", href: "https://tish.sh" },
+    { name: "changelog", href: "https://github.com/tishlang/tish/releases" },
+    { name: "roadmap", href: "https://github.com/tishlang/tish/milestones" },
+  ],
+  community: [
+    { name: "github", href: "https://github.com/tishlang/tish" },
+    { name: "discord", href: "#" },
+    { name: "twitter", href: "#" },
+    { name: "forum", href: "#" },
+  ],
+  resources: [
+    { name: "blog", href: "#" },
+    {
+      name: "examples",
+      href: "https://github.com/tishlang/tish/tree/main/examples",
+    },
+    { name: "benchmarks", href: "/#benchmarks" },
+    { name: "faq", href: "/docs" },
+  ],
+} as const
 
 export function Footer() {
   return (
@@ -22,20 +40,27 @@ export function Footer() {
             </p>
           </div>
 
-          {Object.entries(links).map(([title, items]) => (
+          {Object.entries(sections).map(([title, links]) => (
             <div key={title}>
-              <h3 className="text-xs font-medium text-muted-foreground">{title}</h3>
+              <h3 className="text-xs font-bold text-primary">{title}</h3>
               <ul className="mt-3 flex flex-col gap-2">
-                {items.map((item) => (
-                  <li key={item}>
-                    <Link
-                      href="#"
-                      className="text-xs text-muted-foreground transition-colors hover:text-foreground"
-                    >
-                      {item}
-                    </Link>
-                  </li>
-                ))}
+                {links.map((link) => {
+                  const external = link.href.startsWith("http")
+                  return (
+                    <li key={link.name}>
+                      <Link
+                        href={link.href}
+                        {...(external && {
+                          target: "_blank",
+                          rel: "noopener noreferrer",
+                        })}
+                        className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  )
+                })}
               </ul>
             </div>
           ))}
@@ -43,7 +68,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 md:flex-row">
           <p className="text-xs text-muted-foreground">
-            Tish is open source under the PIF license.
+            Tish is free and open source under the PIF license.
           </p>
         </div>
       </div>

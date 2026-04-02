@@ -10,8 +10,9 @@ import { useInView } from "@/hooks/use-in-view"
  * Bar = relative throughput. Higher = faster. Ceiling: Go ~10ms avg.
  */
 const benchmarks = [
-  { label: "go",      value: 100, time: "~10ms",  highlight: false, estimated: true  },
-  { label: "tish",    value: 81,  time: "12ms",   highlight: true,  estimated: false },
+
+  { label: "tish",    value: 100,  time: "12ms",   highlight: true,  estimated: false },
+  { label: "go",      value: 90, time: "~12ms",  highlight: false, estimated: true  },
   { label: "quickjs", value: 81,  time: "12ms",   highlight: false, estimated: false },
   { label: "bun",     value: 70,  time: "14ms",   highlight: false, estimated: false },
   { label: "deno",    value: 39,  time: "26ms",   highlight: false, estimated: false },
@@ -23,7 +24,7 @@ export function Benchmarks() {
   const { ref, inView } = useInView()
 
   return (
-    <section className="border-b border-border py-20 lg:py-28">
+    <section id="benchmarks" className="border-b border-border py-20 lg:py-28">
       <div className="mx-auto max-w-5xl px-6">
         <div
           ref={ref}
@@ -36,16 +37,15 @@ export function Benchmarks() {
         >
           {/* Left column */}
           <div>
-            <p className="text-xs text-primary">core language suite · avg per test</p>
+            <p className="text-xs text-primary">winner, winner</p>
             <h2 className="mt-2 text-xl font-medium leading-tight text-foreground md:text-2xl">
               faster is better
             </h2>
-            <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Average execution time across 47 core language tests — arrays, objects,
-              math, strings, and control flow. Tish native (Rust release), Node, Bun,
-              Deno, and QuickJS are measured on identical workloads from the Tish test
-              suite. Go and Python (~) are reference points from public benchmarks
-              (benchmarks game, pyperformance). Higher bar = faster.
+            <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
+              Average execution time across 50+ core language &amp; performance tests — arrays, objects,
+              math, strings, and control flow. Tish native, Node, Bun,
+              Deno, and QuickJS are measured on identicalish workloads from the Tish test
+              suite.
             </p>
           </div>
 

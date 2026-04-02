@@ -70,10 +70,11 @@ export function Hero() {
   }, [termVisible, visibleLines])
 
   return (
-    <section className="py-24 lg:py-32">
+    <section className="pt-24 lg:pt-32 pb-16 lg:pb-16">
       <div className="mx-auto max-w-5xl px-6">
         <p className="animate-fade-in-up text-xs text-primary" style={{ animationDelay: "0ms" }}>
-          v1.1.3 - GPU + MLX
+          {/* UPDATE HEADER */}
+          <a href="https://github.com/tishlang/tish/releases/tag/v1.3.4">v1.1.3 - GPU + MLX</a>
         </p>
 
         <h1
@@ -90,27 +91,18 @@ export function Hero() {
           style={{ animationDelay: "160ms", opacity: 0 }}
         >
           write familiar javascript syntax, compile to
-          native binaries, and ship ai inference &amp; data pipelines
-          at any scale. tools, bare metal &amp; zero cost abstractions that just work.
+          native binaries, and ship <b>ai</b> inference &amp; data pipelines
+          at any scale. no runtime, bare metal &amp; zero cost abstractions that just work.
         </p>
 
         <div
           className="animate-fade-in-up mt-8 flex items-center gap-3"
           style={{ animationDelay: "240ms", opacity: 0 }}
         >
-          <Link href="#">
-            <Button size="sm" className="group h-8 text-xs">
+          <Link href="/docs">
+            <Button size="sm" className="cursor-pointer group h-8 text-xs">
               get started
               <ArrowRight className="ml-1.5 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
-            </Button>
-          </Link>
-          <Link href="#">
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 text-xs border-border text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
-            >
-              read the docs
             </Button>
           </Link>
         </div>

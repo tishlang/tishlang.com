@@ -13,7 +13,7 @@ export function CTA() {
       <div className="mx-auto max-w-5xl px-6">
         <div
           ref={ref}
-          className="border border-border p-8 transition-colors duration-500 hover:border-primary/20 md:p-12"
+          className="border border-border p-8 transition-colors duration-500 hover:border-primary/20 md:p-10"
           style={{
             opacity: inView ? 1 : 0,
             transform: inView ? "none" : "translateY(12px)",
@@ -37,17 +37,17 @@ export function CTA() {
           </div>
 
           <div className="mt-6 flex items-center gap-3">
-            <Link href="#">
-              <Button size="sm" className="group h-8 text-xs">
+            <Link href="/docs/getting-started/installation">
+              <Button size="sm" className="cursor-pointer group h-8 text-xs">
                 install tish
                 <ArrowRight className="ml-1.5 h-3 w-3 transition-transform group-hover:translate-x-0.5" />
               </Button>
             </Link>
-            <Link href="#">
+            <Link href="https://github.com/tishlang/tish">
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 text-xs border-border text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
+                className="cursor-pointer h-8 text-xs border-border text-foreground transition-colors hover:border-primary/40 hover:bg-secondary"
               >
                 view on github
               </Button>
