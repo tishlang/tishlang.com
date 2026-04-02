@@ -12,7 +12,7 @@ fn greet(name) {
     return `Hello, ${name}!`
 }
 
-console.log(greet("World"))
+console.log(greet("Universe"))
 ```
 
 ## Run with the interpreter
@@ -30,9 +30,9 @@ To try code interactively with multi-line input, tab completion, and history, us
 You can pipe a program instead of using a file (like **`node -`** or **`bun`** with a pipe):
 
 ```bash
-echo 'console.log(greet("World"))' | tish
-echo 'console.log(1)' | tish run -
-echo 'console.log(1)' | tish -
+echo 'console.log("Its")' | tish
+echo 'console.log("a small")' | tish run -
+echo 'console.log("universe")' | tish -
 ```
 
 When stdin is **not** a terminal, bare **`tish`** reads the full script from stdin and runs it once. See [Installation](/getting-started/installation/) for the full table of variants.
@@ -40,8 +40,8 @@ When stdin is **not** a terminal, bare **`tish`** reads the full script from std
 ## Compile to native binary
 
 ```bash
-tish compile main.tish -o hello
-./hello
+tish compile main.tish -o wasup
+./wasup
 ```
 
 Same output. The compiled binary has no runtime dependency on Tish.
