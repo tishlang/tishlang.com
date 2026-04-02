@@ -9,10 +9,10 @@ Zectre is the **primary** path we document for hosted apps. Tish also compiles t
 
 | Output | Typical use |
 |--------|-------------|
-| **Native binary** | `tish compile` → run on Linux/macOS under a process manager or VM |
+| **Native binary** | `tish build` → run on Linux/macOS under a process manager or VM |
 | **Docker image** | Any container host (including Zectre — see [Docker on Zectre](/deploy/docker/)) |
 | **WebAssembly** | Browser or WASI runtimes — see [WebAssembly targets](/reference/wasm-targets/) |
-| **JavaScript** | Bundlers and Node — `tish compile --target js` |
+| **JavaScript** | Bundlers and Node — `tish build --target js` |
 
 There is **no** first-party “Deploy to Vercel / Heroku / Netlify” button for arbitrary Tish apps. You **can** use those products’ normal workflows when your artifact matches what they expect (for example static files from a wasm build, or a Dockerfile on a container-based tier).
 

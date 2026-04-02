@@ -36,7 +36,7 @@ const sections = [
     description:
       "compile tish to a native executable for servers and cli tools, or to wasm for the browser and wasi, or to js for bundlers. no made-up tensor stack in the core language — you interop with rust and native crates where you need heavy numeric or ml work.",
     capabilities: [
-      "tish compile — native, wasm, wasi, or js targets",
+      "tish build — native, wasm, wasi, or js targets",
       "cranelift or rust codegen paths depending on backend",
       "zero config, zero runtime, hardened dependencies",
       "first class support from zectre deploy",
@@ -50,7 +50,7 @@ const sections = [
     description:
       "compile tish to a native executable for servers and cli tools, or to wasm for the browser and wasi, or to js for bundlers. no made-up tensor stack in the core language — you interop with rust and native crates where you need heavy numeric or ml work.",
     capabilities: [
-      "tish compile — native, wasm, wasi, or js targets",
+      "tish build — native, wasm, wasi, or js targets",
       "cranelift or rust codegen paths depending on backend",
       "zero config, zero runtime, hardened dependencies",
       "first class support from zectre deploy",

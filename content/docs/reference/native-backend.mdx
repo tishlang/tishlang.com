@@ -3,7 +3,7 @@ title: Native Backend
 description: Choose between the Rust and Cranelift backends when compiling to native.
 ---
 
-When compiling Tish to a native binary (`tish compile --target native`), you can select the native backend with `--native-backend`.
+When compiling Tish to a native binary (`tish build --target native`), you can select the native backend with `--native-backend`.
 
 ## Backends
 
@@ -24,9 +24,9 @@ The Rust backend transpiles your Tish program to Rust source calling **`tishlang
 - Destructuring in function parameters
 
 ```bash
-tish compile main.tish -o app
+tish build main.tish -o app
 # or explicitly:
-tish compile main.tish -o app --native-backend rust
+tish build main.tish -o app --native-backend rust
 ```
 
 > **Primitive lowering (in progress):** Where types are annotated or can be inferred, the Rust backend emits native Rust primitives (`f64`, `Vec<f64>`, direct arithmetic) instead of `Value`. See [Type Annotations](/language/type-annotations/) for the current status.
@@ -42,7 +42,7 @@ Use when your program:
 - Does not need `tish:*` or `@scope/pkg` modules
 
 ```bash
-tish compile main.tish -o app --native-backend cranelift
+tish build main.tish -o app --native-backend cranelift
 ```
 
 If your program uses native imports, the Cranelift backend will error:

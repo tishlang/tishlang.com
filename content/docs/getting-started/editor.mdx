@@ -59,10 +59,10 @@ Copy or merge into your workspace **`.vscode/tasks.json`**:
       "problemMatcher": []
     },
     {
-      "label": "tish: compile (native)",
+      "label": "tish: build (native)",
       "type": "shell",
       "command": "tish",
-      "args": ["compile", "${file}", "--output", "${workspaceFolder}/tish_out", "--target", "native"],
+      "args": ["build", "${file}", "--output", "${workspaceFolder}/tish_out", "--target", "native"],
       "group": "build",
       "problemMatcher": ["$tish-rustc"]
     }
@@ -70,7 +70,7 @@ Copy or merge into your workspace **`.vscode/tasks.json`**:
 }
 ```
 
-After **native compile**, rustc errors are picked up by the **`$tish-rustc`** problem matcher contributed by the extension.
+After a **native build**, rustc errors are picked up by the **`$tish-rustc`** problem matcher contributed by the extension.
 
 ## Neovim (nvim-lspconfig)
 

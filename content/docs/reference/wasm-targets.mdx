@@ -19,7 +19,7 @@ Produces files for browser execution:
 - `{output}.html` — Loader (open via local server for CORS)
 
 ```bash
-tish compile hello.tish -o app --target wasm
+tish build hello.tish -o app --target wasm
 ```
 
 **Requirements**: `rustup target add wasm32-unknown-unknown`, `cargo install wasm-bindgen-cli`
@@ -36,7 +36,7 @@ python3 -m http.server 8765
 Produces a single `.wasm` file with embedded bytecode. Run with [Wasmtime](https://wasmtime.dev/) or any WASI-compatible runtime:
 
 ```bash
-tish compile hello.tish -o app --target wasi
+tish build hello.tish -o app --target wasi
 wasmtime app.wasm
 ```
 
@@ -49,6 +49,6 @@ WASI output uses the bytecode VM (same runtime as Cranelift). The same subset of
 For Node.js or bundlers (no WebAssembly), use:
 
 ```bash
-tish compile hello.tish -o app --target js
+tish build hello.tish -o app --target js
 node app.js
 ```

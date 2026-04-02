@@ -12,7 +12,7 @@ Tish runs in **secure mode** with no I/O features enabled by default. Only core 
 To enable network, filesystem, or process APIs:
 
 - **Run:** The tish binary must be built with features, e.g. `cargo run -p tishlang--features http -- run main.tish`. The `tish run` command does not accept feature flags.
-- **Compile:** Pass `--feature` (singular, repeatable) when compiling: `tish compile main.tish -o app --feature http --feature fs --feature process`
+- **Build:** Pass `--feature` (singular, repeatable) when building: `tish build main.tish -o app --feature http --feature fs --feature process`
 
 | Flag | Enables |
 |------|---------|

@@ -28,7 +28,7 @@ This page summarizes Tish behavior relative to ECMA-262. Each concept has a deci
 | coalesce (`??`), conditional (`? :`) | Follow |
 | member, optional-chaining (`?.`) | Follow |
 | class, super, this | Omit |
-| `new` | Simplify — expression parsed on all backends; VM / interpreter / native Rust use host `construct` (not full `[[Construct]]`); `tish compile --target js` emits native `new`. See [Tish vs JavaScript](/docs/language/vs-javascript/). |
+| `new` | Simplify — expression parsed on all backends; VM / interpreter / native Rust use host `construct` (not full `[[Construct]]`); `tish build --target js` emits native `new`. See [Tish vs JavaScript](/docs/language/vs-javascript/). |
 | async, await | Follow (simplify) |
 | generators | Omit |
 | for-in | Omit; for-of follows (arrays and strings) |
