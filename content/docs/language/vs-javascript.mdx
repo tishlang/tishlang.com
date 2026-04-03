@@ -30,7 +30,7 @@ This page documents how Tish differs from JavaScript and what Tish adds. Since T
 | Optional type annotations | Parsed, not enforced (gradual typing) |
 | Feature flags | `http`, `fs`, `process`, `regex` — secure-by-default |
 | `serve(port, handler)` | Built-in HTTP server (no Express) |
-| `fetch` / `fetchAll` / `fetchAsync` / `fetchAllAsync` | HTTP client APIs (sync and async; async return Promises) |
+| `fetch` / `fetchAll` | HTTP client APIs (**return `Promise`**; **`await fetch(...)`** for the response; response **`body`** is a byte **`ReadableStream`**, not a string — use **`getReader()`** or **`await res.text()`** / **`await res.json()`**) |
 | `Promise`, `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` | ECMA-style Promises and non-blocking timers (with `http` feature) |
 | `async fn` / `await` | Async functions and await expressions |
 | `readFile` / `writeFile` / etc. | File system APIs (feature-gated) |
@@ -70,7 +70,7 @@ Tish supports **`import`** and **`export`** for **language builtins** (e.g. `imp
 
 ### Async/await support
 
-Tish supports `async fn` and `await` for asynchronous I/O. Use `fetchAsync` and `fetchAllAsync` with `await` for non-blocking HTTP requests. **Promises** (ECMA-262 Promise objects) are supported: `Promise(executor)`, `.then`, `.catch`, `.finally`, `Promise.resolve`, `Promise.reject`, `Promise.all`, `Promise.race`. Host APIs **setTimeout**, **setInterval**, **clearTimeout**, and **clearInterval** are non-blocking (callbacks run after the delay; setTimeout returns immediately). Generators are not supported.
+Tish supports `async fn` and `await` for asynchronous I/O. Use **`await fetch(...)`** and **`await fetchAll(...)`** for HTTP (both return **Promises**). **Promises** (ECMA-262 Promise objects) are supported: `Promise(executor)`, `.then`, `.catch`, `.finally`, `Promise.resolve`, `Promise.reject`, `Promise.all`, `Promise.race`. Host APIs **setTimeout**, **setInterval**, **clearTimeout**, and **clearInterval** are non-blocking (callbacks run after the delay; setTimeout returns immediately). Generators are not supported.
 
 ## See also
 

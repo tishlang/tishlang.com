@@ -3,11 +3,18 @@ title: HTTP
 description: "HTTP client and server APIs in Tish (feature flag: http)."
 ---
 
-Requires the `http` feature. Build tish with it for run: `cargo run -p tishlang--features http -- run main.tish`. For build: `tish build main.tish -o app --feature http`.
+Requires the `http` feature. Build tish with it for run: `cargo run -p tishlang --features http -- run main.tish`. For build: `tish build main.tish -o app --feature http`.
 
-## fetch(url, options?)
+## `fetch(url, options?)`
 
-Perform an HTTP request. Returns a response object.
+Perform an HTTP request. **`fetch` returns a `Promise`** that settles to a **response object**. Always **`await`** the result (or use `.then`) — there is no synchronous “already materialized” response.
+
+```javascript
+import { fetch } from "http"
+
+let res = await fetch("https://api.example.com/data")
+console.log(res.status, res.ok)
+```
 
 ### Parameters
 
@@ -17,56 +24,133 @@ Perform an HTTP request. Returns a response object.
   - `headers`: Object of header name → value
   - `body`: Request body string
 
-### Response object
+### Response object (client `fetch`)
 
-- `status`: Status code (number)
-- `ok`: Boolean (true if 2xx)
-- `body`: Response body string
-- `headers`: Object of header name → value
+- **`status`**: Status code (number)
+- **`ok`**: Boolean (true if 2xx)
+- **`headers`**: Object of header name → value
+- **`body`**: Opaque **`ReadableStream`** (not a string). Use **`body.getReader()`** and a read loop, or consume the whole body with **`await res.text()`** / **`await res.json()`** (see below).
+- **`text`**: Function with **no args** → returns a **`Promise<string>`** that reads the **entire** body as UTF-8 text.
+- **`json`**: Function with **no args** → returns a **`Promise`** that reads the **entire** body and **`JSON.parse`s** it.
 
-### Example
+### Buffered JSON / text (small responses)
+
+For typical JSON APIs, read the full body in one step:
 
 ```javascript
-let res = fetch("https://api.example.com/data")
-console.log(res.status, res.body)
+import { fetch } from "http"
 
-let postRes = fetch("https://api.example.com/post", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ key: "value" })
-})
+let res = await fetch("https://api.example.com/json")
+if (res.ok) {
+  let data = await res.json()
+  console.log(data)
+}
+
+let res2 = await fetch("https://api.example.com/plain")
+let txt = await res2.text()
 ```
 
-## fetchAsync(url, options?)
+### `ReadableStream` and `getReader()`
 
-Async HTTP fetch. Returns a **Promise**. Use with `await`:
+The response **`body`** is a **Web-fetch–style readable stream**:
+
+1. Call **`let reader = res.body.getReader()`** (locks the body for streaming).
+2. Loop: **`let chunk = await reader.read()`**.
+3. Each chunk is **`{ done: boolean, value: number[] }`**: **`value`** is the next slice of raw bytes (**UTF-8 is not decoded** for you; merge and decode as needed).
+4. Stop when **`done`** is true.
+
+**Single-consumer rule:** After **`getReader()`**, do **not** call **`await res.text()`** or **`await res.json()`** on the same response — the body can only be consumed one way. (Same idea as browsers: locked stream vs. fully buffered helpers.)
+
+### Streaming example (accumulate bytes / line-based protocols)
+
+This pattern matches incremental SSE or other protocols where you decode UTF-8 and split frames yourself:
 
 ```javascript
-let res = await fetchAsync("https://api.example.com/data")
-console.log(res.ok ? res.body : "Error")
+import { fetch } from "http"
+
+let res = await fetch("https://example.com/stream", { method: "GET" })
+if (!res.ok) {
+  console.log("error", res.status)
+} else {
+  let reader = res.body.getReader()
+  let acc = []
+  while (true) {
+    let chunk = await reader.read()
+    if (chunk.done) {
+      break
+    }
+    let bytes = chunk.value
+    let i = 0
+    while (i < bytes.length) {
+      acc.push(bytes[i])
+      i = i + 1
+    }
+  }
+  // acc is number[] of UTF-8 bytes; decode to string in your app if needed
+}
 ```
 
-Same parameters and response shape as `fetch`. `await` works on any Promise (fetchAsync, fetchAllAsync, or `Promise(executor)`).
+The Tish runtime integration test [`fetch_readable_stream.rs`](https://github.com/tishlang/tish/blob/main/crates/tish_runtime/tests/fetch_readable_stream.rs) (in the `tish` repo) exercises chunked bodies end-to-end.
 
-## fetchAllAsync(requests)
+## `fetchAll(requests)`
 
-Async version of `fetchAll`. Use with `await` in async functions. Same parameters and return shape as `fetchAll`.
+**`fetchAll` returns a `Promise`** that settles to an **array of response objects** (same shape as `fetch` above). Use **`await fetchAll([...])`**.
 
-## fetchAll(requests)
-
-Perform multiple HTTP requests in parallel (sync). Each request is a string URL or object with `url` (and optional `method`, `headers`, `body`).
-
-### Returns
-
-Array of response objects (same shape as `fetch`).
-
-### Example
+Each request is a string URL or an object with `url` (and optional `method`, `headers`, `body`).
 
 ```javascript
-let results = fetchAll([
-    "https://api.example.com/a",
-    { url: "https://api.example.com/b", method: "POST" }
+import { fetch, fetchAll } from "http"
+
+let results = await fetchAll([
+  "https://api.example.com/a",
+  { url: "https://api.example.com/b", method: "POST" },
 ])
+```
+
+## `serve(port, handler)`
+
+Start an HTTP server. The handler receives a request object and returns a response object or string.
+
+### Request object
+
+- `method`: HTTP method (string)
+- `path`: Path without query (string)
+- `url`: Full URL (string)
+- `query`: Query string (string)
+- `headers`: Object of header name → value
+- **`body`**: Request body (**string** on the server)
+
+### Response
+
+Return an object:
+
+- `status`: Status code (number, default 200)
+- **`body`**: Response body (**string**)
+- `headers`: Object of header name → value (optional, e.g. `{ contentType: "application/json" }`)
+
+Or return a string (200, no headers).
+
+Server-side **`body` as string** is intentional and **not** the same shape as **client** `fetch` **`res.body`** (opaque byte stream).
+
+### Example
+
+```javascript
+fn handleRequest(req) {
+  if (req.path === "/health") {
+    return { status: 200, body: "OK" }
+  }
+  if (req.path === "/") {
+    return {
+      status: 200,
+      headers: { contentType: "application/json" },
+      body: JSON.stringify({ message: "Hello" }),
+    }
+  }
+  return { status: 404, body: "Not Found" }
+}
+
+let port = "PORT" in process.env ? parseInt(process.env.PORT) : 8080
+serve(port, handleRequest)
 ```
 
 ## Promise and timers
@@ -78,46 +162,4 @@ With the `http` feature, Tish also provides:
 - **setInterval(callback, delayMs, ...args)** — Schedule callback to run repeatedly (non-blocking)
 - **clearTimeout(id)**, **clearInterval(id)** — Cancel timers
 
-## serve(port, handler)
-
-Start an HTTP server. The handler receives a request object and returns a response object or string.
-
-### Request object
-
-- `method`: HTTP method (string)
-- `path`: Path without query (string)
-- `url`: Full URL (string)
-- `query`: Query string (string)
-- `headers`: Object of header name → value
-- `body`: Request body (string)
-
-### Response
-
-Return an object:
-
-- `status`: Status code (number, default 200)
-- `body`: Response body (string)
-- `headers`: Object of header name → value (optional, e.g. `{ contentType: "application/json" }`)
-
-Or return a string (200, no headers).
-
-### Example
-
-```javascript
-fn handleRequest(req) {
-    if (req.path === "/health") {
-        return { status: 200, body: "OK" }
-    }
-    if (req.path === "/") {
-        return {
-            status: 200,
-            headers: { contentType: "application/json" },
-            body: JSON.stringify({ message: "Hello" })
-        }
-    }
-    return { status: 404, body: "Not Found" }
-}
-
-let port = "PORT" in process.env ? parseInt(process.env.PORT) : 8080
-serve(port, handleRequest)
-```
+Use **`async fn`** / **`await`** for HTTP and other Promise-based APIs.

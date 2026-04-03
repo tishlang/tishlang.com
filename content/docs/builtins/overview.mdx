@@ -11,12 +11,12 @@ Tish runs in **secure mode** with no I/O features enabled by default. Only core 
 
 To enable network, filesystem, or process APIs:
 
-- **Run:** The tish binary must be built with features, e.g. `cargo run -p tishlang--features http -- run main.tish`. The `tish run` command does not accept feature flags.
+- **Run:** The tish binary must be built with features, e.g. `cargo run -p tishlang --features http -- run main.tish`. The `tish run` command does not accept feature flags.
 - **Build:** Pass `--feature` (singular, repeatable) when building: `tish build main.tish -o app --feature http --feature fs --feature process`
 
 | Flag | Enables |
 |------|---------|
-| `http` | `fetch`, `fetchAll`, `fetchAsync`, `fetchAllAsync`, `serve`; `Promise`; `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` |
+| `http` | `fetch`, `fetchAll`, `serve`; `Promise`; `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` |
 | `fs` | `readFile`, `writeFile`, `fileExists`, `readDir`, `mkdir` |
 | `process` | `process.exit`, `process.cwd`, `process.argv`, `process.env` |
 | `regex` | `RegExp`, `String.match`, `String.replace` with regex |
@@ -36,7 +36,7 @@ In `tish.yaml`, configure features under `build.features` for platform deploys.
 | [Numbers](/builtins/numbers/) | Always | `toFixed` |
 | [Arrays](/builtins/arrays/) | Always | `Array.isArray`, `push`, `pop`, `map`, `filter`, `reduce`, etc. |
 | [Strings](/builtins/strings/) | Always | `indexOf`, `includes`, `slice`, `split`, `replace`, etc. |
-| [HTTP](/features/http/) | `http` | `fetch`, `fetchAll`, `fetchAsync`, `fetchAllAsync`, `serve`; `Promise`; `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` |
+| [HTTP](/features/http/) | `http` | `fetch`, `fetchAll`, `serve` (**`fetch` / `fetchAll` return `Promise`**; response **`body`** is a **`ReadableStream`**; **`text` / `json`** return **`Promise`**); `Promise`; `setTimeout`, `setInterval`, `clearTimeout`, `clearInterval` |
 | [File system](/features/fs/) | `fs` | `readFile`, `writeFile`, `fileExists`, `readDir`, `mkdir` |
 | [Process](/features/process/) | `process` | `process.exit`, `process.cwd`, `process.argv`, `process.env` |
 | [RegExp](/features/regex/) | `regex` | `RegExp`, `String.match`, `String.replace` with regex |
