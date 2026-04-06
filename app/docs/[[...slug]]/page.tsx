@@ -29,6 +29,12 @@ export default async function DocsPage({
   if (!doc) notFound();
 
   const { prev, next } = await getPrevNext(slugStr);
+  const prevLink = prev
+    ? { title: prev.title, href: prev.slug ? `/docs/${prev.slug}` : "/docs" }
+    : null;
+  const nextLink = next
+    ? { title: next.title, href: next.slug ? `/docs/${next.slug}` : "/docs" }
+    : null;
 
   const { content } = await compileMDX({
     source: doc.content,
@@ -117,8 +123,8 @@ export default async function DocsPage({
           >
             {content}
           </div>
-          <PrevNext prev={prev} next={next} />
-          <ImproveDocLink sourcePath={doc.sourcePath} showTopRule={!prev && !next} />
+          <PrevNext prev={prevLink} next={nextLink} />
+          <ImproveDocLink sourcePath={doc.sourcePath} showTopRule={!prevLink && !nextLink} />
         </div>
         <TableOfContents />
       </div>

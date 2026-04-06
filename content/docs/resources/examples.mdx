@@ -3,46 +3,6 @@ title: Examples
 description: Example Tish applications.
 ---
 
-Ready-to-deploy example applications live in the [tish](https://github.com/tishlang/tish) repository under `examples/`.
+Canonical descriptions and how to run each example live in the **[tish](https://github.com/tishlang/tish) repository** under `examples/` (README index and per-example `README.md` files).
 
-## Available examples
-
-| Example | Description | Features |
-|---------|-------------|----------|
-| hello-world | Minimal app that logs and exits | None |
-| matmul | Dense matrix multiply: VM, Rust+runtime native, embedded-VM binary, JS, WASI | None |
-| modules-example | Import/export across files | None |
-| data-processing | Array sorting, splice, nested loops, filter/map/reduce for sales report | None |
-| wasmtime-modules | Multi-module WASI (main, math, greet) — each compiles to separate .wasm | None |
-| tishx-example | Tish + JSX to plain JS (vanilla DOM, useState) | js target |
-| mdx-docs | Static docs site: file routing, MDX, pre-render to HTML | http, fs, regex |
-| http-modules-example | Import/export with serve (deployment-ready) | http, process |
-| http-hello | Basic HTTP server with routing | http |
-| json-api | REST API with JSON responses | http |
-| echo-server | Echoes request details back | http |
-| counter-api | Stateful counter service | http |
-| async-await | Async/await with fetchAsync | http |
-| js-to-tish-example | JS to Tish transpiler usage | None |
-| form-fields, data-plot, code-editor, viewer-3d | egui UI examples (in tish-egui package/repo) | egui (import-driven) |
-
-## Run locally
-
-From the [tish](https://github.com/tishlang/tish) repo:
-
-```bash
-cd examples/http-hello
-cargo run -p tishlang --features http -- run src/main.tish
-```
-
-Or use the `tish` binary after install:
-
-```bash
-tish build src/main.tish -o server --feature http
-./server
-```
-
-For native modules (e.g. egui, Polars), add the package to `package.json` dependencies and use `import { Egui } from 'tish:egui'` — no `--feature` needed; imports drive compilation.
-
-## Deploy
-
-Use the zectre CLI from the example directory. See [Deploy overview](/deploy/overview/).
+Browse them on this site: **[Examples](/docs/examples)** (content is loaded from that tree at build time).

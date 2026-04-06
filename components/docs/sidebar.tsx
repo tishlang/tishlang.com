@@ -4,9 +4,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import type { DocMeta } from "@/lib/docs";
+import type { ExampleNavItem } from "@/lib/docs-examples";
 
 interface SidebarProps {
   allDocs: DocMeta[];
+  exampleNav: ExampleNavItem[];
 }
 
 const docsSidebarConfig = [
@@ -18,9 +20,10 @@ const docsSidebarConfig = [
   { label: "Reference", directory: "reference" },
   { label: "Deploy", directory: "deploy" },
   { label: "Resources", directory: "resources" },
+  { label: "Examples", examples: true },
 ] as const;
 
-function buildSidebarItems(allDocs: DocMeta[]) {
+function buildSidebarItems(allDocs: DocMeta[], exampleNav: ExampleNavItem[]) {
   const items: Array<
     | { kind: "link"; label: string; href: string }
     | { kind: "section"; label: string; children: Array<{ label: string; href: string }> }
@@ -29,6 +32,13 @@ function buildSidebarItems(allDocs: DocMeta[]) {
   for (const section of docsSidebarConfig) {
     if ("slug" in section && section.slug === "") {
       items.push({ kind: "link", label: section.label, href: "/docs" });
+      continue;
+    }
+    if ("examples" in section && section.examples) {
+      if (exampleNav.length > 0) {
+        const children = exampleNav.map((e) => ({ label: e.title, href: e.href }));
+        items.push({ kind: "section", label: section.label, children });
+      }
       continue;
     }
     if ("directory" in section) {
@@ -45,9 +55,9 @@ function buildSidebarItems(allDocs: DocMeta[]) {
   return items;
 }
 
-export function Sidebar({ allDocs }: SidebarProps) {
+export function Sidebar({ allDocs, exampleNav }: SidebarProps) {
   const pathname = usePathname();
-  const items = buildSidebarItems(allDocs);
+  const items = buildSidebarItems(allDocs, exampleNav);
 
   return (
     <nav className="flex flex-col gap-0.5 text-sm">

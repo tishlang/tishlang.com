@@ -5,13 +5,16 @@ import { docsSourceEditUrl } from "@/lib/docs-github";
 
 export function ImproveDocLink({
   sourcePath,
+  editHref,
   showTopRule,
 }: {
   sourcePath: string;
+  /** When set (e.g. tish repo examples), overrides `docsSourceEditUrl(sourcePath)`. */
+  editHref?: string;
   /** When there is no prev/next nav above, draw a separator before this link. */
   showTopRule: boolean;
 }) {
-  const href = docsSourceEditUrl(sourcePath);
+  const href = editHref ?? docsSourceEditUrl(sourcePath);
   return (
     <p
       className={cn(

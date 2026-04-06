@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { DocMeta } from "@/lib/docs";
+
+export type DocNavLink = { title: string; href: string };
 
 interface PrevNextProps {
-  prev: DocMeta | null;
-  next: DocMeta | null;
+  prev: DocNavLink | null;
+  next: DocNavLink | null;
 }
 
 export function PrevNext({ prev, next }: PrevNextProps) {
@@ -15,7 +16,7 @@ export function PrevNext({ prev, next }: PrevNextProps) {
       <div className="flex-1">
         {prev && (
           <Link
-            href={`/docs/${prev.slug}`}
+            href={prev.href}
             className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -26,7 +27,7 @@ export function PrevNext({ prev, next }: PrevNextProps) {
       <div className="flex flex-1 justify-end">
         {next && (
           <Link
-            href={`/docs/${next.slug}`}
+            href={next.href}
             className="group flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
             <span>{next.title}</span>
