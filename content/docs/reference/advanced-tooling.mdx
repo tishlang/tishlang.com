@@ -18,13 +18,12 @@ Tish can run interpreted (VM) or as a **native** binary compiled to Rust. A soli
 
 ## Tree-sitter grammar
 
-**Status:** Not shipped.
+**Status:** **Partial** — an incremental grammar lives in the main repo as [`tree-sitter-tish`](https://github.com/tishlang/tish/tree/main/tree-sitter-tish) (subset of the language; growing with [`LANGUAGE.md`](https://github.com/tishlang/tish/blob/main/docs/LANGUAGE.md)).
 
-A Tree-sitter grammar would enable:
+It enables:
 
-- Incremental parsing in editors
-- Better highlighting in Neovim/Helix/Zed
-- Potential WASM playground highlighter
+- ast-grep and other Tree-sitter-based tooling (see the sibling [`tish-security`](https://github.com/tishlang/tish-security) repository next to [`tish`](https://github.com/tishlang/tish))
+- Future editor highlighters (Neovim / Helix / Zed) and WASM playground highlighting
 
 TextMate grammars in **`tish-vscode`** cover VS Code/Cursor today.
 

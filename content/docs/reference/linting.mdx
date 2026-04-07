@@ -19,6 +19,12 @@ tish-lint src/main.tish
 tish-lint src/
 ```
 
+**SARIF** (e.g. GitHub Code Scanning): `--format sarif` writes a single SARIF 2.1.0 document to stdout.
+
+```bash
+tish-lint --format sarif src/ > tish-lint.sarif
+```
+
 **Exit codes:** non-zero if any file fails to parse or reports error-severity issues.
 
 **Output:**
@@ -33,6 +39,10 @@ path/to/file.tish:LINE:COL: warning [RULE_ID] message
 |----|----------|-------------|
 | `tish-empty-catch` | Warning | Empty `catch` block. |
 | `tish-duplicate-key` | Warning | Duplicate keys in an object literal. |
+
+## Security tooling repo layout
+
+The **[`tish-security`](https://github.com/tishlang/tish-security)** companion repository (keep it next to your [`tish`](https://github.com/tishlang/tish) checkout) holds shared `.tish` fixtures, OpenGrep / ast-grep / Comby examples, a Codacy Docker scaffold, and CI snippets. The compiler repo’s workflow still runs `tish-lint` on in-tree examples.
 
 ## CI example
 
