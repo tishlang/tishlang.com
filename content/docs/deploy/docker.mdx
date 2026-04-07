@@ -10,7 +10,7 @@ Use this when your app is already packaged as a **Docker** (or Podman) image —
 - Image pushed to a registry the agents can pull (Docker Hub, GHCR, etc.).
 - At least one agent with **`container_enabled = true`** and access to a container socket. See the platform doc below for agent config.
 
-## Minimal `tish.yaml`
+## Minimal `zectre.yaml`
 
 ```yaml
 name: my-service
@@ -45,8 +45,8 @@ You do **not** need the `tish` compiler on your machine for Docker deploys.
 
 ## Example repo
 
-A minimal Node HTTP image plus `tish.yaml` lives in [tish-container-example](https://github.com/tishlang/tish-container-example).
+A minimal tish HTTP `zectre.yaml` lives in [container-example](https://github.com/tishlang/tish/tree/main/examples/container-example).
 
 ## Full reference
 
-Volumes, API payloads, and operator details: [Container deployments](https://github.com/tishlang/zectre-platform/blob/main/docs/CONTAINER_DEPLOYMENTS.md) in the zectre-platform repository.
+Volumes, API payloads, and operator details: [Container deployments](https://github.com/tishlang/tish/tree/main/examples/container-example) in the zectre-platform repository.

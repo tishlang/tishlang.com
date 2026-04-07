@@ -9,8 +9,8 @@ Hosted deployment in this guide means **Zectre**: the **zectre** CLI plus the **
 
 | Path | What runs | You provide |
 |------|-----------|-------------|
-| **Native Tish** (default) | Platform builds a Tish **native binary** and the agent runs it | Source + `tish.yaml` / `package.json` build config |
-| **Docker** | Agent pulls and runs a **container image** | Image in a registry + `deploy.process_type: docker` and `deploy.image` in `tish.yaml` (or `--image` on the CLI) |
+| **Native Tish** (default) | Platform builds a Tish **native binary** and the agent runs it | Source + `zectre.yaml` / `package.json` build config |
+| **Docker** | Agent pulls and runs a **container image** | Image in a registry + `deploy.process_type: docker` and `deploy.image` in `zectre.yaml` (or `--image` on the CLI) |
 
 See [Docker on Zectre](/deploy/docker/) for images. For compiling Tish to WASM, JS, or binaries you run yourself, see [Other hosts](/deploy/other-hosts/).
 
@@ -29,11 +29,11 @@ Docker skips the Tish compile step on the platform: you build and push the image
 | **zectre** | Auth, projects, link, deploy, logs, env vars (Vercel-style workflow for this platform) |
 | **Zectre Platform** | API, scheduler, agents, proxy, registry, build service |
 
-See [Platform](/deploy/platform/) for architecture. Config reference: [tish.yaml](/deploy/tish-yaml/).
+See [Platform](/deploy/platform/) for architecture. Config reference: [zectre.yaml](/deploy/zectre-yaml/).
 
 ## Quick start (against a running platform)
 
-From your app directory (with a `tish.yaml` or `package.json` with a `tish` section):
+From your app directory (with a `zectre.yaml` or `package.json` with a `tish` section):
 
 ```bash
 zectre login
@@ -47,9 +47,9 @@ In CI or other non-interactive environments, link first (`zectre link` or `zectr
 
 ## Self-hosting the platform (developers)
 
-To run the stack locally for development, clone [zectre-platform](https://github.com/tishlang/zectre-platform) and use `just setup` then `just run-all`. That is **not** required to deploy an app to an existing Zectre deployment.
+To run the stack locally for development, clone [zectre-platform](https://zectre.com) and use `just setup` then `just run-all`. That is **not** required to deploy an app to an existing Zectre deployment.
 
 ## Config files
 
-- **`tish.yaml`** — Deploy spec (replicas, `process_type`, `image`, resources, networking). Build fields in YAML are used only when `package.json` has no `tish` section (see [tish.yaml](/deploy/tish-yaml/)).
+- **`zectre.yaml`** — Deploy spec (replicas, `process_type`, `image`, resources, networking). Build fields in YAML are used only when `package.json` has no `tish` section (see [zectre.yaml](/deploy/zectre-yaml/)).
 - **`.zectre/<cluster>/project.json`** — Written by `zectre link`; maps this directory to a platform app for that cluster.

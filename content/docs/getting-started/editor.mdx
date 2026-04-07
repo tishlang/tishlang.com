@@ -86,7 +86,7 @@ if not configs.tish_lsp then
       cmd = { 'tish-lsp' },
       filetypes = { 'tish' },
       root_dir = function(fname)
-        return vim.fs.dirname(vim.fs.find({ 'tish.yaml', 'package.json', '.git' }, { path = fname, upward = true })[1])
+        return vim.fs.dirname(vim.fs.find({ 'zectre.yaml', 'package.json', '.git' }, { path = fname, upward = true })[1])
       end,
       single_file_support = true,
     },

@@ -1,9 +1,9 @@
 ---
-title: tish.yaml
-description: Deployment and project configuration for Zectre (`tish.yaml`).
+title: zectre.yaml
+description: Deployment and project configuration for Zectre (`zectre.yaml`).
 ---
 
-Zectre reads **`tish.yaml`** in the project root for deploy settings (and for Tish build settings when `package.json` does not define them). The CLI binary is `zectre`; only `zectre dev` / `zectre build` invoke the **`tish`** compiler for the native Tish runtime.
+Zectre reads **`zectre.yaml`** in the project root for deploy settings (and for Tish build settings when `package.json` does not define them). Keep this file at the repo root so it stays versioned even if **`.zectre/`** is gitignored for local link state. The CLI binary is `zectre`; only `zectre dev` / `zectre build` invoke the **`tish`** compiler for the native Tish runtime.
 
 ## Example (native Tish)
 
@@ -85,9 +85,9 @@ networking:
 | `health_check.interval` | Interval string (e.g. `10s`) |
 | `health_check.timeout` | Timeout string |
 
-## Build config: `package.json` vs `tish.yaml`
+## Build config: `package.json` vs `zectre.yaml`
 
-**Precedence:** If `package.json` includes a **`tish`** section (`source`, `features`), that is used for local `zectre build` / `zectre dev` and platform builds. Otherwise Zectre uses the **`build`** block in `tish.yaml`.
+**Precedence:** If `package.json` includes a **`tish`** section (`source`, `features`), that is used for local `zectre build` / `zectre dev` and platform builds. Otherwise Zectre uses the **`build`** block in `zectre.yaml`.
 
 `package.json` example:
 
@@ -119,7 +119,7 @@ Feature names align with Tish capabilities (`http`, `fs`, `process`, `regex`, `p
 ```
 my-app/
 ├── package.json     # optional: name, version, tish.source, tish.features
-├── tish.yaml        # deploy (+ optional build)
+├── zectre.yaml      # deploy (+ optional build)
 ├── README.md
 └── src/
     └── main.tish
