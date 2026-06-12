@@ -1,0 +1,80 @@
+---
+title: Set
+description: The Set collection in Tish.
+---
+
+## Overview
+
+`Set` is a collection of unique values. It works identically across every Tish backend — the
+interpreter, the bytecode VM, and native (AOT) compiled binaries. Membership uses **SameValueZero**
+equality: `NaN` is equal to `NaN`, `+0` and `-0` are the same value, primitives compare by value, and
+objects compare by identity. Insertion order is preserved.
+
+```javascript
+let s = new Set([1, 2, 2, 3])   // {1, 2, 3}
+s.size                          // 3
+```
+
+## Constructor
+
+| Form | Result |
+|------|--------|
+| `new Set()` | An empty set. |
+| `new Set(iterable)` | A set seeded from an array (duplicates dropped). |
+
+## Properties & methods
+
+| Member | Description |
+|--------|-------------|
+| `.size` | Number of values (a computed property). |
+| `.add(value)` | Insert `value` if not already present. |
+| `.has(value)` | `true` if `value` is a member. |
+| `.delete(value)` | Remove `value`; returns `true` if it was present. |
+| `.clear()` | Remove all values. |
+| `.values()` / `.keys()` | An **iterator** over the values in insertion order (identical for a Set). |
+| `.entries()` | An **iterator** over `[value, value]` pairs. |
+
+## Iteration
+
+`.values()`, `.keys()`, and `.entries()` return real **iterators** (objects with a
+`.next()` yielding `{ value, done }`), so they work directly, in `for...of`, and with spread:
+
+```javascript
+let s = new Set([2, 3, 4])
+let total = 0
+for (let v of s.values()) {
+  total = total + v
+}
+total              // 9
+
+s.values().next()  // { value: 2, done: false }
+[...s.values()]    // [2, 3, 4]
+```
+
+## Examples
+
+```javascript
+let seen = new Set()
+seen.add("a")
+seen.add("b")
+seen.add("a")        // duplicate — ignored
+seen.size            // 2
+seen.has("b")        // true
+seen.delete("a")     // true
+seen.size            // 1
+
+// SameValueZero: NaN is a single member.
+let n = new Set([NaN, NaN])
+n.size               // 1
+n.has(NaN)           // true
+```
+
+## Compatibility notes (v1)
+
+- **`forEach` is not available yet**, and `.add()` does not return the set (no method chaining).
+  Iterate with `for...of` over `.values()`.
+- **Direct `for (x of set)` and `[...set]` are not wired yet** — iterate via `.values()` /
+  `.keys()` / `.entries()`. Those now return **iterators**, so `[...set.values()]` and
+  `set.values().next()` work like JavaScript.
+- `console.log(set)` prints the underlying object rather than `Set(n) {…}`. Log
+  `[...set.values()]` style output for a clean view (`set.values()`).

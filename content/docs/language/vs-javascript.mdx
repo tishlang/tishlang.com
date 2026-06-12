@@ -35,7 +35,7 @@ This page documents how Tish differs from JavaScript and what Tish adds. Since T
 | `async fn` / `await` | Async functions and await expressions |
 | `readFile` / `writeFile` / etc. | File system APIs (feature-gated) |
 | `new` expressions | Parsed and lowered on every backend; semantics are **not** full ECMA `[[Construct]]` on VM, interpreter, and native Rust (see below). **`tish build --target js`** emits real JavaScript `new`. |
-| `import` / `export` | Modules for builtins (`http`, etc.), native `tish:*` specs (Rust native backend), and multi-file resolution where the toolchain supports it — not arbitrary npm package graphs on all targets (see below). |
+| `import` / `export` | Modules for builtins (`http`, etc.), native **`tish:*`** and **`cargo:…`** specs on the Rust native backend (`cargo:` uses `tish.rustDependencies` in `package.json`), and multi-file resolution where the toolchain supports it — not arbitrary npm package graphs on all targets (see below). |
 | Interpreter + native compile | Same source runs both ways |
 
 ## Semantic Details
@@ -66,7 +66,7 @@ Tish accepts **`new`** (including argument lists and spread) like JavaScript syn
 
 ### Modules (`import` / `export`)
 
-Tish supports **`import`** and **`export`** for **language builtins** (e.g. `import { serve } from 'http'` with the `http` feature), **native module specs** such as **`tish:fs`**, **`tish:http`**, **`tish:process`**, **`tish:ws`**, etc. on the **Rust native compile** path, and **multi-file** programs where the resolver is enabled. **`tish:*` and npm-linked native modules** require **`tish build --native-backend rust`** (not the Cranelift/LLVM “embedded bytecode only” binary paths). This is **not** “every npm package on every target”; dynamic **`import()`** / **`import.meta`** are out of scope for ECMA alignment in the same way as in the main Tish docs.
+Tish supports **`import`** and **`export`** for **language builtins** (e.g. `import { serve } from 'http'` with the `http` feature), **native module specs** such as **`tish:fs`**, **`tish:http`**, **`tish:process`**, **`tish:ws`**, etc., and **`cargo:crate_key`** imports backed by **`tish.rustDependencies`** on the **Rust native compile** path, plus **multi-file** programs where the resolver is enabled. **`tish:*`**, **`cargo:…`**, and npm-linked native modules require **`tish build --native-backend rust`** (not the Cranelift/LLVM “embedded bytecode only” binary paths). This is **not** “every npm package on every target”; dynamic **`import()`** / **`import.meta`** are out of scope for ECMA alignment in the same way as in the main Tish docs.
 
 ### Async/await support
 

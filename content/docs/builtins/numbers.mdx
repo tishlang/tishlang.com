@@ -3,6 +3,48 @@ title: Numbers
 description: Number builtins in Tish.
 ---
 
+## Number literals
+
+Numbers are IEEE-754 doubles. Literals may be written in plain or **scientific (exponent)
+notation** — `e` or `E`, an optional `+`/`-` sign, then digits:
+
+```javascript
+1.5e-3     // 0.0015
+1e10       // 10000000000
+2E+3       // 2000
+6.022e23   // Avogadro's number
+let r = 2.5e2   // 250
+```
+
+The exponent is part of the literal, so `3e0`, `1.25E2`, and `5e-1` are all valid numbers.
+
+Integers may also use **hex**, **octal**, or **binary** prefixes (any case), with optional
+`_` digit separators:
+
+```javascript
+0xff       // 255
+0xDEADBEEF // 3735928559
+0o17       // 15  (octal)
+0b1010     // 10  (binary)
+0xFF_FF    // 65535  (underscores group digits)
+255 & 0xff // bit masks read naturally
+```
+
+## String conversion
+
+`console.log(n)`, `String(n)`, `"" + n`, and template literals all follow JavaScript's
+`Number.prototype.toString` exactly — including the switch to **exponential notation** once
+the decimal point lands past digit 21 or before digit −6 (the shortest round-tripping form):
+
+```javascript
+console.log(6.022e23)   // "6.022e+23"  (not 602200000000000000000000)
+console.log(1e-7)       // "1e-7"
+console.log(1e21)       // "1e+21"
+console.log(1e-6)       // "0.000001"   (still in decimal range)
+console.log(123.456)    // "123.456"
+console.log(0.1 + 0.2)  // "0.30000000000000004"
+```
+
 ## Number.prototype.toFixed
 
 | Method | Description |

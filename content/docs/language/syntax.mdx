@@ -13,12 +13,32 @@ description: Full syntax reference for the Tish language.
 
 ## Literals
 
-- Numbers: `1`, `1.5`, `0.5`
+- Numbers: `1`, `1.5`, `0.5`, scientific notation `1.5e-3`, `1e10`, `2E+3`, and radix literals `0xff`, `0o17`, `0b1010` (optional `_` separators)
 - Strings: `"hello"`, `'world'` (escapes: `\n`, `\r`, `\t`, `\\`, `\"`, `\'`)
 - Booleans: `true`, `false`
 - Null: `null`
 - Arrays: `[1, 2, 3]`
 - Objects: `{ x: 1, y: 2 }` (fixed keys at parse time)
+
+## Variable declarations
+
+```javascript
+let x = 1                 // mutable, block-scoped
+const y = 2               // immutable
+let a = 1, b = 2, c       // comma-separated declarators (c is uninitialized)
+let [p, q] = pair, r = 3  // a destructuring declarator may appear in the list
+```
+
+Comma-separated declarators also work in a `for` initializer:
+
+```javascript
+for (let i = 0, n = arr.length; i < n; i++) {
+  // ...
+}
+```
+
+Each declarator binds in the **same** scope (no nested block) — `let a = 1, b = 2` is
+equivalent to writing the two `let`s on separate lines.
 
 ## Functions
 
@@ -47,6 +67,23 @@ See [Modules](/language/modules/) for full details.
 - Braces optional: use indentation for blocks.
 - Tab and space normalized: 1 tab = 1 level; 2 spaces = 1 level.
 - No mixing errors: both styles work; only consistent level matters.
+
+### Ignoring indentation (debugging)
+
+When you're debugging how **nested blocks** transpile, you can tell the lexer to ignore indentation so blocks are delimited **only by braces** `{ … }`. Fully brace-delimited code parses identically either way, so this isolates whether a block-nesting problem comes from the indentation layer.
+
+- Set the environment variable `TISH_IGNORE_INDENT=1` — honored by every command that parses Tish (`run`, `build`, `dump-ast`, `fmt`, lint).
+- Or pass the flag to the AST dumper: `tish dump-ast --ignore-indent file.tish` (the flag is OR'd with the env var, mirroring `--no-optimize` / `TISH_NO_OPTIMIZE`).
+
+```bash
+# Inspect the parsed block structure with indentation ignored
+tish dump-ast --ignore-indent app.tish
+
+# Apply it to any command — e.g. transpile to JavaScript and compare the output
+TISH_IGNORE_INDENT=1 tish build app.tish --target js -o app.js
+```
+
+With indentation ignored, an indented line no longer opens a block, so every block must use explicit braces.
 
 ## Grammar (informal)
 

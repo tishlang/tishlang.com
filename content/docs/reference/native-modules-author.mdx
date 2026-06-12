@@ -9,9 +9,75 @@ This document specifies the formal requirements for third-party native modules t
 
 Third-party modules integrate with Tish via:
 
-- **Interpreter:** `TishNativeModule` trait; globals registered at startup
-- **Compiled:** Import-driven; `import { Egui } from 'tish:egui'` resolves the package and adds it as a Cargo dependency. No `tish_runtime` glue.
-- **Package:** npm `package.json` with `tish.module`, `tish.crate`, `tish.export`; resolved from `node_modules` or workspace layout
+- **Interpreter:** `TishNativeModule` trait; globals registered at startup (no `tish:` / `cargo:` specifiers in the same way as compile).
+- **Compiled `tish:` (npm native module):** `import { Egui } from 'tish:egui'` — resolves a package under `node_modules` (or workspace layout) whose `package.json` has `tish.module`, `tish.crate`, `tish.export`. The compiler adds that crate as a Cargo dependency and calls its export function (or a generated per-export wrapper when `tish.generateNativeWrapper` is true).
+- **Compiled `cargo:` (Cargo-only dependency):** `import { foo } from 'cargo:my_crate'` — **no npm package** for `my_crate`. You declare the crate in project root `package.json` → `tish.rustDependencies` using the **same key** as after `cargo:`. `tish build` merges those entries into the ephemeral `Cargo.toml`, then emits a generated native wrapper that maps each imported name to `my_crate::{snake_case}(args: &[Value]) -> Value` on **that** dependency crate. The crate must implement those `pub fn` symbols (typically **pre-generated** with **`tishlang-cargo-bindgen`** from the Tish workspace, bindgen-style). See [Cargo-backed imports](#cargo-backed-imports-cargo) below.
+
+Optional: set `tish.generateNativeWrapper` to `true` to use the same generated-wrapper style for **`tish:`** npm modules (per-export Rust symbols on the adapter crate instead of a single `tish.export` object).
+
+## Cargo-backed imports (`cargo:`)
+
+Use this when your Rust code lives in a normal Cargo crate (workspace member or path dependency) and you do **not** want to publish an npm adapter package.
+
+### Requirements
+
+- **`tish build --target native --native-backend rust`** only. Not supported for `tish run`, the bytecode VM, `tish build --target js`, or Cranelift/LLVM native targets (those paths reject external native imports).
+- **Project root `package.json`** must include a **`tish`** object with **`rustDependencies`**: an object whose **keys** are exactly the identifiers used after `cargo:` (with `-` allowed in the key; the Rust crate name typically uses `_`).
+- Each value is either a **version string** (published on crates.io) or a **JSON object** that becomes a Cargo inline dependency table (e.g. `{ "path": "./crates/my-shim" }`). Relative `path` values are resolved from the **project root** (the directory containing `package.json`), not from the ephemeral build dir.
+
+### Tish source (example: pre-generated JSON helpers)
+
+```javascript
+import { to_string, from_str } from 'cargo:tish_serde_json'
+
+console.log(to_string({ hello: "world" }))
+```
+
+### `package.json` fragment
+
+```json
+{
+  "tish": {
+    "rustDependencies": {
+      "tish_serde_json": { "path": "./crates/tish_serde_json" }
+    }
+  }
+}
+```
+
+The key must match `cargo:…`. Use a **path** to a small crate produced by **`tishlang-cargo-bindgen`** (workspace crate `tishlang_cargo_bindgen`, binary `tishlang-cargo-bindgen`), or hand-maintain the same `pub fn` contract. You can also use a **crates.io version string** when a published crate already exposes the `Value` ABI.
+
+### Pre-generating bindings (Phase 1)
+
+The tool resolves the **upstream** Cargo package with **`cargo metadata`**, walks its **`src/**/*.rs`**, and classifies each requested **`pub fn`** by **signature shape** (via **`syn`**) — not by a hard-coded crate list. Supported shapes today include:
+
+- **`pub fn …(args: &[Value]) -> Value`** — thin forward to the dependency.
+- **`pub fn …<T: Serialize + ?Sized>(v: &T) -> Result<String, _>`** — Tish `Value` is converted via **`serde_json::Value`**, then the real `to_string`-style API is called.
+- **`pub fn …<'a, T: Deserialize<'a>>(s: &'a str) -> Result<T, _>`** — parse as **`serde_json::Value`**, then map into Tish **`Value`**.
+
+From the Tish language repo (typical: **no** `--dependency` — the tool infers the glue path from **`tish.rustDependencies`**, then the upstream from the glue **`Cargo.toml`** if it exists, otherwise from the **project root** **`Cargo.toml`**, using registry semver entries in **`[dependencies]`** / **`[dev-dependencies]`** and skipping **`tishlang_core`** / path-only deps):
+
+```bash
+cargo run -p tishlang_cargo_bindgen -- \
+  --project-root /path/to/your-app \
+  --exports to_string,from_str
+```
+
+With multiple path-based **`rustDependencies`**, add **`--crate-name`** matching the key (same as after **`cargo:`**). **Bootstrap** without a glue **`Cargo.toml`**: put the upstream crate in the app **`Cargo.toml`** (e.g. **`serde_json = "1"`** under **`[dev-dependencies]`**), or pass **`--dependency serde_json`** and **`--dependency-version 1.0`** without **`--out-dir`**. Fully manual: **`--dependency`**, **`--out-dir`**, and optional **`--crate-name`**.
+
+Optional **`--manifest-path`** resolves the upstream from an existing workspace instead of a temporary probe crate.
+
+Prefer **`--tishlang-runtime-path`** (or **`TISHLANG_RUNTIME_PATH`**) so the generated glue crate uses the **same** `tishlang_runtime` / `tishlang_core` as **`tish build`** (which resolves the runtime from your project + checkout). **`--tishlang-runtime-version`** writes a crates.io `tishlang_runtime` line; that can compile but then **`tish build` fails with two `tishlang_core` / `Value` types** until the compiler also links the registry runtime. The **`tish-cargo-example`** **`npm run gen:bindings`** script uses the path. **Phase 2 (planned):** `tish build` may run this generator for you automatically.
+
+### Rust contract on the **generated** crate
+
+After generation, `tish build` expects each **Tish import name** to exist as **`pub fn {snake}(args: &[Value]) -> Value`** on the **generated** crate (the one listed in `rustDependencies`). That crate calls into the real dependency (`serde_json`, etc.) using the patterns above.
+
+For crates that only expose the Tish ABI directly, you can skip bindgen and implement those `pub fn` symbols by hand.
+
+### Working example
+
+See **`tish-cargo-example`** (pre-generated `crates/tish_serde_json`) and in-repo tests **`crates/tish/tests/cargo_example_compile.rs`** (path shim fixture).
 
 ## 1. Trait Contract
 

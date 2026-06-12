@@ -64,6 +64,18 @@ let result = "hello 123 world 456".replace(RegExp("(\\d+)", "g"), (match, g1) =>
 
 Supported in both interpreter and compiled modes.
 
+## Resolved (as of 2026-06)
+
+These previously-missing pieces now work across the interpreter, VM, and native backends:
+
+- **`>>>` unsigned right shift** — `4294967295 >>> 0 === 4294967295`. See [Operators](/reference/operators/).
+- **Hex / octal / binary integer literals** — `0xFF`, `0o17`, `0b1010` (any case, `_` digit separators). See [Numbers](/builtins/numbers/).
+- **Scientific-notation literals** — `1.5e-3`, `6.022e23`.
+- **`Number.prototype.toString` exponential form** — matches V8 (exponent ≥ 21 or ≤ -7 → `1e+21`, `1e-7`).
+- **Comma declarators** — `let a = 1, b = 2, c = a + b`.
+- **Map / Set iterators** — `.values()`, `.keys()`, `.entries()` return iterators (`.next()`) that also work in `for…of`. See [Map](/builtins/map/) and [Set](/builtins/set/).
+- **Gradual type checking** — `tish build --check warn|error` flags provable annotation violations. See [Type Annotations](/language/type-annotations/).
+
 ## See also
 
 - [Tish vs JavaScript](/language/vs-javascript/) — High-level differences

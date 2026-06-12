@@ -1,0 +1,104 @@
+---
+title: Typed Arrays
+description: Float32Array, Float64Array, and the integer typed-array views in Tish.
+---
+
+## Overview
+
+Tish supports the typed-array views — `Float64Array`, `Float32Array`, `Int8Array`, `Uint8Array`,
+`Uint8ClampedArray`, `Int16Array`, `Uint16Array`, `Int32Array`, and `Uint32Array` — across every
+backend (interpreter, bytecode VM, and native/AOT). Each constructor **coerces every element to the
+view's element type**: `Float32Array` rounds to 32-bit float precision, the integer views
+truncate-and-wrap, and `Uint8ClampedArray` clamps to `0..=255`.
+
+```javascript
+new Uint8Array([300, -1, 256])   // [44, 255, 0]   (wrap mod 256)
+new Int8Array([128, -129])       // [-128, 127]    (signed wrap)
+new Float32Array([0.1])[0]       // 0.10000000149011612  (f32-rounded)
+new Uint8ClampedArray([-5, 300]) // [0, 255]       (clamped)
+```
+
+## Constructors
+
+| Form | Result |
+|------|--------|
+| `new X(length)` | A view of `length` zeros. |
+| `new X([...])` | A view seeded from an array, each element coerced to the element type. |
+| `new X(arrayLike)` | A coerced copy of another array / typed array. |
+
+## Statics
+
+| Member | Description |
+|--------|-------------|
+| `X.of(...items)` | A view from the argument list (coerced). |
+| `X.from(arrayLike)` | A view from an array-like (coerced). |
+| `X.BYTES_PER_ELEMENT` | Element size in bytes (`Float64Array` → 8, `Int32Array` → 4, `Uint8Array` → 1, …). |
+
+## Element coercion
+
+| View | Rule |
+|------|------|
+| `Float64Array` | Stored as-is (64-bit float). |
+| `Float32Array` | Rounded to 32-bit float precision. |
+| `Int8/16/32Array` | `ToInt8/16/32` — truncate toward zero, wrap, reinterpret as signed. |
+| `Uint8/16/32Array` | `ToUint8/16/32` — truncate toward zero, wrap mod 2ⁿ. |
+| `Uint8ClampedArray` | Clamp to `0..=255`, rounding ties to even. |
+
+Non-numeric elements become `NaN` first, which is `0` for the integer views.
+
+## Working with views
+
+A typed array is backed by a regular array, so indexing, `.length`, `for…of`, and the array methods
+all work:
+
+```javascript
+let data = new Uint8Array([10, 20, 30])
+data.length                 // 3
+data[0]                     // 10
+
+let total = 0
+for (let x of data) {
+  total = total + x
+}
+total                       // 60
+
+new Float64Array([1, 2, 3, 4]).reduce((a, b) => a + b, 0)   // 10
+```
+
+## Packed `Float64Array` (native, opt-in)
+
+On the **native (AOT) backend**, `Float64Array` can use a packed `Vec<f64>` representation — one
+contiguous buffer of doubles instead of a generic boxed array of values. Enable it with the
+environment variable `TISH_PACKED_ARRAYS=1` (default **off**); with the flag off, behaviour is
+byte-for-byte identical to the boxed backing.
+
+`Float64Array` is the natural fit because its element type already *is* a 64-bit float, so no
+coercion is needed. The packed form is **~3× denser** (8 bytes per element vs 24) and constructs
+dramatically faster — a length-form `new Float64Array(n)` is a single zero-fill rather than building
+`n` boxed values. Indexing, `.length`, `for…of`, and the array methods all work unchanged.
+
+A useful side effect: with packing on, **writes to a `Float64Array` coerce to `f64`**, so the
+construction-only rule below does not apply to this one view:
+
+```javascript
+// With TISH_PACKED_ARRAYS=1 on the native backend:
+let f = new Float64Array([1, 2, 3])
+f[0] = "oops"   // stored as NaN (coerced to f64), not the raw string
+```
+
+The integer views and `Float32Array` have no packed representation yet and always use the boxed
+backing. Array methods (`reduce`, `map`, `filter`, `forEach`, `find`, `some`, `every`, …) iterate the
+packed buffer directly without first expanding it to a boxed array, so they keep the speed and memory
+benefit too. A numeric `map`/`filter` also *returns* a packed result, so chains like
+`xs.filter(...).map(...).reduce(...)` stay packed from end to end.
+
+## Compatibility notes (v1)
+
+- **Coercion happens at construction (`new` / `.from` / `.of`), not on element assignment.**
+  `ta[i] = 300` on a `Uint8Array` stores `300` (a plain array write, no wrap). Rebuild with
+  `Uint8Array.of(...)` / `Uint8Array.from(...)` when you need the value re-coerced. (The one
+  exception is a packed `Float64Array` on the native backend — see above — which coerces writes to
+  `f64`.)
+- **No `ArrayBuffer` / `DataView` / `.buffer` / `.byteLength` / `.subarray` / `.set` yet.**
+- A typed array is a regular array at runtime, so `Array.isArray(ta)` is `true` and there is no
+  `instanceof` distinction between view types.

@@ -1,9 +1,9 @@
 ---
 title: Type Annotations
-description: Optional TypeScript-style type annotations in Tish.
+description: Optional, gradually-checked TypeScript-style type annotations in Tish.
 ---
 
-Tish supports optional TypeScript-style type annotations. Types are **parsed but not enforced** at runtime (gradual typing). Omit them for dynamic typing.
+Tish supports optional TypeScript-style type annotations. They're **gradual**: omit them and a binding is dynamic; add them and you get an opt-in compile-time checker plus faster native code. On their own, annotations never change runtime behavior.
 
 ## Syntax
 
@@ -21,8 +21,9 @@ fn add(a: number, b: number): number {
 // Object types
 let person: { name: string, age: number } = { name: "Alice", age: 30 }
 
-// Union types
+// Union and optional (T? === T | null)
 let value: number | string = 42
+let maybe: number? = null
 
 // Rest parameters
 fn sum(...args: number[]): number { ... }
@@ -37,14 +38,51 @@ fn sum(...args: number[]): number { ... }
 | `boolean` | `true` or `false` |
 | `null` | The null value |
 | `void` | No return value (functions) |
-| `T[]` | Array of type T |
+| `T[]` / `Array<T>` | Array of `T` (`Array<T>` desugars to `T[]`) |
+| `T?` | Optional — shorthand for `T \| null` |
 | `{ k: T }` | Object with typed properties |
-| `T \| U` | Union (either T or U) |
-| `(T) => R` | Function type (syntax only, future) |
+| `T \| U` | Union (either `T` or `U`) |
+| `T & U` | Intersection (both `T` and `U`) |
+| `[T, U]` | Tuple — fixed length, positional |
+| `"on" \| "off"` | Literal types (and unions of them) |
+| `(a: T) => R` | Function type |
+| `<T>` | Generics on `fn`, `type`, and `interface` |
+| `interface Name { … }` | Named structural type (supports `extends`) |
+| `x as T` | Type assertion (cast) |
+
+```javascript
+// Generics, interfaces, tuples, literals, intersections, casts
+fn identity<T>(x: T): T { return x }
+type Box<T> = { value: T }
+interface Point { x: number, y: number }
+interface Dog extends Animal { bark: boolean }
+type Person = Named & Aged
+type Status = "on" | "off"
+let pair: [number, string] = [7, "z"]
+let n = (42 as number) + 8
+```
+
+## Type checking (`--check`)
+
+A **gradual checker** verifies annotations at build time. It is opt-in and conservative — it reports only mismatches it can prove (zero false positives), so unannotated code stays fully dynamic.
+
+```bash
+tish build app.tish --check warn    # report diagnostics, keep building
+tish build app.tish --check error   # report AND fail the build (exit 1)
+```
+
+```
+tish type warning: 2:17: Type 'number' is not assignable to type 'string'.
+```
+
+Set `TISH_CHECK=warn` (or `error`) to make it the default for a project, and gate CI on `--check error`. The checker resolves `type` aliases, arrays, and object/interface shapes; it does **not** yet narrow literal-union membership or perform full TypeScript inference.
+
+## Native codegen
+
+With `--native-backend rust`, annotations lower to native Rust types — `number → f64`, `string → String`, `boolean → bool`, `number[] → Vec<f64>`, and `Box<number>` monomorphizes to a struct with an `f64` field — with **no `Value` boxing**. An inference pass also propagates these types through arithmetic, loop counters, and homogeneous arrays, so much idiomatic numeric code goes native without any explicit annotations. See [Native backend](/reference/native-backend/).
 
 ## Notes
 
-- Type annotations are optional; omitting them is equivalent to dynamic typing.
-- Types are parsed and stored in the AST but **not enforced** during evaluation (no runtime type errors for mismatches).
-- **`--native-backend rust`:** Variable declarations annotated with `number`, `string`, or `boolean` already lower to native Rust primitives (`f64`, `String`, `bool`) in the emitted Rust source — no `Value` boxing for those bindings. Function parameters with type annotations similarly emit typed Rust parameters.
-- **Inference (in progress):** The compiler is gaining a type-inference pass that propagates primitive types through arithmetic, loop counters, and homogeneous array literals automatically, so you get native codegen without having to annotate everything manually. See `docs/LANGUAGE.md` → *Native compile (implementation status)* in the language repo for current progress.
+- Annotations are optional; omitting them is equivalent to dynamic typing.
+- They do not change evaluation by themselves — enforcement is the opt-in `--check` pass, not a runtime cost.
+- Generic type parameters are **erased** for checking (gradual) but **specialized** in native codegen.

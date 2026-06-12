@@ -3,12 +3,13 @@ title: WebAssembly Targets
 description: Compile Tish to WebAssembly for browser or Wasmtime.
 ---
 
-Tish supports two WebAssembly targets:
+Tish compiles to two self-contained WebAssembly targets, plus a raw bytecode chunk for hosts that already ship the VM runtime:
 
 | Target | Output | Runtime | Use when |
 |--------|--------|---------|----------|
 | **wasm** | .wasm + .js + .html | Browser | Deploy to web |
 | **wasi** | Single .wasm | Wasmtime, wasmer, etc. | CLI, serverless, edge |
+| **bytecode** | Single file (raw chunk) | A tish VM runtime you already ship | Custom embeds & bundlers |
 
 ## Browser (wasm)
 
@@ -45,6 +46,27 @@ wasmtime app.wasm
 ### Known limitations (WASI)
 
 WASI output uses the bytecode VM (same runtime as Cranelift). The same subset of Tish that works with Cranelift works with WASI. Some constructs and builtins may fail or produce incomplete output. For full compatibility, prefer the Rust native backend or the JS target.
+
+## Bytecode chunk (bytecode)
+
+Emits **only** the serialized bytecode program — no VM binary, no wasm-bindgen glue, no HTML loader:
+
+```bash
+tish build hello.tish -o app.tbc --target bytecode
+```
+
+This is the exact byte sequence that `--target wasm` embeds (as base64) inside its generated HTML loader, written out raw. Use it when the **host already ships the tish VM runtime** and only needs the program to run — for example a web app that builds `tishlang_wasm_runtime` once with `wasm-bindgen` and then fetches the chunk as a separate, cacheable asset:
+
+```js
+import init, { run } from './tish_vm.js';   // your prebuilt VM runtime (wasm-bindgen)
+await init('./tish_vm_bg.wasm');
+const chunk = new Uint8Array(await (await fetch('./app.tbc')).arrayBuffer());
+run(chunk);                                  // deserialize + execute
+```
+
+Unlike `--target wasm`, nothing is built or discarded: no standalone VM `.wasm`, no `.js`, no `.html`. This makes it ideal for bundlers (Vite, esbuild, …) that fingerprint the runtime and the bytecode chunk as independent assets, and for custom embeddings whose runtime exposes its own entry (e.g. a WebGPU host's `start(chunk, env)`).
+
+**Requirements**: none beyond the `tish` CLI — the host supplies the runtime.
 
 For Node.js or bundlers (no WebAssembly), use:
 

@@ -53,7 +53,9 @@ Each module may have at most one default export.
 
 ## Native module imports
 
-Native modules (e.g. egui, Polars) are imported via the `tish:` specifier:
+### `tish:` (npm / packaged native modules)
+
+Native modules (e.g. egui, Polars) are usually imported via the **`tish:`** specifier:
 
 ```javascript
 import { Egui } from 'tish:egui'
@@ -74,18 +76,38 @@ let df = Polars.read_csv("./data.csv")
 - Resolution walks `node_modules` and parent directories to find the package
 - No `--features` needed: native imports drive compilation and Cargo dependencies automatically
 
-Creating a native module? See [Native Modules (Author Guide)](/reference/native-modules-author/).
+### `cargo:` (Rust crates with the `Value` ABI)
+
+Use **`cargo:`** for crates listed under **`package.json` → `tish.rustDependencies`** (same key as in the import). The crate must expose **`pub fn {snake}(args: &[Value]) -> Value`**. In practice, generate that glue with **`tishlang-cargo-bindgen`** (like bindgen) and commit the output, or use a published crate that already matches the contract.
+
+```javascript
+import { to_string, from_str } from 'cargo:tish_serde_json'
+```
+
+```json
+{
+  "tish": {
+    "rustDependencies": {
+      "tish_serde_json": { "path": "./crates/tish_serde_json" }
+    }
+  }
+}
+```
+
+This path is **only** for **`tish build --target native`** with the **Rust** native backend. It does **not** run in the interpreter, VM, or JS output. Full rules and CLI usage: [Native Modules (Author Guide)](/reference/native-modules-author/).
+
+Creating or publishing a `tish:` npm module? See the same [Native Modules (Author Guide)](/reference/native-modules-author/).
 
 ## Path resolution
 
 - **Relative paths:** `./foo.tish`, `../lib/utils.tish` — resolved relative to the importing file's directory
-- **Native modules:** `tish:egui`, `tish:polars` — resolved via `package.json` and project layout
+- **Native modules:** `tish:egui`, `tish:polars` — resolved via `package.json` and project layout; **`cargo:my_crate`** — resolved via `tish.rustDependencies` (Rust native build only)
 - The `.tish` extension is optional for file imports; it is added if the path has no extension
 
 ## Limits (Phase 1)
 
 - No bare specifier resolution (e.g. `import x from "lodash"`) for file modules
-- For native modules, add the package to `package.json` dependencies; use `tish:name` in imports
+- For **`tish:`** modules, add the package to `package.json` `dependencies`; use `tish:name` in imports. For **`cargo:`**, add keys under `tish.rustDependencies` instead (no npm package required for that key).
 
 ## Example
 

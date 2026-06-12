@@ -19,7 +19,7 @@ When compiling Tish to a native binary (`tish build --target native`), you can s
 
 The Rust backend transpiles your Tish program to Rust source calling **`tishlang_runtime`** — dynamic operations on `Value` — then invokes `cargo build --release`. This gives:
 
-- Full native-module support (`import { Egui } from 'tish:egui'`, `@scope/pkg`)
+- Full native-module support (`import { Egui } from 'tish:egui'`, `import { x } from 'cargo:my_crate'` with `tish.rustDependencies`, `@scope/pkg`)
 - Access to the full Rust ecosystem
 - Destructuring in function parameters
 
@@ -37,18 +37,17 @@ The Cranelift backend produces a standalone binary **without a cargo invocation*
 
 Use when your program:
 
-- Has **no** native imports (pure Tish + file imports only)
+- Has **no external** native imports (`cargo:…`, packaged `tish:*` modules such as `tish:egui`, or `@scope/pkg`). **Built-in** `tish:fs`, `tish:http`, and `tish:process` (when enabled) are still allowed on this path.
 - Benefits from a fast build (no cargo + rustc overhead)
-- Does not need `tish:*` or `@scope/pkg` modules
 
 ```bash
 tish build main.tish -o app --native-backend cranelift
 ```
 
-If your program uses native imports, the Cranelift backend will error:
+If your program uses **external** native imports (including `cargo:…` crates), the Cranelift backend will error with a message like:
 
 ```
-Cranelift backend does not support native imports (tish:*, @scope/pkg). Use --native-backend rust.
+Cranelift backend does not support external native imports (tish:…, cargo:…, @scope/pkg). Built-in tish:fs, tish:http, tish:process are supported. Use --native-backend rust for external modules.
 ```
 
 ## Known limitations (Cranelift / LLVM)
@@ -57,7 +56,7 @@ Because the binary runs **`tishlang_vm`**, any construct the VM supports is supp
 
 ## Target and feature flags
 
-`--native-backend` applies only when `--target native` (the default). Other targets (`js`, `wasm`, `wasi`) ignore it.
+`--native-backend` applies only when `--target native` (the default). Other targets (`js`, `wasm`, `wasi`, `bytecode`) ignore it.
 
 For WebAssembly targets, see [WASM Targets](/reference/wasm-targets/).
 

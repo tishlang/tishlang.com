@@ -1,0 +1,94 @@
+---
+title: Map
+description: The Map collection in Tish.
+---
+
+## Overview
+
+`Map` is a collection of key → value entries that remembers insertion order and works identically
+across every Tish backend — the interpreter, the bytecode VM, and native (AOT) compiled binaries.
+Keys are compared with **SameValueZero** equality: `NaN` matches `NaN`, `+0`/`-0` are the same,
+primitives compare by value, and objects compare by identity. Any value may be a key.
+
+```javascript
+let m = new Map([["a", 1], ["b", 2]])
+m.get("a")   // 1
+m.size       // 2
+```
+
+## Constructor
+
+| Form | Result |
+|------|--------|
+| `new Map()` | An empty map. |
+| `new Map(iterable)` | A map seeded from an array of `[key, value]` pairs. |
+
+## Properties & methods
+
+| Member | Description |
+|--------|-------------|
+| `.size` | Number of entries (a computed property). |
+| `.set(key, value)` | Insert or update `key`. |
+| `.get(key)` | The value for `key`, or `undefined`. |
+| `.has(key)` | `true` if `key` is present. |
+| `.delete(key)` | Remove `key`; returns `true` if it was present. |
+| `.clear()` | Remove all entries. |
+| `.keys()` | An **iterator** over the keys in insertion order. |
+| `.values()` | An **iterator** over the values in insertion order. |
+| `.entries()` | An **iterator** over `[key, value]` pairs. |
+
+## Iteration
+
+`.keys()`, `.values()`, and `.entries()` return real **iterators** — objects with a
+`.next()` method that yields `{ value, done }` — so they work both directly and in
+`for...of` / spread, just like JavaScript:
+
+```javascript
+let m = new Map([["a", 1], ["b", 2], ["c", 3]])
+
+let total = 0
+for (let v of m.values()) {
+  total = total + v
+}
+total   // 6
+
+for (let pair of m.entries()) {
+  // pair[0] is the key, pair[1] is the value
+}
+
+// Iterator API + spread
+let it = m.keys()
+it.next()              // { value: "a", done: false }
+[...m.values()]        // [1, 2, 3]
+```
+
+The iterator snapshots the map when it is created; mutating the map mid-iteration is not
+reflected (a live iterator is a follow-up).
+
+## Examples
+
+```javascript
+let counts = new Map()
+counts.set("apple", 1)
+counts.set("pear", 2)
+counts.set("apple", 5)   // updates the existing key
+counts.size              // 2
+counts.get("apple")      // 5
+counts.has("pear")       // true
+counts.delete("pear")    // true
+counts.size              // 1
+
+// Any value works as a key.
+let byId = new Map()
+byId.set(1, "one")
+byId.set(2, "two")
+byId.get(1)              // "one"
+```
+
+## Compatibility notes (v1)
+
+- **`forEach` is not available yet**, and `.set()` does not return the map (no method chaining).
+  Iterate with `for...of` over `.entries()` / `.keys()` / `.values()`.
+- **Direct `for (entry of map)` and `[...map]` are not wired yet** — use `.entries()` /
+  `.keys()` / `.values()`, which return arrays.
+- `console.log(map)` prints the underlying object rather than `Map(n) {…}`.

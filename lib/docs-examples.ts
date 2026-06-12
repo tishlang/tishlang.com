@@ -19,14 +19,14 @@ export interface ExampleNavItem {
 }
 
 function getTishPackageRoot(): string {
-  return path.join(process.cwd(), "node_modules", "tish");
+  return path.join(process.cwd(), "node_modules", "@tishlang", "tish");
 }
 
 export function getTishExamplesRoot(): string {
   const root = path.join(getTishPackageRoot(), EXAMPLES_SEGMENT);
   if (!fs.existsSync(root) || !fs.statSync(root).isDirectory()) {
     throw new Error(
-      'Missing `node_modules/tish/examples`. Run `npm install` (devDependency `tish` from GitHub).'
+      'Missing `node_modules/@tishlang/tish/examples`. Run `npm install` (devDependency `@tishlang/tish` from GitHub).'
     );
   }
   return root;

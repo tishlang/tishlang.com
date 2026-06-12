@@ -12,7 +12,7 @@ const sections = [
       "tish is a hardened js/ts-like surface: let/const, arrow functions, async/await, template literals, and modules. one source tree runs in a tree-walking interpreter or bytecode vm, transpiles to javascript, or ships as wasm/wasi or a native binary — pick the backend and target that fit your deploy story.",
     capabilities: [
       "strict equality only; no undefined — null or a real value",
-      "native modules on the rust backend: tish:http, tish:fs, tish:process, and more",
+      "native modules on the rust backend: tish:http, tish:fs, tish:process, cargo: local crates via rustDependencies, and more",
       "optional type syntax parsed at compile time (checked types and codegen still evolving)",
       "secure-by-default: http, fs, process, and regex behind explicit feature flags",
     ],

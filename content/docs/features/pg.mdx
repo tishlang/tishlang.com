@@ -1,0 +1,104 @@
+---
+title: PostgreSQL
+description: "PostgreSQL driver for Tish (feature flag: pg)."
+---
+
+Requires the **`pg`** feature on the `tish` CLI (included in the default `full` feature set).
+
+- **Run:** `cargo run -p tishlang --features pg -- run main.tish` (or use a `tish` binary built with `pg` / `full`).
+- **Build:** `tish build main.tish -o app --feature pg` (combine with `http`, `fs`, etc. as needed).
+
+Install the npm surface (Tish source only; the wire protocol runs in the linked Rust crate **`tishlang_pg`**):
+
+```bash
+npm install @tishlang/pg
+```
+
+```javascript
+import { connect, prepare, queryPrepared, queryAll, migrate, close, perWorkerClient } from "@tishlang/pg"
+```
+
+Under the hood, `@tishlang/pg` re-exports functions backed by the `cargo:tish_pg` native module registered when Postgres support is linked in.
+
+## `connect(connectionString | options)`
+
+Returns a **numeric client handle** on success, or an **error object** `{ ok: false, error: "…" }` on failure.
+
+- **String:** `postgres://user:pass@host:5432/dbname`
+- **Object:** `{ connectionString: "postgres://…" }` (shape reserved for future pool options such as `max`).
+
+```javascript
+const client = connect(process.env.DATABASE_URL)
+if (typeof client === "object" && client.ok === false) {
+  console.error(client.error)
+  process.exit(1)
+}
+```
+
+## `perWorkerClient(connectionString)`
+
+Same wire semantics as `connect`, but named for the **prefork HTTP** pattern: one dedicated Postgres client per OS worker after `fork()`, so connections are not shared across processes. Prefer this when you combine **`http`** + **`pg`** and run multiple worker processes.
+
+## `prepare(client, sql)`
+
+Prepares a statement on the given client. Returns a **numeric statement handle** or `{ ok: false, error }`.
+
+## `queryPrepared(client, stmt, params)`
+
+Runs a prepared query. **`params`** is an array of JSON-compatible values (or omit / pass `null` for no parameters).
+
+On success, returns an **array of row objects** (column names → values). On failure, `{ ok: false, error }`.
+
+```javascript
+const stmt = prepare(client, "SELECT $1::text AS v")
+const rows = queryPrepared(client, stmt, ["hello"])
+console.log(rows[0].v)
+```
+
+## `queryAll(client, specs)`
+
+**Pipelined batch:** `specs` is an array of `[statement_handle, params_array]` pairs. Queries are issued concurrently on the wire against the same client; the database still executes them in order.
+
+Returns an **array of row-arrays** (one per spec), or `{ ok: false, error }`.
+
+```javascript
+const s = prepare(client, "SELECT $1::int AS n")
+const batch = queryAll(client, [
+  [s, [1]],
+  [s, [2]],
+])
+```
+
+## `migrate(client, directoryPath)`
+
+Reads `directoryPath` for `*.sql` files, sorts them **lexically**, and applies any not yet recorded in the `_tish_pg_migrations` ledger table (created automatically). Each file runs in its own transaction (`BEGIN` / `COMMIT` or `ROLLBACK` on error).
+
+Returns `{ ok: true, applied: string[] }` listing newly applied migration **filenames**, or `{ ok: false, error }`.
+
+## `close(client)`
+
+Removes the client handle from the internal registry. Statements tied to that client should not be used afterward.
+
+## Postgres errors
+
+Server-side faults often surface as generic `"db error"` strings if you only call `.toString()` on the underlying driver. The Rust helper **`format_pg_error`** (used internally) prefers the database message, SQLSTATE code, `DETAIL`, and `HINT` when present. Tish-facing APIs stringify errors through the same path so `error` fields are usually actionable.
+
+## Compose with `http`
+
+```javascript
+import { serve } from "http"
+import { connect, prepare, queryPrepared, close } from "@tishlang/pg"
+
+const client = connect(process.env.DATABASE_URL)
+const stmt = prepare(client, "SELECT $1::text AS msg")
+
+serve(8080, async (req) => {
+  if (req.method === "GET" && req.path === "/db") {
+    const rows = queryPrepared(client, stmt, ["ok"])
+    return { status: 200, body: JSON.stringify({ rows }) }
+  }
+  return { status: 404, body: "not found" }
+})
+```
+
+Use **`perWorkerClient`** instead of **`connect`** when your HTTP stack uses multiple worker processes and each worker should own its own connection.
