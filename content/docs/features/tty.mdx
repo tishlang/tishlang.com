@@ -1,0 +1,101 @@
+---
+title: TTY
+description: "Interactive terminal I/O in Tish — raw mode, key and resize events (feature flag: tty)."
+---
+
+Requires the `tty` feature. Run: `tish run --feature tty main.tish`. Build: `tish build main.tish -o app --feature tty`.
+
+The `tish:tty` module gives a program direct, line-buffer-free access to the terminal: detect a
+TTY, read its size, switch into **raw mode**, and poll for **key** and **resize** events. It's the
+foundation for building TUIs (interactive prompts, key viewers, full-screen apps).
+
+```javascript
+import { isTTY, size, setRawMode, read } from 'tish:tty'
+```
+
+## isTTY()
+
+Returns `true` when stdout is connected to a real terminal, `false` when output is piped or
+redirected. Guard interactive code with it so piped runs degrade gracefully.
+
+```javascript
+if (!isTTY()) {
+  console.log("Not a terminal — run this directly in a terminal.")
+}
+```
+
+## size()
+
+Returns the terminal dimensions as `{ cols, rows }`.
+
+```javascript
+let dims = size()
+console.log("Terminal:", dims.cols, "x", dims.rows)
+```
+
+## setRawMode(enabled)
+
+Enable (`true`) or disable (`false`) raw mode. In raw mode the terminal delivers each keypress
+immediately — no line buffering, no echo — so you can react key-by-key. Always restore it with
+`setRawMode(false)` before exiting.
+
+```javascript
+setRawMode(true)
+// … interactive loop …
+setRawMode(false)
+```
+
+## read(timeoutMs)
+
+Poll for the next terminal event, waiting up to `timeoutMs` milliseconds. Returns the event object,
+or `null` if nothing arrived within the timeout (so you can keep a responsive loop). Events have a
+`type`:
+
+- **`"key"`** — `{ type, key, ctrl, alt, shift }`. `key` is the character (`"a"`) for printable keys
+  or a name for special keys: `Enter`, `Esc`, `Tab`, `BackTab`, `Backspace`, `Delete`, `Insert`,
+  `Home`, `End`, `PageUp`, `PageDown`, `Up`, `Down`, `Left`, `Right`, `Null`. The boolean modifiers
+  `ctrl`, `alt`, and `shift` report which were held.
+- **`"resize"`** — `{ type, cols, rows }`, emitted when the terminal window changes size.
+
+```javascript
+let ev = read(200)            // poll with a 200ms timeout
+if (ev == null) { /* nothing this tick */ }
+else if (ev.type == "key") {
+  console.log("key:", ev.key, "ctrl:", ev.ctrl, "alt:", ev.alt, "shift:", ev.shift)
+}
+else if (ev.type == "resize") {
+  console.log("resize:", ev.cols, "x", ev.rows)
+}
+```
+
+## Full example — an interactive key viewer
+
+```javascript
+import { isTTY, size, setRawMode, read } from 'tish:tty'
+
+if (!isTTY()) {
+  console.log("Not a terminal — run this directly in a terminal.")
+} else {
+  let dims = size()
+  console.log("Terminal:", dims.cols, "x", dims.rows, "— press keys ('q' to quit)")
+  setRawMode(true)
+  let running = true
+  while (running) {
+    let ev = read(200)
+    if (ev == null) { continue }
+    if (ev.type == "key") {
+      console.log("key:", ev.key, "ctrl:", ev.ctrl, "alt:", ev.alt, "shift:", ev.shift)
+      if (ev.key == "q") { running = false }
+      if (ev.ctrl && ev.key == "c") { running = false }
+    }
+    if (ev.type == "resize") {
+      console.log("resize:", ev.cols, "x", ev.rows)
+    }
+  }
+  setRawMode(false)
+  console.log("bye")
+}
+```
+
+Run it in a real terminal: `tish run --feature tty keys.tish`. Press keys to see them, resize the
+window to see resize events, and press `q` or `Ctrl+C` to quit.
