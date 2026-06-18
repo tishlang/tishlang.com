@@ -1,0 +1,61 @@
+---
+title: JavaScript Target
+description: Compile Tish to JavaScript as a single bundle or as ES modules for Vite/Rollup tree-shaking.
+---
+
+`tish build --target js` compiles Tish to JavaScript in one of two output formats, chosen with `--format`.
+
+| Format | Output | Use case |
+|--------|--------|----------|
+| `bundle` (default) | One merged `.js` file (`-o app.js`) | `<script>` tags, CLI tools, embeds without a bundler |
+| `esm` | One `.js` file per `.tish` module under a directory (`-o dist/`) with real `import` / `export` | Vite / Rollup / esbuild production builds (tree-shaking, code-splitting) |
+
+## Bundle format (default)
+
+```bash
+tish build app.tish -o app.js --target js
+```
+
+All statically-imported modules are resolved and merged into a single flat program before JavaScript is emitted, so the output has no `import` / `export` statements (an entry `export default` is the one exception). It is simple to load but opaque to a bundler: there is no module graph to tree-shake, and two modules that export the same top-level name collide in the single shared scope.
+
+## ESM format
+
+```bash
+tish build src/main.tish -o dist --target js --format esm
+```
+
+Each reachable `.tish` module is compiled to its own `.js` file, preserving the source tree layout relative to the project root, with real ES `import` / `export`:
+
+```
+src/workbench/boot.tish         ->  dist/workbench/boot.js
+src/internal/layout/index.tish  ->  dist/internal/layout/index.js
+```
+
+Because every module keeps its own scope:
+
+- A bundler (Vite, Rollup, esbuild) sees a static `import` graph and can **tree-shake** unused exports, **code-split**, scope-hoist, and minify.
+- Two modules can export the **same name** without colliding. For example `a.tish` and `b.tish` may both `export fn activate`, imported under distinct local aliases:
+
+```javascript
+import { activate as activateA } from "./a.tish"
+import { activate as activateB } from "./b.tish"
+```
+
+Relative import specifiers keep their shape with `.tish` rewritten to `.js` (`./dep.tish` becomes `./dep.js`), since the output tree mirrors the source tree.
+
+### Vite production recipe
+
+Compile Tish to ES modules, then let Vite own minification and tree-shaking:
+
+```bash
+tish build src/main.tish -o dist/tish --target js --format esm
+# point Vite at dist/tish/main.js as an entry; Vite bundles + tree-shakes the graph
+```
+
+### Limitations
+
+- `-o` is treated as a **directory** in ESM mode.
+- **Native imports** (`tish:*`, `cargo:*`, `ffi:*`, and the built-in `fs` / `http` / `process` / `ws`) are rejected — they require [`--target native`](/reference/native-backend/).
+- All modules must resolve **under the project root**; external (`node_modules` / sibling) `.tish` dependencies outside the tree require `--format bundle`.
+- `--source-map` is **bundle-only** for now; ESM per-file source maps are a follow-up.
+- `.jsx` / `.js` single-file inputs are bundle-only.

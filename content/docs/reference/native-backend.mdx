@@ -31,6 +31,28 @@ tish build main.tish -o app --native-backend rust
 
 > **Primitive lowering (in progress):** Where types are annotated or can be inferred, the Rust backend emits native Rust primitives (`f64`, `Vec<f64>`, direct arithmetic) instead of `Value`. See [Type Annotations](/language/type-annotations/) for the current status.
 
+#### Native typing flags (opt-in)
+
+The deeper typed-native optimizations are **dark-shipped behind environment variables** — they are **off by default**, so the default build stays byte-identical, and you opt in per build. They apply only to `--native-backend rust`.
+
+| Flag | What it does |
+|------|--------------|
+| `TISH_PARAM_NATIVE=1` | Annotated scalar params (`a: number/boolean/string`) get a native shadow (`f64`/`bool`/`String`) so the body lowers without boxing. |
+| `TISH_PARAM_INFER=1` | Unannotated params used *purely numerically* are inferred `number` (conservative, sound). |
+| `TISH_NATIVE_FN=1` | Numeric-only top-level functions are emitted as native `fn(f64, …) -> f64`; direct calls bypass the boxed call ABI. |
+| `TISH_STRUCT_INFER=1` | Block-local `let o = {…}` / `let xs = […]` are inferred to a native struct / `T[]` when every later use is safe. |
+| `TISH_NATIVE_HOF=1` | `reduce`/`map`/`filter`/`some`/`every` over a native `number[]` lower to a direct Rust iterator chain. |
+| `TISH_AGGREGATE_INFER=1` | Interprocedural monomorphic struct inference: when a whole-program candidacy predicate holds (a monomorphic all-`f64` object shape that never hits `===`/escape/reshape), an array-of-objects is unboxed into a native `Vec<Struct>` threaded by reference and its factory/operator functions are de-virtualized into typed Rust free functions — removing the boxed `Value` + `RefCell` + property-map hot path. All-or-nothing per group: any unlowerable use disables it and falls back to the byte-identical boxed path. |
+
+```bash
+# Example: build with the full typed-native flag set
+TISH_PARAM_NATIVE=1 TISH_PARAM_INFER=1 TISH_NATIVE_FN=1 \
+TISH_STRUCT_INFER=1 TISH_NATIVE_HOF=1 TISH_AGGREGATE_INFER=1 \
+  tish build main.tish -o app --native-backend rust
+```
+
+These flags are correctness-preserving (each bails to the boxed path rather than miscompile), but they are still being hardened — treat them as opt-in performance experiments.
+
 ### Cranelift backend
 
 The Cranelift backend produces a standalone binary **without a cargo invocation** — build is fast. However, the binary **runs the same `tishlang_vm`** on embedded bytecode; it is **not** AOT machine-code compilation of Tish opcodes. Throughput is VM-class, similar to `tish run --backend vm`.
