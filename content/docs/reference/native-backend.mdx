@@ -53,6 +53,16 @@ TISH_STRUCT_INFER=1 TISH_NATIVE_HOF=1 TISH_AGGREGATE_INFER=1 \
 
 These flags are correctness-preserving (each bails to the boxed path rather than miscompile), but they are still being hardened — treat them as opt-in performance experiments.
 
+#### Value-representation flags (opt-in)
+
+Distinct from the native-typing flags above, this one changes the in-memory `Value` representation on **every** backend (interpreter, bytecode VM, and native), not just the Rust codegen.
+
+| Flag | What it does |
+|------|--------------|
+| `TISH_PACKED_ARRAYS=1` | Store all-numeric arrays as an unboxed `Vec<f64>` (`NumberArray`) instead of a vector of individually-boxed values. A non-numeric store deopts the backing **in place** (`Packed → Boxed`), so every alias of the array stays sound. |
+
+It is **sound** — a full parity sweep runs the entire test corpus flag-on vs flag-off across interp / vm / native, plus GAUNTLET checksums against Node — but it is kept **off by default on purpose, because it is a performance wash**. The VM JIT does not consume `NumberArray`, so packed arrays never reach the tier that actually speeds numeric loops; flag-on and flag-off measure within ~1% of each other on large numeric workloads. The representation exists so a future JIT path can turn it into a real win — until then there is no reason to enable it.
+
 ### Cranelift backend
 
 The Cranelift backend produces a standalone binary **without a cargo invocation** — build is fast. However, the binary **runs the same `tishlang_vm`** on embedded bytecode; it is **not** AOT machine-code compilation of Tish opcodes. Throughput is VM-class, similar to `tish run --backend vm`.
