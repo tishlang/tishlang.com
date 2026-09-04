@@ -86,6 +86,50 @@ Cranelift backend does not support external native imports (tish:…, cargo:…,
 
 Because the binary runs **`tishlang_vm`**, any construct the VM supports is supported; constructs not yet implemented in the VM (e.g. certain destructuring patterns) are equally unsupported here. **Destructuring parameters** are not supported in bytecode — use the Rust backend or destructure inside the function body.
 
+## Build environment variables
+
+`tish build --target native` generates a Rust crate and drives `cargo build --release` for it.
+These variables shape that nested build. All are optional; the default is a shipping build.
+
+### Build profile
+
+| Variable | Effect |
+|---|---|
+| *(unset)* | Shipping profile: `lto = "fat"`, `codegen-units = 1`, stripped, `panic = "abort"`. Smallest, fastest binary; slowest to produce — the final LTO link is single-threaded and dominates a warm build of a large app. |
+| `TISH_FAST_NATIVE_BUILD=1` | Iteration profile: no LTO, `opt-level = 1`, 16 codegen units, incremental. Use for CI verification builds and local iteration; do not ship the result. Also selects the fast profile on the GBA path. |
+| `TISH_NATIVE_THIN_LTO=1` | Thin LTO over 8 codegen units, still stripped: most of fat's size/speed win with a parallel link. The CI-friendly shipping profile. `TISH_FAST_NATIVE_BUILD` takes precedence when both are set. *(tish ≥ 3.11)* |
+
+### Where the build happens
+
+| Variable | Effect |
+|---|---|
+| `TISH_NATIVE_TARGET_DIR=<dir>` | Persistent cargo target dir for native builds. By default the generated crate is built in a per-process temp dir that is deleted on success, so nothing survives between two builds and CI recompiles every dependency each run. Point this at a directory that persists (a CI cache) and cargo reuses the dependency artifacts; only the generated crate is recompiled. Created on demand; an unusable path warns and falls back to the temp dir. Ignored inside the tish workspace itself, which already shares its `target/`. *(tish ≥ 3.11)* |
+| `TISH_KEEP_BUILD_DIR=1` | Keep the generated crate's source directory after a successful build (it is otherwise removed). Useful to read the generated `main.rs` / `Cargo.toml`. Failed builds always keep it. |
+| `TISH_GBA_TARGET_DIR=<dir>` | The GBA-target equivalent of `TISH_NATIVE_TARGET_DIR` (ROM builds otherwise each carry a private dependency tree). |
+
+`CARGO_TARGET_DIR`, `RUSTC_WRAPPER`, `RUSTC_WORKSPACE_WRAPPER` and `CARGO_BUILD_RUSTC_WRAPPER` are
+**removed** from the environment before cargo runs — an inherited target dir made cargo write
+where the compiler never looked for the output. Use the two `*_TARGET_DIR` variables above to
+share a target dir, and cargo's own `$CARGO_HOME/config.toml` (`[build] rustc-wrapper`) to
+wrap `rustc`, e.g. with sccache.
+
+### Code generation
+
+| Variable | Effect |
+|---|---|
+| `RUSTFLAGS` | Passed through. If it does not name a `target-cpu`, tish appends `-C target-cpu=native` for host builds (never for `--cargo-target` cross builds, and only when `native` is at least as capable as the target default). Pin one (`-C target-cpu=x86-64-v2`) when the binary ships to other machines. |
+| `TISH_NATIVE_OPT=0` | Turn off the whole typed-native optimization stack (the flags in "Native typing flags" above are gated behind it). For A/B baselines and bisecting a suspected miscompile. |
+| `TISH_NO_OPTIMIZE=1` | Skip the compiler's own optimizer passes before codegen (`1`, `true` or `yes`). |
+| `TISH_NATIVE_FAST_ALLOC=0` | Do not link mimalloc as the global allocator (default on: ~20% on object/array-heavy code). Off automatically for static libraries and cross builds. |
+
+### GBA target
+
+| Variable | Effect |
+|---|---|
+| `TISH_GBA_THIN_LTO=1` | Thin LTO / 8 codegen units for the ROM instead of the default fat LTO (fat keeps stack frames smallest; see the GBA guide). |
+| `TISH_GBA_DEBUG=1` | Keep debuginfo in the release ROM (slower link; for mGBA backtraces). |
+| `TISH_GBA_FAT_LTO=1` | Legacy no-op: fat is already the default. |
+
 ## Target and feature flags
 
 `--native-backend` applies only when `--target native` (the default). Other targets (`js`, `wasm`, `wasi`, `bytecode`) ignore it.
