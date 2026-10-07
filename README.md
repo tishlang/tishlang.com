@@ -1,35 +1,72 @@
-# v0-landing-page-design
+# tishlang.com
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [v0](https://v0.app).
+The website and documentation for [Tish](https://github.com/tishlang/tish), live at
+[tishlang.com](https://tishlang.com): the landing page, the docs at `/docs`, and the runnable
+examples at `/docs/examples`.
 
-## Built with v0
+It's a Next.js app exported as a static site (`output: "export"`), with search built by
+[Pagefind](https://pagefind.app) after each build.
 
-This repository is linked to a [v0](https://v0.app) project. You can continue developing by visiting the link below -- start new chats to make changes, and v0 will push commits directly to this repo. Every merge to `main` will automatically deploy.
-
-[Continue working on v0 →](https://v0.app/chat/projects/prj_WE2kHmirBgqr76XGwWoMebVQxhMt)
-
-## Getting Started
-
-First, run the development server:
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+npm install
+npm run dev      # http://localhost:3000
+npm run build    # static site in out/, then the Pagefind search index in out/pagefind
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Writing docs
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Docs are MDX files in `content/docs/`. The folder sets the URL and the sidebar section:
+`content/docs/language/syntax.mdx` is `/docs/language/syntax`, under **Language**.
 
-## Learn More
+| Folder | Sidebar section |
+| --- | --- |
+| `index.mdx` | Introduction (the docs home) |
+| `getting-started/` | Getting Started |
+| `language/` | Language |
+| `builtins/` | Builtins |
+| `features/` | Features (`fs`, `http`, `process`, `regex`, `tty`, `pg`) |
+| `reference/` | Reference |
+| `deploy/` | Deploy |
+| `resources/` | Resources |
 
-To learn more, take a look at the following resources:
+Each page starts with frontmatter:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-- [v0 Documentation](https://v0.app/docs) - learn about v0 and how to use it.
+```mdx
+---
+title: Installation
+description: One line shown under the title and in search results.
+---
+```
 
-<a href="https://v0.app/chat/api/kiro/clone/spacedevin/v0-landing-page-design" alt="Open in Kiro"><img src="https://pdgvvgmkdvyeydso.public.blob.vercel-storage.com/open%20in%20kiro.svg?sanitize=true" /></a>
+To add a page, add an `.mdx` file to one of these folders. The section order lives in
+`docsSidebar` in `lib/docs.ts`. Every page has an "Improve this page" link to its source here
+on GitHub.
+
+## Examples
+
+`/docs/examples` isn't written in this repo. It renders the `examples/*/README.md` files that ship
+in the `@tishlang/tish` npm package, so it always matches the installed compiler. Bumping
+`@tishlang/tish` in `package.json` updates them.
+
+## Layout
+
+| Path | What it is |
+| --- | --- |
+| `app/page.tsx` | The landing page, built from `components/landing/` (hero, features, code showcase, benchmarks) |
+| `app/docs/` | The docs routes: `[[...slug]]` for pages, `examples/` for the examples |
+| `components/docs/` | Sidebar, table of contents, search, previous / next links, MDX components |
+| `components/ui/` | Shared UI components (shadcn/ui) |
+| `lib/docs.ts` | Loads the MDX, reads frontmatter, builds the sidebar |
+| `lib/docs-examples.ts` | Reads the examples from `node_modules/@tishlang/tish` |
+| `lib/docs-github.ts` | Source and edit links on GitHub |
+
+## Related
+
+- [tishlang/tish](https://github.com/tishlang/tish): the language, compiler and tooling
+- [tishlang/lattish](https://github.com/tishlang/lattish): JSX and a React-like framework for Tish
+
+## License
+
+See [LICENSE](LICENSE).
