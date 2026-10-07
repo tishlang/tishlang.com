@@ -63,7 +63,7 @@ export function Footer() {
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 md:flex-row">
           <p className="text-xs text-muted-foreground">
-            Tish is free and open source under the <a href="https://github.com/piffoundation/payitforward" target="_blank" rel="noopener noreferrer">Pay It Forward</a> license.
+            Tish is free and open source under the <a href="https://github.com/tishlang/tish/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT</a> license.
             &copy; 2026 Tish. 
           </p>
         </div>
